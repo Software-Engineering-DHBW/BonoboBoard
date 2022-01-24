@@ -1,0 +1,172 @@
+REQUEST - HEADERS
+=================
+
+POST /service/soap/MsgActionRequest HTTP/1.1
+Host: studgate.dhbw-mannheim.de
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0
+Accept: */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/soap+xml; charset=utf-8
+Content-Length: 755
+Origin: https://studgate.dhbw-mannheim.de
+DNT: 1
+Connection: keep-alive
+Referer: https://studgate.dhbw-mannheim.de/zimbra/
+Cookie: ZM_TEST=true; ZM_AUTH_TOKEN=XXXXXXX
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: same-origin
+
+RESPONSE - HEADERS
+==================
+
+HTTP/1.1 200 OK
+Server: nginx
+Date: Mon, 24 Jan 2022 15:28:09 GMT
+Content-Type: text/javascript; charset=utf-8
+Content-Length: 960
+Connection: keep-alive
+Cache-Control: no-store, no-cache
+X-XSS-Protection: 1; mode=block
+Expect-CT: max-age=0
+Strict-Transport-Security: max-age=31536000; includeSubdomains
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+REQUEST - PAYLOAD
+=================
+
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+   <soap:Header>
+      <context xmlns="urn:zimbra">
+         <userAgent xmlns="" name="ZimbraWebClient - FF3.0 (Linux)" version="7.1.4_GA_2555" />
+         <session xmlns="" id="16189" />
+         <notify xmlns="" seq="1" />
+         <account xmlns="" by="name">s190976@student.dhbw-mannheim.de</account>
+         <format xmlns="" type="js" />
+         <authToken xmlns="">XXXXXXX</authToken>
+      </context>
+   </soap:Header>
+   <soap:Body>
+      <MsgActionRequest xmlns="urn:zimbraMail">
+         <action xmlns="" id="9460" op="delete" />
+      </MsgActionRequest>
+   </soap:Body>
+</soap:Envelope>
+
+RESPONSE - PAYLOAD
+==================
+
+{
+   "Header":{
+      "context":{
+         "session":{
+            "id":"16189",
+            "_content":"16189"
+         },
+         "change":{
+            "token":58504
+         },
+         "notify":[
+            {
+               "seq":2,
+               "created":{
+                  "m":[
+                     {
+                        "s":627,
+                        "d":1643038089000,
+                        "l":"5",
+                        "cid":"-9461",
+                        "f":"s",
+                        "rev":58502,
+                        "id":"9461",
+                        "e":[
+                           {
+                              "a":"s190976@student.dhbw-mannheim.de",
+                              "d":"s190976",
+                              "t":"t"
+                           },
+                           {
+                              "a":"s190976@student.dhbw-mannheim.de",
+                              "d":"Jakob",
+                              "p":"Jakob Hutschenreiter",
+                              "t":"f"
+                           }
+                        ],
+                        "su":"Test API",
+                        "fr":"Einfacher Test der API"
+                     }
+                  ],
+                  "c":[
+                     {
+                        "id":"-9461",
+                        "n":1,
+                        "f":"s",
+                        "d":1643038089000,
+                        "su":"Test API",
+                        "e":[
+                           {
+                              "a":"s190976@student.dhbw-mannheim.de",
+                              "d":"Jakob",
+                              "p":"Jakob Hutschenreiter",
+                              "t":"f"
+                           }
+                        ]
+                     }
+                  ]
+               },
+               "modified":{
+                  "mbx":[
+                     {
+                        "s":23813758
+                     }
+                  ],
+                  "folder":[
+                     {
+                        "id":"5",
+                        "n":23,
+                        "s":9560189,
+                        "i4ms":58502,
+                        "i4next":9462
+                     }
+                  ]
+               }
+            },
+            {
+               "seq":3,
+               "deleted":{
+                  "id":"9460,-9460"
+               },
+               "modified":{
+                  "mbx":[
+                     {
+                        "s":23813758
+                     }
+                  ],
+                  "folder":[
+                     {
+                        "id":"6",
+                        "n":0,
+                        "s":0,
+                        "i4ms":58504,
+                        "i4next":9461
+                     }
+                  ]
+               }
+            }
+         ],
+         "_jsns":"urn:zimbra"
+      }
+   },
+   "Body":{
+      "MsgActionResponse":{
+         "action":{
+            "id":"9460",
+            "op":"delete"
+         },
+         "_jsns":"urn:zimbraMail"
+      }
+   },
+   "_jsns":"urn:zimbraSoap"
+}

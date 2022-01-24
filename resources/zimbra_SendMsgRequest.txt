@@ -1,0 +1,194 @@
+REQUEST - HEADERS
+=================
+
+POST /service/soap/SendMsgRequest HTTP/1.1
+Host: studgate.dhbw-mannheim.de
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0
+Accept: */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/soap+xml; charset=utf-8
+Content-Length: 1056
+Origin: https://studgate.dhbw-mannheim.de
+DNT: 1
+Connection: keep-alive
+Referer: https://studgate.dhbw-mannheim.de/zimbra/
+Cookie: ZM_TEST=true; ZM_AUTH_TOKEN=XXXXXXX
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: same-origin
+
+RESPONSE - HEADERS
+==================
+
+HTTP/1.1 200 OK
+Server: nginx
+Date: Mon, 24 Jan 2022 15:28:09 GMT
+Content-Type: text/javascript; charset=utf-8
+Content-Length: 804
+Connection: keep-alive
+Cache-Control: no-store, no-cache
+X-XSS-Protection: 1; mode=block
+Expect-CT: max-age=0
+Strict-Transport-Security: max-age=31536000; includeSubdomains
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+REQUEST - PAYLOAD
+=================
+
+{
+   "Header":{
+      "context":{
+         "_jsns":"urn:zimbra",
+         "userAgent":{
+            "name":"ZimbraWebClient - FF3.0 (Linux)",
+            "version":"7.1.4_GA_2555"
+         },
+         "session":{
+            "_content":16189,
+            "id":16189
+         },
+         "notify":{
+            "seq":1
+         },
+         "account":{
+            "_content":"s190976@student.dhbw-mannheim.de",
+            "by":"name"
+         },
+         "authToken":"XXXXXXX"
+      }
+   },
+   "Body":{
+      "SendMsgRequest":{
+         "_jsns":"urn:zimbraMail",
+         "suid":1643038089534,
+         "m":{
+            "id":"9460",
+            "did":"9460",
+            "idnt":"b9236719-8177-43a3-8511-028c5643a955",
+            "e":[
+               {
+                  "t":"t",
+                  "a":"s190976@student.dhbw-mannheim.de",
+                  "add":"0"
+               },
+               {
+                  "t":"f",
+                  "a":"s190976@student.dhbw-mannheim.de",
+                  "p":"Jakob Hutschenreiter"
+               }
+            ],
+            "su":{
+               "_content":"Test API"
+            },
+            "mp":[
+               {
+                  "ct":"text/plain",
+                  "content":{
+                     "_content":"Einfacher Test der API\n\n-- \nName------------Jakob Hutschenreiter\nKurs------------TINF19IT2\nMatrikelnummer--1419081\n\n"
+                  }
+               }
+            ],
+            "irt":{
+               "_content":"<1896242393.6626.1643038086517.JavaMail.root@studgate>"
+            }
+         }
+      }
+   }
+}
+
+RESPONSE - PAYLOAD
+==================
+
+{
+   "Header":{
+      "context":{
+         "session":{
+            "id":"16189",
+            "_content":"16189"
+         },
+         "change":{
+            "token":58503
+         },
+         "notify":[
+            {
+               "seq":2,
+               "created":{
+                  "m":[
+                     {
+                        "s":627,
+                        "d":1643038089000,
+                        "l":"5",
+                        "cid":"-9461",
+                        "f":"s",
+                        "rev":58502,
+                        "id":"9461",
+                        "e":[
+                           {
+                              "a":"s190976@student.dhbw-mannheim.de",
+                              "d":"s190976",
+                              "t":"t"
+                           },
+                           {
+                              "a":"s190976@student.dhbw-mannheim.de",
+                              "d":"Jakob",
+                              "p":"Jakob Hutschenreiter",
+                              "t":"f"
+                           }
+                        ],
+                        "su":"Test API",
+                        "fr":"Einfacher Test der API"
+                     }
+                  ],
+                  "c":[
+                     {
+                        "id":"-9461",
+                        "n":1,
+                        "f":"s",
+                        "d":1643038089000,
+                        "su":"Test API",
+                        "e":[
+                           {
+                              "a":"s190976@student.dhbw-mannheim.de",
+                              "d":"Jakob",
+                              "p":"Jakob Hutschenreiter",
+                              "t":"f"
+                           }
+                        ]
+                     }
+                  ]
+               },
+               "modified":{
+                  "mbx":[
+                     {
+                        "s":23814202
+                     }
+                  ],
+                  "folder":[
+                     {
+                        "id":"5",
+                        "n":23,
+                        "s":9560189,
+                        "i4ms":58502,
+                        "i4next":9462
+                     }
+                  ]
+               }
+            }
+         ],
+         "_jsns":"urn:zimbra"
+      }
+   },
+   "Body":{
+      "SendMsgResponse":{
+         "m":[
+            {
+               "id":"9461"
+            }
+         ],
+         "_jsns":"urn:zimbraMail"
+      }
+   },
+   "_jsns":"urn:zimbraSoap"
+}

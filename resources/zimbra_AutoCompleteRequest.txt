@@ -1,0 +1,100 @@
+REQUEST - HEADERS
+=================
+
+POST /service/soap/AutoCompleteRequest HTTP/1.1
+Host: studgate.dhbw-mannheim.de
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0
+Accept: */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/soap+xml; charset=utf-8
+Content-Length: 549
+Origin: https://studgate.dhbw-mannheim.de
+DNT: 1
+Connection: keep-alive
+Referer: https://studgate.dhbw-mannheim.de/zimbra/
+Cookie: ZM_TEST=true; ZM_AUTH_TOKEN=XXXXXXX
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: same-origin
+
+RESPONSE - HEADERS
+==================
+
+HTTP/1.1 200 OK
+Server: nginx
+Date: Mon, 24 Jan 2022 15:26:24 GMT
+Content-Type: text/javascript; charset=utf-8
+Content-Length: 336
+Connection: keep-alive
+Cache-Control: no-store, no-cache
+X-XSS-Protection: 1; mode=block
+Expect-CT: max-age=0
+Strict-Transport-Security: max-age=31536000; includeSubdomains
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+
+REQUEST - PAYLOAD
+=================
+
+{
+   "Header":{
+      "context":{
+         "_jsns":"urn:zimbra",
+         "userAgent":{
+            "name":"ZimbraWebClient - FF3.0 (Linux)",
+            "version":"7.1.4_GA_2555"
+         },
+         "session":{
+            "_content":16189,
+            "id":16189
+         },
+         "account":{
+            "_content":"s190976@student.dhbw-mannheim.de",
+            "by":"name"
+         },
+         "authToken":"XXXXXXX"
+      }
+   },
+   "Body":{
+      "AutoCompleteRequest":{
+         "_jsns":"urn:zimbraMail",
+         "name":{
+            "_content":"s190"
+         }
+      }
+   }
+}
+
+RESPONSE - PAYLOAD
+==================
+
+{
+   "Header":{
+      "context":{
+         "session":{
+            "id":"16189",
+            "_content":"16189"
+         },
+         "change":{
+            "token":58499
+         },
+         "_jsns":"urn:zimbra"
+      }
+   },
+   "Body":{
+      "AutoCompleteResponse":{
+         "canBeCached":true,
+         "match":[
+            {
+               "email":"\u003Cs190976@student.dhbw-mannheim.de\u003E",
+               "type":"rankingTable",
+               "ranking":"6",
+               "isGroup":false
+            }
+         ],
+         "_jsns":"urn:zimbraMail"
+      }
+   },
+   "_jsns":"urn:zimbraSoap"
+}
