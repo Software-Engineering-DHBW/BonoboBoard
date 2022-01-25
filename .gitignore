@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# WHITELIST
+!django-datta-able-1.0.4/.env
+
