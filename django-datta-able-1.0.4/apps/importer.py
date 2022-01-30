@@ -3,8 +3,6 @@
 """
 """
 
-import icalendar
-import pandas as pd
 import re
 import requests
 from requests.exceptions import RequestException
@@ -226,42 +224,6 @@ class Importer(object):
     #     raise NotImplementedError("This method needs to be implemented!")
 
 
-class LectureImporter(Importer):
-    """class to achive the course-specific timetable
-
-    """
-
-    __url: ClassVar[str] = "http://vorlesungsplan.dhbw-mannheim.de/ical.php?uid="
-
-    # TODO delete auth token
-    def __init__(self, uid) -> None:
-        super().__init__()
-        df = self.scrape(uid)
-        # print(df.to_string())   #Debug Output
-
-    def scrape(self, uid) -> pd.DataFrame:
-        '''
-        '''
-        # set up url to the ical file
-        ical_url = LectureImporter.__url + uid
-
-        # Get ical from given address
-        response = reqget(url=ical_url, headers=self.headers,
-                          allow_redirects=True)
-        gcal = icalendar.Calendar.from_ical(response.content)
-
-        df = pd.DataFrame(columns=["lecture", "location", "start", "end"])
-        for component in gcal.walk():
-            if component.name == "VEVENT":
-                vevent = [component.get('SUMMARY'),
-                          component.get('LOCATION'),
-                          component.get('DTSTART').dt,
-                          component.get('DTEND').dt
-                          ]
-                df.loc[len(df)] = vevent
-        return df
-
-
 class MoodleImporter(Importer):
     """class to import data from moodle
 
@@ -289,7 +251,7 @@ class MoodleImporter(Importer):
         self.scrape()
 
     def login(self, username, password):
-        """aquire the authentication token
+        """acquire the authentication token
 
         Parameters
         ----------
