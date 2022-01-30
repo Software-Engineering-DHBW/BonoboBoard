@@ -6,6 +6,7 @@ Copyright (c) 2019 - present AppSeed.us
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 from .forms import LoginForm, SignUpForm
 
 
@@ -19,7 +20,8 @@ def login_view(request):
         if form.is_valid():
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
-            user = authenticate(username=username, password=password)
+            #user = authenticate(username=username, password=password)          #use this to not skip login logic
+            user = User.objects.create_user(username, 'myemail@crazymail.com', password)
             if user is not None:
                 login(request, user)
                 return redirect("/")
@@ -46,7 +48,7 @@ def register_user(request):
             msg = 'User created - please <a href="/login">login</a>.'
             success = True
 
-            # return redirect("/login/")
+            return redirect("/login/")
 
         else:
             msg = 'Form is not valid'
