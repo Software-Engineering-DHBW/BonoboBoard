@@ -10,9 +10,10 @@ from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 from typing import ClassVar, Type, Dict, List
 
+
 def reqpost(url="", headers={}, params={}, payload={}, allow_redirects=False, return_code=200):
     """wrapper for a post request with return code check
-    
+
     Parameters
     ----------
     url : str
@@ -38,16 +39,19 @@ def reqpost(url="", headers={}, params={}, payload={}, allow_redirects=False, re
     RequestException
         if the expected return code differs from the actual return code
     """
-    r = requests.post(url=url, headers=headers, params=params, data=payload, allow_redirects=allow_redirects)
+    r = requests.post(url=url, headers=headers, params=params,
+                      data=payload, allow_redirects=allow_redirects)
     # compare return code with expected return code
     if not r.status_code == return_code:
-        raise RequestException(f"Expected return code [{ return_code }] differs from actual return code [{ r.status_code }]")
+        raise RequestException(
+            f"Expected return code [{ return_code }] differs from actual return code [{ r.status_code }]")
         # KILL THREAD
     return r
 
+
 def reqget(url="", headers={}, params={}, allow_redirects=False, return_code=200):
     """wrapper for a get request with return code check
-    
+
     Parameters
     ----------
     url : str
@@ -71,16 +75,19 @@ def reqget(url="", headers={}, params={}, allow_redirects=False, return_code=200
     RequestException
         if the expected return code differs from the actual return code
     """
-    r = requests.get(url=url, headers=headers, params=params, allow_redirects=allow_redirects)
+    r = requests.get(url=url, headers=headers, params=params,
+                     allow_redirects=allow_redirects)
     # compare return code with expected return code
     if not r.status_code == return_code:
-        raise RequestException(f"Expected return code [{ return_code }] differs from actual return code [{ r.status_code }]")
-        # KILL THREAD 
+        raise RequestException(
+            f"Expected return code [{ return_code }] differs from actual return code [{ r.status_code }]")
+        # KILL THREAD
     return r
+
 
 def url_get_fqdn(url):
     """return fqdn of an url
-    
+
     Parameters
     ----------
     url : str
@@ -93,9 +100,10 @@ def url_get_fqdn(url):
     """
     return re.sub("(^http[s]?://)|(/.*$)", "", url)
 
+
 def url_get_path(url):
     """return path of an url
-    
+
     Parameters
     ----------
     url : str
@@ -108,9 +116,10 @@ def url_get_path(url):
     """
     return re.sub("(^.*/)|(\?.*$)", "", url)
 
+
 def url_get_args(url):
     """return array of arguments of an url
-    
+
     Parameters
     ----------
     url : str
@@ -123,6 +132,7 @@ def url_get_args(url):
         as follows: "arg=value"
     """
     return re.sub("^.*\?", "", url).split("&")
+
 
 class Importer(object):
     """base class for every importer
@@ -186,7 +196,7 @@ class Importer(object):
 
     def drop_header(self, header):
         """method to drop headers
-        
+
         Parameters
         ----------
         header: str
@@ -201,17 +211,18 @@ class Importer(object):
     # --- DISCUSSION START --- #
     # JH:   Is it worth to define methods here, which subclasses have to implement like java interfaces? #Python_is_not_Java
     # --- DISCUSSION END ----- #
-    def login(self):
-        """method which should be implemented by subclasses"""
-        raise NotImplementedError("This method needs to be implemented!")
+    # def login(self):
+    #     """method which should be implemented by subclasses"""
+    #     raise NotImplementedError("This method needs to be implemented!")
 
     def scrape(self):
         """method which should be implemented by subclasses"""
         raise NotImplementedError("This method needs to be implemented!")
 
-    def logout(self):
-        """method which should be implemented by subclasses"""
-        raise NotImplementedError("This method needs to be implemented!")
+    # def logout(self):
+    #     """method which should be implemented by subclasses"""
+    #     raise NotImplementedError("This method needs to be implemented!")
+
 
 class MoodleImporter(Importer):
     """class to import data from moodle
@@ -240,8 +251,8 @@ class MoodleImporter(Importer):
         self.scrape()
 
     def login(self, username, password):
-        """aquire the authentication token
-        
+        """acquire the authentication token
+
         Parameters
         ----------
         username : str
@@ -279,8 +290,9 @@ class MoodleImporter(Importer):
         }
 
         # STEP 2: LOGIN - POST REQUEST
-        r_login = reqpost(url=url+"login/index.php", headers=self.headers, payload=payload, return_code=303)
-        
+        r_login = reqpost(url=url+"login/index.php",
+                          headers=self.headers, payload=payload, return_code=303)
+
         # add authentication cookie to the headers
         self.auth_token = r_login.headers["Set-Cookie"].split(";")[0]
         self.headers["Cookie"] = self.auth_token
@@ -305,7 +317,8 @@ class MoodleImporter(Importer):
         content_profile = BeautifulSoup(r_profile.text, "lxml")
 
         # scrape username
-        self.scraped_data["username"] = content_profile.find(id="usermenu").get("title")
+        self.scraped_data["username"] = content_profile.find(
+            id="usermenu").get("title")
 
         # scrape logout url
         for tag_a in content_profile.find(id="usermenu-dropdown").find_all("a"):
@@ -348,7 +361,7 @@ class MoodleImporter(Importer):
                                     if isinstance(content, NavigableString):
                                         course_dict[key]["bbb_rooms"][content.string] = temp_href
                             break
-        
+
         self.scraped_data["courses"] = course_dict
 
     def logout(self):
@@ -356,6 +369,7 @@ class MoodleImporter(Importer):
         """
         # STEP 1: LOGOUT - GET REQUEST
         reqget(url=self.__logout_url, headers=self.headers, return_code=303)
+
 
 class ZimbraHandler:
     """
@@ -411,14 +425,16 @@ class ZimbraHandler:
             "username": username,
             "password": password
         }
-        
+
         # LOGIN - POST REQUEST
-        r_login: Type[requests.models.Response] = reqpost(url=url, headers=self.headers, payload=payload, allow_redirects=False, return_code=302)
+        r_login: Type[requests.models.Response] = reqpost(
+            url=url, headers=self.headers, payload=payload, allow_redirects=False, return_code=302)
 
         # add authentication cookie to the headers
         self.auth_token = r_login.headers["Set-Cookie"].split(";")[0]
-        self.headers["Cookie"] = "; ".join(self.headers["Cookie"], self.auth_token)
-        
+        self.headers["Cookie"] = "; ".join(
+            self.headers["Cookie"], self.auth_token)
+
     def scrape(self):
         """
         """
@@ -430,4 +446,3 @@ class ZimbraHandler:
         """
         # lazy peon
         url: str = ZimbraHandler.__url
-
