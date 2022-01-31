@@ -16,18 +16,13 @@
 \usepackage{float}
 \usepackage{array}
 
-
 \graphicspath{ {../img/} }
 \renewcommand\familydefault{\sfdefault}
-
-
-
 
 \pagestyle{fancy}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
 \fancyfoot[C]{\includegraphics[width=\textwidth]{Polygon_gruen}\\ \thepage}
-
 
 \rhead{\includegraphics[width=\textwidth]{LogoHeader}}
 \setlength\headheight{30pt}
@@ -60,8 +55,8 @@
 \begin{table}[h]
 	\begin{tabular}{@{} p{20mm} p{25mm} p{25mm} p{75mm}}
 		\textbf{Revision} & \textbf{Datum} & \textbf{Autor(en)} & \textbf{Beschreibung}\\
-		1.0 & 31.01.2022 & NK|PK & Erstellung, A: 1.1, 1.2, 1.3\\
-		1.1 & 31.01.2022 & JW & A: 
+		1.0 & 31.01.2022 & NK|PK & A: 1.1, 1.2, 1.3\\
+		1.1 & 31.01.2022 & JW & A: 1.3, C: 1.1, 1.2, 1.3 
 	\end{tabular}
 \end{table}
 \noindent
@@ -78,27 +73,33 @@ Abkürzungen: Hinzugefügt/Added (A), Änderung/Changed (C), Löschung/Deleted (
 
 \section{Einleitung}
 	\subsection{Motivation} % Motivation, Thema, Ziel
-BonoboBoard ist ein kostenfreier webbasierter Service für alle Studierenden der DHBW Mannheim, die statt vieler unabhängiger Websites eine einzige Übersicht aller auf die Hochschule bezogenen Inhalte erhalten wollen.\\
+BonoboBoard ist eine kostenfreie Webanwendung für alle Studierenden der DHBW Mannheim, die statt vieler unabhängiger Websites eine einzige Übersicht aller auf die Hochschule bezogenen Inhalte erhalten wollen.\\
 Es stellt Funktionen bereit, die alle relevanten Websites der DHBW Mannheim nach Informationen durchsucht und diese in Form eines Dashboards darstellt.\\
 Da keine Konkurrenzprodukte existieren, ist unser Produkt am Markt einzigartig.
 
 
 	\subsection{Zielgruppe} % Personas
 Das BonoboBoard soll Studierende der DHBW Mannheim ansprechen. Da sich die Anforderungsdefinition nach der Persona Methode richtet, folgt eine Beschreibung unserer Persona:\\\\
-Hans ist 20 Jahre alt, hat sein Abitur absolviert und studiert nun an der DHBW Mannheim im zweiten Semester Informationstechnik. Er ist sehr motiviert und möchte sein Studium bestmöglich absolvieren. Dabei nutzt er Tools, die es ihm erlauben effektiver zu arbeiten. Beispielsweise nutzt er einen Kalender, um seine Termine mit dem Vorlesungsplan in Einklang zu bringen.\\ % automatisches / manuelles Eintragen ? Passt hier nicht wirklich rein
-\noindent
+Hans ist 20 Jahre alt, hat sein Abitur absolviert und studiert nun an der DHBW Mannheim im zweiten Semester Informationstechnik. Er ist sehr motiviert und möchte sein Studium bestmöglich absolvieren. Dabei nutzt er Tools, die es ihm erlauben effektiver zu arbeiten. Beispielsweise nutzt er einen Kalender, um seine Termine mit dem Vorlesungsplan in Einklang zu bringen.\\ 
 Da er sich im zweiten Semester befindet, hat er bereits alle Websites der DHBW Mannheim kennengelernt. Gerade bei der Verwaltung und Struktur der DHBW-Plattform Moodle und Dualis sieht er einige Schwachstellen und sucht nach übersichtlichen Alternativen, die den Informationsfluss der DHBW auf einem Kanal bündeln. Er begibt sich auf die Suche nach Tools, die ihm den Universitätsalltag erleichtern.\\
-Beim Arbeiten mit Tools legt er wert darauf, dass diese intuitiv zu bedienen sind und ein halbwegs ansprechendes Design vorweisen. Daher ist er von den Websites, mit welchen er im DHBW Studium arbeiten muss, frustriert.
-
-
-
-% Auf der Suche nach einem weiteren Tool, was ihm die Arbeit erleichtert stößt er auf das BonoboBoard.
+Beim Arbeiten mit Tools legt er wert darauf, dass diese intuitiv zu bedienen sind und ein halbwegs ansprechendes Design vorweisen. Daher ist er von den Websites mit dem er im DHBW Studium aktuell arbeiten muss frustriert.
 
 	\subsection{Detaillierte Ziele} % Szenarios
 
 \textbf{Szenario 1: Den DHBW Vorlesungsplan einsehen}\par\noindent
-Hans benutzt das BonoboBoard, um seinen wöchentlichen Vorlesungsplan direkt auf seinem Dashboard angezeigt zu bekommen. Durch das Auswählen einer bestimmten Vorlesung kann er sehen, welchen Vorlesungsraum, er betreten muss. Dies ist unabhängig davon, ob die Veranstaltung online oder in Präsenz stattfindet. Hierbei hilft ihm vor allem die einfache Zuordnung der Links zu den Vorlesungsräumen für die unterschiedlichen Online-Plattformen, wie Microsoft-Teams oder BigBlueButton, welche sonst mühsam zu ermitteln war. Sollte diese automatische Zuordnung einmal nicht möglich sein, kann Hans für zukünftige Termine Vorlesungslinks zu Räumen ergänzen. Die Veranstaltungen nehmen ihrer Dauer entsprechend Platz im Kalender ein, wodurch Hans eine Übersicht über ihm frei zur Verfügung stehende Zeiträume erhält. Zurückliegende Veranstaltungen werden farbig unterschiedlich zu noch ausstehenden hervorgehoben, wodurch Hans weiß, welche Termine für ihn noch ausstehen.
+Hans benutzt das BonoboBoard, um seinen wöchentlichen Vorlesungsplan direkt auf seinem Dashboard angezeigt zu bekommen. Durch das Auswählen einer bestimmten Vorlesung kann er sehen welchen Vorlesungsraum er betreten muss. Dies ist unabhängig davon, ob die Veranstaltung online oder in Präsenz stattfindet. Hierbei hilft ihm vor allem die einfache Zuordnung der Links zu den Vorlesungsfächern bei unterschiedlichen Online-Plattformen, wie Microsoft-Teams oder BigBlueButton, welche sonst mühsam zu ermitteln war. Sollte eine automatische Zuordnung von Vorlesungsraum zu Vorelsungsfach einmal nicht möglich sein, kann Hans für seine zukünftigen Termine Vorlesungslinks oder Raumnummern ergänzen. Die Veranstaltungen nehmen ihrer Dauer entsprechend Platz im Kalender ein, wodurch Hans eine Übersicht über ihm frei zur Verfügung stehende Zeiträume erhält. Zurückliegende Veranstaltungen werden farbig unterschiedlich zu noch ausstehenden hervorgehoben, wodurch Hans weiß, welche Termine für ihn noch ausstehen.\\
 
+\noindent\textbf{Szenario 2: Die Prüfungsnoten einsehen} \par\noindent
+Bisher musste Hans immer die Website Dualis aufrufen, um seine Prüfungsergebnisse einsehen zu können. Mit Hilfe von BonoboBoard ruft er nun seine Ergebnisse direkt über das Dashboard auf. Seine Prüfungsergebnisse sind zunächst unerkenntlich auf dem Dashboard zu sehen und werden erst nach einem Mausklick auf das Feld Leistungsübersicht erkenntlich gemacht. Dadurch kann Hans seinen Bildschirm in der Vorlesung teilen ohne seine Noten preiszugeben. Über das Menüfeld gelangt Hans in eine detailreichere Übersicht seiner Prüfungsergebnisse. Dort sind die einzelen Noten der Modulfächer vorzufinden. \\
+
+\noindent\textbf{Szenario 3: Die verschiedenen Kursräume organisieren} \par\noindent
+Hans' einzelne Vorlesungen finden, sowohl online als auch in Präsenz, an verschiedenen Orten statt. Vor allem die Organisation der Links zu den einzelnen Online-Vorlesungsräumen, fiel Hans besonders schwer, da die Vorlesungen einerseits auf unterschiedlichen Online-Plattformen gehalten werden und andererseits er die jeweilligen Einladungslinks entweder über Email oder über die Plattform Moodle erhalten hat. Durch das BonoboBoard kann Hans nun die Vorlesungen, die er besuchen will, im Vorlesungsfeld auswählen und sieht unmittelbar welchen Vorlesungsraum er betreten muss. Die Vorlesungsräume werden automatisch zu den Vorlesungsfächern zugeordnet, sollte diese Zuordnung nicht möglich sein kann Hans Vorlesungslinks oder Vorlesungsräume ergänzen. \\
+
+\noindent\textbf{Szenario 4: Das Versenden und Einsehen von Emails} \par\noindent
+Die Kommunikation zwischen Hans und seinen Dozent*innen erfolgte bisher über den Zimbra Webclient. Die grafische Oberfläche hat Hans derart frustriert, dass er nur sehr selten seine Emails freiwillig überprüft hat. Seit er BonoboBoard verwendet schaut er viel häufiger in sein Postfach und versendet öfters Emails. Das ansprechende Design und die intuitve Bedienung von BonoboBoard bereiten empfangene Emails  übersichtlich auf und vereinfachen den Prozess Emails zu verschicken. \\
+
+\noindent\textbf{Szenario 5: Das Anmelden auf BonoboBoard} \par\noindent
+Hans, als IT-Student, legt viel Wert auf seine Datensicherheit. Er will seine DHBW-Login-Daten nicht mit Dritten teilen, um diese vor Missbrauch zu schützen. Bei der Verwendung von BonoboBoard hat er keine Bedenken, da die Anwendung sein Passwort nicht speichert und er bei jedem Aufruf erneut nach seinem Passwort gefragt wird. 
 
 \section{Hauptteil}
 	\subsection{Anforderungen} % User Stories
