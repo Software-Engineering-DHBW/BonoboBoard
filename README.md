@@ -7,15 +7,15 @@
 GitHub team-codex
 ----------------
 
-1)  **Don't change the main branch directly.** Only update the main by merge requests. <br> 
+1)  <font size="+20">Don't change the main branch directly.</font> Only update the main by merge requests. <br> 
 Exceptions are made for new documents or their content.
 
 2) Branches need **meaningful names** and need to match one of the following  categories: <br>
-core<br>
-frontend<br>
-feature<br>
-bugfix<br>
-test<br>
+	 * core  
+	 * frontend  
+	 * feature  
+	 * bugfix  
+	 * test    </br> </br>
 example: "feature/docs_faculty_technic" or "core/session_handling_requests"<br>
 
 3) **Merge Requests**: <br>
