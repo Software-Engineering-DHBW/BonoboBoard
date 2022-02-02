@@ -4,9 +4,35 @@
 :--|:--
 **Unsere Vision** | BonoboBoard wird ein kostenfreier webbasierter Service für alle Studierenden der DHBW Mannheim, die statt vieler unabhängiger Websites eine einzige Übersicht aller auf die Hochschule bezogenen Inhalte erhalten wollen. Es soll Funktionen bereit stellen, die alle relevanten Websites der DHBW Mannheim nach Informationen durchsuchen und diese in Form eines Dashboards darstellen.
 
-## Used Tools
+GitHub team-codex
+----------------
 
-* [PLACEHOLDER]()
+1)  **Don't change the main branch directly.** Only update the main by merge requests. <br> 
+Exceptions are made for new documents or their content.
+
+2) Branches need **meaningful names** and need to match one of the following  categories: <br>
+core<br>
+frontend<br>
+feature<br>
+bugfix<br>
+test<br>
+example: "feature/docs_faculty_technic" or "core/session_handling_requests"<br>
+
+3) **Merge Requests**: <br>
+	Need **approvals of two** team members.<br>
+	The person requesting has to merch him- or herself.<br>
+
+
+## Used Tools
+* MYPY: pip install mypy
+* Pylint: pip install pylint
+
+
+## Third-Party Libraries
+* django
+* requests
+* beautifulsoup4
+
 
 ## Style Guides
 
