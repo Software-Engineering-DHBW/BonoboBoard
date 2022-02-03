@@ -1,39 +1,21 @@
 # -*- coding: utf-8 -*-
 
-"""the base module provides basic functionality for requests
+"""the util module provides basic functionality for requests
 """
 
-from typing import Any, Dict, List, NoReturn, TypedDict, Union
+from abc import ABC, ABCMeta, abstractmethod
 import re
 import requests
-from requests.models import Response
 from requests.exceptions import RequestException
-
-###                ###
-# TYPING DEFINITIONS #
-###                ###
-
-class MoodleModuleDict(TypedDict):
-    """TypedDict for moodle course modules"""
-    name: str
-    url: str
-
-class MoodleCourseDict(TypedDict):
-    """TypedDict for moodle courses"""
-    name: str
-    href: str
-    bbb_rooms: List[MoodleModuleDict]
-
-MoodleDict = Dict[str, Union[List[MoodleCourseDict], str]]
 
 ###              ###
 # HELPER FUNCTIONS #
 ###              ###
 
 def reqpost(
-        *, url: str = "", headers: Dict[str, str] = None,
-        params: Dict[str, str] = None, payload: Dict[str, str] = None,
-        allow_redirects: bool = False, return_code: int = 200) -> Union[Response, NoReturn]:
+        *, url = "", headers = None,
+        params = None, payload = None,
+        allow_redirects = False, return_code = 200):
     """wrapper for a post request with return code check
 
     Parameters
@@ -62,7 +44,7 @@ def reqpost(
         if the expected return code differs from the actual return code
     """
 
-    res: Response = requests.post(
+    res = requests.post(
         url=url,
         headers=headers,
         params=params,
@@ -78,9 +60,9 @@ def reqpost(
     return res
 
 def reqget(
-        *, url: str = "", headers: Dict[str, str] = None,
-        params: Dict[str, str] = None, allow_redirects: bool = False,
-        return_code: int = 200) -> Union[Response, NoReturn]:
+        *, url = "", headers = None,
+        params = None, allow_redirects = False,
+        return_code = 200):
     """wrapper for a get request with return code check
 
     Parameters
@@ -107,7 +89,7 @@ def reqget(
         if the expected return code differs from the actual return code
     """
 
-    res: Response = requests.get(
+    res = requests.get(
         url=url,
         headers=headers,
         params=params,
@@ -121,7 +103,7 @@ def reqget(
         raise RequestException(err_msg)
     return res
 
-def url_get_fqdn(url: str) -> str:
+def url_get_fqdn(url):
     """return fqdn of an url
 
     Parameters
@@ -136,8 +118,8 @@ def url_get_fqdn(url: str) -> str:
     """
     return re.sub(r"(^http[s]?://)|(/.*$)", "", url)
 
-def url_get_path(url: str) -> str:
-    """return path of an url
+def url_get_path(url):
+    """return path to file of an url
 
     Parameters
     ----------
@@ -151,7 +133,7 @@ def url_get_path(url: str) -> str:
     """
     return re.sub(r"(^.*/)|(\?.*$)", "", url)
 
-def url_get_args(url: str) -> List[str]:
+def url_get_args(url):
     """return array of arguments of an url
 
     Parameters
@@ -171,16 +153,14 @@ def url_get_args(url: str) -> List[str]:
 # ABSTRACT BASE CLASS #
 ###                 ###
 
-class Importer:
+class Importer(ABC):
     """base class for every importer
 
     Attributes
     ----------
-    __auth_token : str
-        the string representing the authentication cookie for the created session
-    __headers: dict
+    headers: dict
         a dictionary with default headers and their respective values
-    __scraped_data: dict
+    scraped_data: dict
         a dictionary representing the scraped data
 
     Methods
@@ -189,50 +169,17 @@ class Importer:
         method to drop an header
     """
 
-    __auth_token: str
-    __headers: Dict[str, str]
-    __scraped_data: Dict[str, Union[MoodleDict, Any]]
-
-    __slots__ = ("__auth_token", "__headers", "__scraped_data",)
+    __slots__ = ("headers", "scraped_data",)
 
     def __init__(self):
         usr_ag = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0"
-        self.__headers = {
+        self.headers = {
             "Accept": "*/*",
             "Accept-Encoding": "gzip, deflate, br",
             "Accept-Language": "en-US,en;q=0.5",
             "User-Agent": usr_ag
         }
-
-    @property
-    def auth_token(self) -> str:
-        """getter for attribute __auth_token"""
-        return self.__auth_token
-
-    @auth_token.setter
-    def auth_token(self, token) -> None:
-        """setter for attribute __auth_token"""
-        self.__auth_token = token
-
-    @property
-    def headers(self) -> Dict[str, str]:
-        """getter for attribute __headers"""
-        return self.__headers
-
-    @headers.setter
-    def headers(self, key, value) -> None:
-        """"setter for attribute __headers"""
-        self.__headers[key] = value
-
-    @property
-    def scraped_data(self) -> Dict[str, Union[MoodleDict, Any]]:
-        """"getter for attribute __scraped_data"""
-        return self.__scraped_data
-
-    @scraped_data.setter
-    def scraped_data(self, key: str, value: Union[MoodleDict, Any]) -> None:
-        """setter for attribute __scraped_data"""
-        self.__scraped_data[key] = value
+        self.scraped_data = {}
 
     def drop_header(self, header) -> None:
         """method to drop an header
@@ -246,4 +193,31 @@ class Importer:
         -------
         None
         """
-        self.__headers.pop(header)
+        self.headers.pop(header)
+
+class ImporterSession(Importer, metaclass=ABCMeta):
+    """base class for every importer with session handling
+
+    Attributes
+    ----------
+    auth_token : str
+        the string representing the authentication cookie for the created session
+    """
+
+    __slots__ = ("auth_token",)
+
+    def __init__(self):
+        super().__init__()
+        self.auth_token = ""
+
+    @abstractmethod
+    def login(self, username, password):
+        pass
+
+    @abstractmethod
+    def scrape(self):
+        pass
+
+    @abstractmethod
+    def logout(self):
+        pass

@@ -3,9 +3,7 @@
 """the zimbra module provides an interface to interact with zimbra
 """
 
-from typing import ClassVar, Dict
-from requests.models import Response
-from base import reqpost, url_get_fqdn
+from util import reqpost, url_get_fqdn
 
 ###            ###
 # ZIMBRA HANDLER #
@@ -16,11 +14,11 @@ class ZimbraHandler:
 
     Attributes
     ----------
-    __url: str
+    url: str
         the given url for zimbra
-    __auth_token: str
+    auth_token: str
         the string representing the authentication cookie for the created session
-    __headers: dict
+    headers: dict
         a dictionary with default headers and their respective values
 
     Methods
@@ -31,45 +29,22 @@ class ZimbraHandler:
         creates a session for the user
     """
 
-    __url: ClassVar[str] = "https://studgate.dhbw-mannheim.de/zimbra/"
+    url = "https://studgate.dhbw-mannheim.de/zimbra/"
 
-    __auth_token: str
-    __headers: Dict[str, str]
+    __slots__ = ("auth_token", "headers")
 
-    __slots__ = ("__auth_token", "__headers")
-
-    def __init__(self, username: str, password: str) -> None:
+    def __init__(self):
+        self.auth_token = ""
         usr_ag = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0"
-        self.__headers = {
+        self.headers = {
             "Accept": "*/*",
             "Accept-Encoding": "gzip, deflate, br",
             "Accept-Language": "en-US,en;q=0.5",
-            "Host": url_get_fqdn(ZimbraHandler.__url),
+            "Host": url_get_fqdn(ZimbraHandler.url),
             "User-Agent": usr_ag
         }
-        self.login(username, password)
 
-    @property
-    def auth_token(self) -> str:
-        """getter for attribute __auth_token"""
-        return self.__auth_token
-
-    @auth_token.setter
-    def auth_token(self, value: str) -> None:
-        """setter for attribute __auth_token"""
-        self.__auth_token = value
-
-    @property
-    def headers(self) -> Dict[str, str]:
-        """getter for attribute __headers"""
-        return self.__headers
-
-    @headers.setter
-    def headers(self, key: str, value: str) -> None:
-        """setter for attribute __headers"""
-        self.__headers[key] = value
-
-    def drop_header(self, header) -> None:
+    def drop_header(self, header):
         """method to drop an header
 
         Parameters
@@ -81,9 +56,9 @@ class ZimbraHandler:
         -------
         None
         """
-        self.__headers.pop(header)
+        self.headers.pop(header)
 
-    def login(self, username: str, password: str) -> None:
+    def login(self, username, password):
         """authenticate the user against zimbra
 
         Parameters
@@ -97,14 +72,14 @@ class ZimbraHandler:
         -------
         None
         """
-        url: str = ZimbraHandler.__url
+        url = ZimbraHandler.url
 
         # set headers for post request
         self.headers["Content-Type"] = "application/x-www-form-urlencoded"
         self.headers["Cookie"] = "ZM_TEST=true"
 
         # form data
-        payload: Dict[str, str] = {
+        payload = {
             "client": "preferred",
             "loginOp": "login",
             "username": username,
@@ -112,7 +87,7 @@ class ZimbraHandler:
         }
 
         # LOGIN - POST REQUEST
-        r_login: Response = reqpost(
+        r_login = reqpost(
             url=url,
             headers=self.headers,
             payload=payload,
