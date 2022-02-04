@@ -20,7 +20,7 @@ example: "feature/docs_faculty_technic" or "core/session_handling_requests"<br>
 
 3) **Merge Requests**: <br>
 	Need **approvals of two** team members.<br>
-	The person requesting has to merch him- or herself.<br>
+	The person requesting has to merge him- or herself.<br>
 
 
 ## Used Tools
