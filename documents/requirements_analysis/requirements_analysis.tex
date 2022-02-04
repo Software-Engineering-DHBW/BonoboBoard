@@ -53,10 +53,11 @@
 
 \section*{Änderungshistorie}
 \begin{table}[h]
-	\begin{tabular}{@{} p{20mm} p{25mm} p{25mm} p{75mm}}
+	\begin{tabular}{@{} p{20mm} p{25mm} p{40mm} p{75mm}}
 		\textbf{Revision} & \textbf{Datum} & \textbf{Autor(en)} & \textbf{Beschreibung}\\
 		1.0 & 31.01.2022 & NK|PK & A: 1.1, 1.2, 1.3\\
-		1.1 & 31.01.2022 & JW & A: 1.3, C: 1.1, 1.2, 1.3 
+		1.1 & 31.01.2022 & JW & A: 1.3, C: 1.1, 1.2, 1.3\\
+		1.2 & 04.02.2022 & JW|NK|derPeder|PK & A: 2.1, 2.2, 3 \\
 	\end{tabular}
 \end{table}
 \noindent
@@ -103,11 +104,152 @@ Hans, als IT-Student, legt viel Wert auf seine Datensicherheit. Er will seine DH
 
 \section{Hauptteil}
 	\subsection{Anforderungen} % User Stories
-	
+\noindent\textbf{Abgeleitet aus Szenario 1: Den DHBW Vorlesungsplan einsehen}\par\noindent
+\begin{table}[H]
+\begin{tabular}{|p{4.5cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Als <Rolle> möchte ich} &\textbf{ <etwas tun>} &\textbf{ <Nutzen>} \\ \hline
+Als Student*in möchte ich & direkt erkennen, wo die Vorlesungen stattfinden, &   für einen schnelleren Login in die DHBW-Ressourcen. \\ \hline
+Als Student*in möchte ich &   direkt erkennen, wie viel Zeit die Vorlesung vom gesamten Tag einnimmt,                    &  um besser andere Termine planen zu können.                       \\ \hline
+Als Student*in möchte ich &  direkt erkennen, welche Vorlesungen bereits vergangen sind,                     &    um den weiteren Tagesverlauf besser planen zu können.                     \\ \hline
+Als Student*in möchte ich &  falls eine automatische Übertragung der Vorlesungslinks/ Räume nicht stattgefunden hat, manuell Vorlesungslinks/ Räume hinzufügen können, &     um eine Übersicht zu haben, wo die Veranstaltungen stattfinden.                \\ \hline
+\end{tabular}
+\end{table}
+\newpage
+
+\noindent\textbf{Abgeleitet aus Szenario 2: Die Prüfungsnoten einsehen} \par\noindent
+\begin{table}[H]
+\begin{tabular}{|p{4.5cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Als <Rolle> möchte ich} &\textbf{ <etwas tun>} &\textbf{ <Nutzen>} \\ \hline
+Als Student*in möchte ich & meine Noten aus Dualis ohne einen extra Login im Dashboard angezeigt bekommen, &  um einfacher nachsehen zu können, welche Noten ich habe. \\ \hline
+Als Student*in möchte ich, & dass meine Noten zunächst ausgeblendet sind und ich diese mit einem Klick sichtbar machen kann, &  um im Vorlesungsraum / beim Teilen private Details zu schützen.  \\ \hline
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Abgeleitet aus Szenario 3: Die verschiedenen Kursräume organisieren} \par\noindent
+\begin{table}[H]
+\begin{tabular}{|p{4.5cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Als <Rolle> möchte ich} &\textbf{ <etwas tun>} &\textbf{ <Nutzen>} \\ \hline
+Als Student*in möchte ich & direkt vom Vorlesungsplan per Klick in den richtigen Onlineraum kommen, & um relevante Informationen an einer Stelle zu halten.  \\ \hline
+Als Student*in möchte ich & meinen Vorlesungen Links hinzufügen und diese bearbeiten können, & um zu gewährleisten, dass der Link immer aktuell und korrekt ist.  \\ \hline
+Als Student*in möchte ich & eine Liste von Links angeboten bekommen, die im Moodle gefunden wurden, & damit ein selbstständiges Kopieren überflüssig ist.  \\ \hline
+Als Student*in möchte ich, & dass die gefunden Links automatisch - sofern möglich - den richtigen Vorlesungen zugeordnet werden, &  um einen möglichst geringen Verwaltungsaufwand zu haben. \\ \hline
+\end{tabular}
+\end{table}
+\noindent\textbf{Abgeleitet aus Szenario 4: Das Versenden und Einsehen von Emails} \par\noindent
+\begin{table}[H]
+\begin{tabular}{|p{4.5cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Als <Rolle> möchte ich} &\textbf{ <etwas tun>} &\textbf{ <Nutzen>} \\ \hline
+Als Student*in möchte ich & meine Studenten-Mails lesen, &  um über alle Hochschulmails informiert zu sein. \\ \hline
+Als Student*in möchte ich & neue Mails verfassen und versenden, & um mit Kommilitonen und Dozenten zu interagieren.  \\ \hline
+Als Student*in möchte ich & auf Mails im Posteingang antworten können, & um zusammenhängende Mails im selben Kontext zu halten.   \\ \hline
+\end{tabular}
+\end{table}
+\noindent\textbf{Abgeleitet aus Szenario 5: Das Anmelden auf BonoboBoard} \par\noindent
+\begin{table}[H]
+\begin{tabular}{|p{4.5cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Als <Rolle> möchte ich} &\textbf{ <etwas tun>} &\textbf{ <Nutzen>} \\ \hline
+Als Student*in möchte ich & dass ich mich direkt mit meinem Studenten-Anmeldedaten anmelden kann  & um nur eine Anmeldung für alle DHBW-Tools zu haben.  \\ \hline
+\end{tabular}
+\end{table}
+\newpage
+
 	\subsection{Funktionalität} % Features
 	
-\section{Zusammenfassung}
+\noindent\textbf{BonoboBoard Datenimport} \par\noindent	
+Beschreibung: 
+\begin{itemize}
+\item Nach der Anmeldung mit den DHBW-Anmeldedaten werden automatisch alle Daten importiert.
+\item 	Dies geschieht durch den  Zugriff auf die jeweiligen Websites der DHBW mit Hilfe der gegebenen Anmeldedaten.
+\item 	Die Authentifikationstokens, der DHBW Seiten, werden im Speicher gehalten um Daten ohne weitere Anmeldung aktualisieren zu können.
+\end{itemize}
 
+User Stories: 
+\begin{itemize}
+\item Hergeleitet aus Szenario 5.
+\end{itemize}
+
+Bedingungen: 
+\begin{itemize}
+\item  Die Student*in hat ein Konto im Rechenzentrum der DHBW Mannheim.
+\item Die jeweiligen Webdienste sind verfügbar.
+\end{itemize}	
+	
+	
+\noindent\textbf{BonoboBoard Vorlesungsplan} \par\noindent	
+Beschreibung: 
+\begin{itemize}
+\item Der Kalender des BonoboBoard zeigt alle Vorlesungszeiten des Nutzers.
+\item Mit Hilfe der Moodle-Integration werden alle Kursräume extrahiert, um diese im Vorlesungsplan einer Veranstaltung hinzuzufügen.
+\end{itemize}
+
+User Stories: 
+\begin{itemize}
+\item Hergeleitet aus Szenario 1 und 3.
+\end{itemize}
+
+Bedingungen: 
+\begin{itemize}
+\item Die Student*in gibt ihren Kurs an.
+\item Die Student*in hat Zugriff auf das Moodle System.
+\end{itemize}
+
+\noindent\textbf{BonoboBoard Zimbra-Integration} \par\noindent	
+Beschreibung: 
+\begin{itemize}
+\item Die Mails im Posteingang der Student*in werden im BonoboBoard angezeigt.
+\item Auf die angezeigten Mails kann geantwortet werden.
+\end{itemize}
+
+User Stories: 
+\begin{itemize}
+\item Hergeleitet aus Szenario 4.
+\end{itemize}
+
+Bedingungen: 
+\begin{itemize}
+\item Die Student*in hat Zugriff auf das Zimbra Portal.
+\item Die Student*in hat keine Mail-Weiterleitung eingerichtet.
+\item Datenimport
+\end{itemize}
+\newpage
+
+\noindent\textbf{BonoboBoard Notenübersicht (Dualis)} \par\noindent	
+Beschreibung: 
+\begin{itemize}
+\item 	Die Notenübersicht zeigt die Noten der Student*in an, die aus dem Dualis System bezogen werden.
+\item 	Die Noten werden erst dann angezeigt, wenn sie angeklickt werden.
+\end{itemize}
+
+User Stories: 
+\begin{itemize}
+\item Hergeleitet aus Szenario 2.
+\end{itemize}
+
+Bedingungen: 
+\begin{itemize}
+\item Der/Die Student*in hat Zugriff auf das Dualis System.
+\item Datenimport
+\end{itemize}
+	
+\section{Zusammenfassung}
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{Dependencies}
+\caption{Projekt Abhängigkeiten}
+\label{img:Dependencies}
+\end{center}
+\end{figure}
+
+Das BonoboBoard umfasst vier Features, von denen eines Voraussetzung für die anderen drei ist (vgl. Abb. \ref{img:Dependencies}). Bei dem ersten handelt es sich um eine Importfunktion, die die Anmeldedaten einer Student*in für das DHBW Rechenzentrum entgegennimmt und diese nutzt, um Zugriff auf die vier wesentlichen DHBW Onlinedienste zu erhalten: Vorlesungsplan, Moodle, Dualis und Zimbra-Webclient. Mit den von diesen Onlineportalen erhaltenen Informationen werden drei Funktionen des BonoboBoards bereitgestellt: Vorlesungsplan, Notenübersicht und Mailservice.\\
+Im Vorlesungsplan werden Termine und Zeiten der Veranstaltungen angezeigt und im Falle von Onlinelehre mit einem Link zu einem Online-Vorlesungsraum versehen. Diese Links werden aus dem Moodle System bezogen.\\
+Die Notenübersicht zeigt der Student*in eine Leistungsübersicht an, die aus dem Dualis bezogen wird. Die Noten werden erst auf Anfrage angezeigt.\\
+Der Mailservice befähigt die Student*in Emails zu lesen, zu schreiben und zu beantworten. Diese Funktionen werden unter Verwendung des Zimbra-Webclients zur Verfügung gestellt.\\
+Das Tool fasst die wesentlichen Funktionen, der von der DHBW Mannheim verwendeten Onlineportalen, zentral an einer Stelle zusammen.
 
 
 		%------------------------------------------------------------
