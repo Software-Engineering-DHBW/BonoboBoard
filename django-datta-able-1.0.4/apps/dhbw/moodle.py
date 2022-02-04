@@ -237,5 +237,10 @@ class MoodleImporter(ImporterSession):
         None
         """
         # logout request
-        reqget(url=self.logout_url, headers=self.headers, return_code=303)
+        reqget(
+            url=self.logout_url,
+            headers=self.headers,
+            return_code=303
+        )
+        
         self.auth_token = ""

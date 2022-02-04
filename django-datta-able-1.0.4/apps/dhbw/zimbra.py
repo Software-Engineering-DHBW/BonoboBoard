@@ -3,13 +3,16 @@
 """the zimbra module provides an interface to interact with zimbra
 """
 
-from util import reqpost, url_get_fqdn
+import re
+import json
+from bs4 import BeautifulSoup
+from util import ImporterSession, reqget, reqpost, url_get_fqdn
 
 ###            ###
 # ZIMBRA HANDLER #
 ###            ###
 
-class ZimbraHandler:
+class ZimbraHandler(ImporterSession):
     """handler for interacting with zimbra
 
     Attributes
@@ -31,32 +34,12 @@ class ZimbraHandler:
 
     url = "https://studgate.dhbw-mannheim.de/zimbra/"
 
-    __slots__ = ("auth_token", "headers")
+    __slots__ = ("contacts",)
 
     def __init__(self):
-        self.auth_token = ""
-        usr_ag = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0"
-        self.headers = {
-            "Accept": "*/*",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Accept-Language": "en-US,en;q=0.5",
-            "Host": url_get_fqdn(ZimbraHandler.url),
-            "User-Agent": usr_ag
-        }
-
-    def drop_header(self, header):
-        """method to drop an header
-
-        Parameters
-        ----------
-        header: str
-            the name of the header which should be dropped
-
-        Returns
-        -------
-        None
-        """
-        self.headers.pop(header)
+        super().__init__()
+        self.headers["Host"] = url_get_fqdn(ZimbraHandler.url)
+        self.contacts = {}
 
     def login(self, username, password):
         """authenticate the user against zimbra
@@ -102,14 +85,75 @@ class ZimbraHandler:
         # drop content-type header
         self.drop_header("Content-Type")
 
-    # def scrape(self) -> None:
-    #     """
-    #     """
-    #     # lazy peon
-    #     url: str = ZimbraHandler.__url
+    def structure_scraped_data(self):
+        """
+        """
+        pass
 
-    # def write_mail(self) -> None:
-    #     """
-    #     """
-    #     # lazy peon
-    #     url: str = ZimbraHandler.__url
+    def scrape(self):
+        """
+        """
+        url = ZimbraHandler.url
+
+        r_home = reqget(
+            url=url,
+            headers=self.headers,
+        )
+
+        content_home = BeautifulSoup(r_home.text, "lxml")
+
+        # improvement idea -> let it loop reversed, since needed content
+        #                     is inside the last / one of the last script tag(s)
+        for tag_script in content_home.find_all("script"):
+            if "var batchInfoResponse" in str(tag_script.string):
+                temp = re.search(
+                    r"var\ batchInfoResponse\ =\ \{\"Header\":.*\"_jsns\":\"urn:zimbraSoap\"\};",
+                    str(tag_script.string)
+                )
+                break
+        temp_json = json.loads(
+            re.sub(r"(var\ batchInfoResponse\ =\ )|(;$)", "", temp.group(0))
+        )
+        self.scraped_data = json.dumps(temp_json)
+
+    def send_mail(self, ):
+        """
+        """
+        url = ZimbraHandler.url
+
+        self.headers["Content-Type"] = "application/soap+xml; charset=utf-8"
+        self.headers["Referer"] = url
+
+        data = {
+            "Header": {
+                "context": {
+                    "auth_token": self.auth_token
+                }
+            },
+            "Body": {
+                "SendMsgRequest": {
+                    "m": {
+
+                    }
+                }
+            }
+        }
+
+        r_send_mail = reqpost(
+            url=url+"service/soap/SendMsgRequest",
+            headers=self.headers,
+            payload=json.dumps(data)
+        )
+
+    def logout(self):
+        """
+        """
+        url = ZimbraHandler.url
+
+        reqget(
+            url=url,
+            headers=self.headers,
+            params={"loginOp": "logout"},
+            return_code=200
+        )
+        self.auth_token = ""
