@@ -42,4 +42,5 @@ example: "feature/docs_faculty_technic" or "core/session_handling_requests"<br>
 
 ## Interesting Resources
 
-understand HTML grids: https://getbootstrap.com/docs/4.0/examples/grid/
+understand HTML grids: https://getbootstrap.com/docs/4.0/examples/grid/  
+understand git: https://git-scm.com/book/en/v2
