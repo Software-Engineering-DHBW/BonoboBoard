@@ -5,6 +5,8 @@ services:
     restart: always
     env_file: .env
     build: .
+    volumes:
+      - ./apps:/apps
     networks:
       - db_network
       - web_network
