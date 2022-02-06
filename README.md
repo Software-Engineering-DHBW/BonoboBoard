@@ -7,7 +7,21 @@
 ## The Prototype
 
 To ensure that our project is possible, we created a prototype for two of your core-features.  
-We use python version 3.8.  
+We use python version 3.8.
+
+**************************** 
+
+### Reasons for the feature-selection
+
+We chose the ```DualisImporter``` and ```LectureImporter``` because they represent our core-functionalities.   
+#### DualisImporter
+We rely on this feature to get all grades.   
+We thought it's difficult to gather "protected" date (user, password), so we chose it to be in our prototype.
+
+#### LectureImporter
+Without a function to get all lectures of a specified course, we can't display a calendar.   
+So this is a number one priority and the reason it's in our prototype.
+
 This is how you get them to run:
 
 **************************** 
