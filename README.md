@@ -1,7 +1,7 @@
 # BonoboBoard
 
-| **Projektname**   | <img src="https://github.com/Software-Engineering-DHBW/BonoboBoard/blob/main/documents/latex_template/img/BonboBoardLogoWhite.png" height="64">                                                                                                                                                                                                                                           |
-| :---------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Projektname**   | <img src="https://github.com/Software-Engineering-DHBW/BonoboBoard/blob/main/documents/latex_template/img/BonboBoardLogoWhite.png" height="64">|
+| :---------------- | :----------- |
 | **Unsere Vision** | BonoboBoard wird ein kostenfreier webbasierter Service für alle Studierenden der DHBW Mannheim, die statt vieler unabhängiger Websites eine einzige Übersicht aller auf die Hochschule bezogenen Inhalte erhalten wollen. Es soll Funktionen bereit stellen, die alle relevanten Websites der DHBW Mannheim nach Informationen durchsuchen und diese in Form eines Dashboards darstellen. |
 
 ## The Prototype
@@ -19,8 +19,10 @@ This is how you get them to run:
   - ``` requests ```
   - ``` re ```
   - ``` sys ```
-- check them by opening a python-shell and type ``` import package ```
+- check them by opening a python-shell and type ``` import *package* ```
   - if this throws no errors, you have already fulfilled the package requirement
+
+****************************  
 
 ### Dualis-Importer
 1. Navigate into the folder 
@@ -35,12 +37,246 @@ This is how you get them to run:
        - where studentMail contains your student-mail as a string
        - where password contains your DHBW-password
 
-In case you don't have DHBW-Credentials, this is the result of the request:
-``` yaml
-{'2': {'modul': 'T3INF1001', 'subject': 'Mathematik I', 'grade': '18', 'credits': '80', 'status': nan, 'date': nan}, '3': {'modul': 'T3INF1002', 'subject': 'Theoretische Informatik I', 'grade': '20', 'credits': '50', 'status': nan, 'date': nan}, '4': {'modul': 'T3INF1003', 'subject': 'Theoretische Informatik II', 'grade': '15', 'credits': '50', 'status': nan, 'date': nan}, '5': {'modul': 'T3INF1004', 'subject': 'Programmieren', 'grade': '10', 'credits': '90', 'status': nan, 'date': nan}, '6': {'modul': 'T3INF1005', 'subject': 'SchlÃ¼sselqualifikationen', 'grade': '15', 'credits': '50', 'status': nan, 'date': nan}, '7': {'modul': 'T3INF1006', 'subject': 'Technische Informatik I', 'grade': '16', 'credits': '50', 'status': nan, 'date': nan}, '8': {'modul': 'T3INF2001', 'subject': 'Mathematik II', 'grade': '15', 'credits': '60', 'status': nan, 'date': nan}, '9': {'modul': 'T3INF2002', 'subject': 'Theoretische Informatik III', 'grade': '14', 'credits': '60', 'status': nan, 'date': nan}, '10': {'modul': 'T3INF2003', 'subject': 'Software Engineering I', 'grade': '10', 'credits': '90', 'status': nan, 'date': nan}, '11': {'modul': 'T3INF2004', 'subject': 'Datenbanken', 'grade': '11', 'credits': '60', 'status': nan, 'date': nan}, '12': {'modul': 'T3INF2005', 'subject': 'Technische Informatik II', 'grade': '15', 'credits': '80', 'status': nan, 'date': nan}, '13': {'modul': 'T3INF2006', 'subject': 'Kommunikations- und Netztechnik', 'grade': '10', 'credits': '50', 'status': nan, 'date': nan}, '14': {'modul': 'T3INF3001', 'subject': 'Software Engineering II', 'grade': nan, 'credits': nan, 'status': nan, 'date': nan}, '15': {'modul': 'T3INF3002', 'subject': 'IT-Sicherheit', 'grade': '16', 'credits': '50', 'status': nan, 'date': nan}, '16': {'modul': 'T3_3101', 'subject': 'Studienarbeit', 'grade': nan, 'credits': nan, 'status': nan, 'date': nan}, '17': {'modul': 'T3_1000', 'subject': 'Praxisprojekt I', 'grade': 'b', 'credits': '200', 'status': nan, 'date': nan}, '18': {'modul': 'T3_2000', 'subject': 'Praxisprojekt II', 'grade': '25', 'credits': '200', 'status': nan, 'date': nan}, '19': {'modul': 'T3_3000', 'subject': 'Praxisprojekt III', 'grade': nan, 'credits': nan, 'status': nan, 'date': nan}, '21': {'modul': 'T3INF4104', 'subject': 'Elektrotechnik', 'grade': '16', 'credits': '30', 'status': nan, 'date': nan}, '22': {'modul': 'T3INF4105', 'subject': 'Physik', 'grade': '14', 'credits': '50', 'status': nan, 'date': nan}, '23': {'modul': 'T3INF4302', 'subject': 'Systemarchitekturen der Informationstechnik', 'grade': nan, 'credits': nan, 'status': nan, 'date': nan}, '24': {'modul': 'T3INF4303', 'subject': 'Computergraphik und Bildverarbeitung', 'grade': nan, 'credits': nan, 'status': nan, 'date': nan}, '25': {'modul': 'T3INF4111', 'subject': 'Grundlagen der Hard- und Software (MA-TINF19IT2)', 'grade': '13', 'credits': '50', 'status': nan, 'date': nan}, '26': {'modul': 'T3INF4252', 'subject': 'Messdatenerfassung und -verarbeitung', 'grade': '15', 'credits': '50', 'status': nan, 'date': nan}, '27': {'modul': 'T3INF4275', 'subject': 'Business Process Management', 'grade': '15', 'credits': '50', 'status': nan, 'date': nan}, '28': {'modul': 'T3INF4331', 'subject': 'Maschinelles Lernen', 'grade': '18', 'credits': '50', 'status': nan, 'date': nan}, '29': {'modul': 'T3INF4367', 'subject': 'EinfÃ¼hrung in die Robotik', 'grade': '22', 'credits': '50', 'status': nan, 'date': nan}, '33': {'modul': 'T3_3300', 'subject': 'Bachelorarbeit', 'grade': nan, 'credits': nan, 'status': nan, 'date': nan}, 'GPA': {'total_gpa_grade': '1,6', 'major_subject_gpa_grade': '1,6'}}
+
+<details> <summary>In case you don't have DHBW-Credentials, expand this for the result of the request:</summary>
+    
+``` json
+{
+   "2":{
+      "modul":"T3INF1001",
+      "subject":"Mathematik I",
+      "grade":"18",
+      "credits":"80",
+      "status":"nan",
+      "date":"nan"
+   },
+   "3":{
+      "modul":"T3INF1002",
+      "subject":"Theoretische Informatik I",
+      "grade":"20",
+      "credits":"50",
+      "status":"nan",
+      "date":"nan"
+   },
+   "4":{
+      "modul":"T3INF1003",
+      "subject":"Theoretische Informatik II",
+      "grade":"15",
+      "credits":"50",
+      "status":"nan",
+      "date":"nan"
+   },
+   "5":{
+      "modul":"T3INF1004",
+      "subject":"Programmieren",
+      "grade":"10",
+      "credits":"90",
+      "status":"nan",
+      "date":"nan"
+   },
+   "6":{
+      "modul":"T3INF1005",
+      "subject":"SchlÃ¼sselqualifikationen",
+      "grade":"15",
+      "credits":"50",
+      "status":"nan",
+      "date":"nan"
+   },
+   "7":{
+      "modul":"T3INF1006",
+      "subject":"Technische Informatik I",
+      "grade":"16",
+      "credits":"50",
+      "status":"nan",
+      "date":"nan"
+   },
+   "8":{
+      "modul":"T3INF2001",
+      "subject":"Mathematik II",
+      "grade":"15",
+      "credits":"60",
+      "status":"nan",
+      "date":"nan"
+   },
+   "9":{
+      "modul":"T3INF2002",
+      "subject":"Theoretische Informatik III",
+      "grade":"14",
+      "credits":"60",
+      "status":"nan",
+      "date":"nan"
+   },
+   "10":{
+      "modul":"T3INF2003",
+      "subject":"Software Engineering I",
+      "grade":"10",
+      "credits":"90",
+      "status":"nan",
+      "date":"nan"
+   },
+   "11":{
+      "modul":"T3INF2004",
+      "subject":"Datenbanken",
+      "grade":"11",
+      "credits":"60",
+      "status":"nan",
+      "date":"nan"
+   },
+   "12":{
+      "modul":"T3INF2005",
+      "subject":"Technische Informatik II",
+      "grade":"15",
+      "credits":"80",
+      "status":"nan",
+      "date":"nan"
+   },
+   "13":{
+      "modul":"T3INF2006",
+      "subject":"Kommunikations- und Netztechnik",
+      "grade":"10",
+      "credits":"50",
+      "status":"nan",
+      "date":"nan"
+   },
+   "14":{
+      "modul":"T3INF3001",
+      "subject":"Software Engineering II",
+      "grade":"nan",
+      "credits":"nan",
+      "status":"nan",
+      "date":"nan"
+   },
+   "15":{
+      "modul":"T3INF3002",
+      "subject":"IT-Sicherheit",
+      "grade":"16",
+      "credits":"50",
+      "status":"nan",
+      "date":"nan"
+   },
+   "16":{
+      "modul":"T3_3101",
+      "subject":"Studienarbeit",
+      "grade":"nan",
+      "credits":"nan",
+      "status":"nan",
+      "date":"nan"
+   },
+   "17":{
+      "modul":"T3_1000",
+      "subject":"Praxisprojekt I",
+      "grade":"b",
+      "credits":"200",
+      "status":"nan",
+      "date":"nan"
+   },
+   "18":{
+      "modul":"T3_2000",
+      "subject":"Praxisprojekt II",
+      "grade":"25",
+      "credits":"200",
+      "status":"nan",
+      "date":"nan"
+   },
+   "19":{
+      "modul":"T3_3000",
+      "subject":"Praxisprojekt III",
+      "grade":"nan",
+      "credits":"nan",
+      "status":"nan",
+      "date":"nan"
+   },
+   "21":{
+      "modul":"T3INF4104",
+      "subject":"Elektrotechnik",
+      "grade":"16",
+      "credits":"30",
+      "status":"nan",
+      "date":"nan"
+   },
+   "22":{
+      "modul":"T3INF4105",
+      "subject":"Physik",
+      "grade":"14",
+      "credits":"50",
+      "status":"nan",
+      "date":"nan"
+   },
+   "23":{
+      "modul":"T3INF4302",
+      "subject":"Systemarchitekturen der Informationstechnik",
+      "grade":"nan",
+      "credits":"nan",
+      "status":"nan",
+      "date":"nan"
+   },
+   "24":{
+      "modul":"T3INF4303",
+      "subject":"Computergraphik und Bildverarbeitung",
+      "grade":"nan",
+      "credits":"nan",
+      "status":"nan",
+      "date":"nan"
+   },
+   "25":{
+      "modul":"T3INF4111",
+      "subject":"Grundlagen der Hard- und Software (MA-TINF19IT2)",
+      "grade":"13",
+      "credits":"50",
+      "status":"nan",
+      "date":"nan"
+   },
+   "26":{
+      "modul":"T3INF4252",
+      "subject":"Messdatenerfassung und -verarbeitung",
+      "grade":"15",
+      "credits":"50",
+      "status":"nan",
+      "date":"nan"
+   },
+   "27":{
+      "modul":"T3INF4275",
+      "subject":"Business Process Management",
+      "grade":"15",
+      "credits":"50",
+      "status":"nan",
+      "date":"nan"
+   },
+   "28":{
+      "modul":"T3INF4331",
+      "subject":"Maschinelles Lernen",
+      "grade":"18",
+      "credits":"50",
+      "status":"nan",
+      "date":"nan"
+   },
+   "29":{
+      "modul":"T3INF4367",
+      "subject":"EinfÃ¼hrung in die Robotik",
+      "grade":"22",
+      "credits":"50",
+      "status":"nan",
+      "date":"nan"
+   },
+   "33":{
+      "modul":"T3_3300",
+      "subject":"Bachelorarbeit",
+      "grade":"nan",
+      "credits":"nan",
+      "status":"nan",
+      "date":"nan"
+   },
+   "GPA":{
+      "total_gpa_grade":"1,6",
+      "major_subject_gpa_grade":"1,6"
+   }
+}
 
 ```
-As you can see, it is possible to get all DHBW related grades with a python script.
+</details>    
+As you can see, it is possible to get all DHBW related grades with a python script.    
+
+****************************    
 
 ### Lecture-Importer
 
@@ -68,7 +304,7 @@ As you can see, it is possible to get all DHBW related grades with a python scri
      - ```lecture_importer = LectureImporter(7761001)```
        - where 7761001 is the uid for the course "TINF19-IT2"
      - ```course_importer.course_list```
-   - Now you see an array of all courses:
+   - Now you see a pandas.DataFrame of all lectures:
 ``` 
                             lecture location               start                 end
 0                        Statistik           2021-04-06 09:00:00 2021-04-06 11:30:00
@@ -83,3 +319,6 @@ As you can see, it is possible to get all DHBW related grades with a python scri
 417             Blockchain (online)          2022-02-19 13:00:00 2022-02-19 14:30:00
 418   Klausur: Wahlmodul Informatik          2022-04-08 09:00:00 2022-04-08 11:00:00
 ``` 
+
+So it is proven, that we can get information about all courses and their lectures. Isn't that great?
+
