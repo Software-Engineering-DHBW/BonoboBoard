@@ -2,8 +2,9 @@ from datetime import datetime, timedelta
 
 import icalendar
 import pandas as pd
+from bs4 import BeautifulSoup
 
-from .importer import *
+from util import *
 
 
 class CourseImporter(Importer):
@@ -11,7 +12,7 @@ class CourseImporter(Importer):
 
     """
 
-    __url: ClassVar[str] = "https://vorlesungsplan.dhbw-mannheim.de/ical.php"
+    __url = "https://vorlesungsplan.dhbw-mannheim.de/ical.php"
 
     # TODO @JH delete auth token ?
     def __init__(self) -> None:
@@ -45,7 +46,7 @@ class LectureImporter(Importer):
     """
 
     # No HTTPS possible in this case?
-    __url: ClassVar[str] = "http://vorlesungsplan.dhbw-mannheim.de/ical.php?uid="
+    __url = "http://vorlesungsplan.dhbw-mannheim.de/ical.php?uid="
 
     # TODO @JH delete auth token ?
     def __init__(self, uid) -> None:
