@@ -8,13 +8,13 @@ import sys
 import re
 from bs4 import BeautifulSoup
 import pandas as pd
-from importer import *
+from util import *
 
 
 class DualisImporter(Importer):
     """
     """
-    __url: ClassVar[str] = "https://dualis.dhbw.de/scripts/mgrqispi.dll"
+    __url = "https://dualis.dhbw.de/scripts/mgrqispi.dll"
     __auth_token: str
 
     def __init__(self, user, passwd):

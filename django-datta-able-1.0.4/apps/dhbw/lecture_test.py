@@ -1,6 +1,6 @@
 import unittest
-from .lecture_importer import LectureImporter
-from .lecture_importer import CourseImporter
+from lecture_importer import LectureImporter
+from lecture_importer import CourseImporter
 
 
 class LectureImporterTest(unittest.TestCase):
