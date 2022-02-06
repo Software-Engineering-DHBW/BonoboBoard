@@ -13,12 +13,12 @@ This is how you get them to run:
 
 ### Requirements
 - [Anaconda](https://www.anaconda.com/products/individual) to run python scripts
-- Python-Packages
-  - ``` BeautifulSoup ```
-  - ``` pandas ```
-  - ``` icalendar```
-  - ``` requests ```
-  - ``` re ```
+- used python-packages
+  - [``` BeautifulSoup ```](https://anaconda.org/anaconda/beautifulsoup4)
+  - [``` pandas ```](https://anaconda.org/anaconda/pandas)
+  - [``` icalendar```](https://anaconda.org/conda-forge/icalendar)
+  - [``` requests ```](https://anaconda.org/anaconda/requests)
+  - [``` re ```](https://anaconda.org/conda-forge/regex)
   - ``` sys ```
 - check them by opening a python-shell and type ``` import *package* ```
   - if this throws no errors, you have already fulfilled the package requirement
@@ -35,8 +35,8 @@ This is how you get them to run:
      - ```python```
      - ```from dualis_importer import DualisImporter```
      - ```DualisImporter(studentMail, password)```
-       - where studentMail contains your student-mail as a string
-       - where password contains your DHBW-password
+       - where ```studentMail``` contains your student-mail (string)
+       - where ```password``` contains your DHBW-password (string)
 <br>
 
 <details> <summary>In case you don't have DHBW-Credentials, <b>expand this</b> for the results:</summary>
