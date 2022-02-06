@@ -290,7 +290,7 @@ As you can see, it is possible to get all DHBW related grades with a python scri
    - be sure to fulfill the above specified package requirements!
    - Commands in the anaconda-shell:
      - ```python```
-     - ```from dualis_importer import CourseImporter```
+     - ```from lecture_importer import CourseImporter```
      - ```course_importer = CourseImporter()```
      - ```course_importer.course_list```
    - Now you see an array of all courses:
@@ -303,10 +303,10 @@ As you can see, it is possible to get all DHBW related grades with a python scri
    - be sure to fulfill the above specified package requirements!
    - Commands in the anaconda-shell:
      - ```python```
-     - ```from dualis_importer import LectureImporter```
+     - ```from lecture_importer import LectureImporter```
      - ```lecture_importer = LectureImporter(7761001)```
        - where 7761001 is the uid for the course "TINF19-IT2"
-     - ```course_importer.course_list```
+     - ```lecture_importer.lectures```
    - Now you see a pandas.DataFrame of all lectures:
 ``` 
                             lecture location               start                 end
