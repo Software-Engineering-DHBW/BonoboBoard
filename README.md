@@ -6,7 +6,8 @@
 
 ## The Prototype
 
-To ensure that our project is possible, we created a prototype for two of your core-features.    
+To ensure that our project is possible, we created a prototype for two of your core-features.  
+We use python version 3.8.  
 This is how you get them to run:
 
 **************************** 
