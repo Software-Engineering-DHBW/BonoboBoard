@@ -6,10 +6,11 @@
 
 ## The Prototype
 
-To ensure that our project is possible, we created a prototype for two of your core-features.
-The focus is to 
-
+To ensure that our project is possible, we created a prototype for two of your core-features.    
 This is how you get them to run:
+
+**************************** 
+
 ### Requirements
 - [Anaconda](https://www.anaconda.com/products/individual) to run python scripts
 - Python-Packages
@@ -36,9 +37,9 @@ This is how you get them to run:
      - ```DualisImporter(studentMail, password)```
        - where studentMail contains your student-mail as a string
        - where password contains your DHBW-password
+<br>
 
-
-<details> <summary>In case you don't have DHBW-Credentials, expand this for the result of the request:</summary>
+<details> <summary>In case you don't have DHBW-Credentials, <b>expand this</b> for the results:</summary>
     
 ``` json
 {
