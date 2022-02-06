@@ -6,29 +6,30 @@
 
 ## The Prototype
 
-To ensure that our project is possible, we created a prototype for two of your core-features.  
+To ensure that our project is possible, we created a prototype for two of the core features.  
 We use python version 3.8.
 
 **************************** 
 
 ### Reasons for the feature-selection
 
-We chose the ```DualisImporter``` and ```LectureImporter``` because they represent our core-functionalities.   
+We chose the ```DualisImporter``` and ```LectureImporter``` because they represent our core functionalities.   
 #### DualisImporter
 We rely on this feature to get all grades.   
-We thought it's difficult to gather "protected" date (user, password), so we chose it to be in our prototype.
+We thought it would be difficult to gather "protected" data (user, password), so we chose it to be part of our prototype.
 
 #### LectureImporter
 Without a function to get all lectures of a specified course, we can't display a calendar.   
-So this is a number one priority and the reason it's in our prototype.
+So this is a number one priority. Thus it has to be in our prototype.
 
-This is how you get them to run:
+
+Let's get started:
 
 **************************** 
 
 ### Requirements
 - [Anaconda](https://www.anaconda.com/products/individual) to run python scripts
-- used python-packages
+- Used python-packages
   - [``` BeautifulSoup ```](https://anaconda.org/anaconda/beautifulsoup4)
   - [``` pandas ```](https://anaconda.org/anaconda/pandas)
   - [``` icalendar```](https://anaconda.org/conda-forge/icalendar)
@@ -36,8 +37,8 @@ This is how you get them to run:
   - [``` re ```](https://anaconda.org/conda-forge/regex)
   - [``` lxml ```](https://lxml.de/installation.html) (pip install lxml)
   - ``` sys ```
-- check them by opening a python-shell and type ``` import *package* ```
-  - if this throws no errors, you have already fulfilled the package requirement
+- Check them by opening a python-shell and type ``` import *package* ```.
+  - If this throws no errors, you have already fulfilled the package requirements.
 
 ****************************  
 
@@ -46,7 +47,7 @@ This is how you get them to run:
    - ```BonoboBoard/django-datta-able-1.0.4/apps/dhbw/``` 
 2. Start the Dualis-Crawler
    - Open a [**Anaconda**](https://www.anaconda.com/products/individual) shell in the specified folder
-   - be sure to fulfill the above specified package requirements!
+   - Be sure to fulfill the above specified package requirements!
    - Commands in the anaconda-shell:
      - ```python```
      - ```from dualis_importer import DualisImporter```
@@ -300,8 +301,8 @@ As you can see, it is possible to get all DHBW related grades with a python scri
 1. Navigate into the folder 
    - ```BonoboBoard/django-datta-able-1.0.4/apps/dhbw/``` 
 2. Start the Crawler to retrieve all courses
-   - Open a [**Anaconda**](https://www.anaconda.com/products/individual) shell in the specified folder
-   - be sure to fulfill the above specified package requirements!
+   - Open a [**Anaconda**](https://www.anaconda.com/products/individual) shell in the specified folder.
+   - Be sure to fulfill the above specified package requirements!
    - Commands in the anaconda-shell:
      - ```python```
      - ```from lecture_importer import CourseImporter```
@@ -313,8 +314,8 @@ As you can see, it is possible to get all DHBW related grades with a python scri
 ```
 
 3. Start the Crawler to retrieve the lectures for a specified course
-   - Open a [**Anaconda**](https://www.anaconda.com/products/individual) shell in the specified folder
-   - be sure to fulfill the above specified package requirements!
+   - Open a [**Anaconda**](https://www.anaconda.com/products/individual) shell in the specified folder.
+   - Be sure to fulfill the above specified package requirements!
    - Commands in the anaconda-shell:
      - ```python```
      - ```from lecture_importer import LectureImporter```
