@@ -20,6 +20,7 @@ This is how you get them to run:
   - [``` icalendar```](https://anaconda.org/conda-forge/icalendar)
   - [``` requests ```](https://anaconda.org/anaconda/requests)
   - [``` re ```](https://anaconda.org/conda-forge/regex)
+  - [``` lxml ```](https://lxml.de/installation.html) (pip install lxml)
   - ``` sys ```
 - check them by opening a python-shell and type ``` import *package* ```
   - if this throws no errors, you have already fulfilled the package requirement
