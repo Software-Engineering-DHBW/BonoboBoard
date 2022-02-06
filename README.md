@@ -323,5 +323,5 @@ As you can see, it is possible to get all DHBW related grades with a python scri
 418   Klausur: Wahlmodul Informatik          2022-04-08 09:00:00 2022-04-08 11:00:00
 ``` 
 
-So it is proven, that we can get information about all courses and their lectures. Isn't that great?
+So it is proven, that we can get information about all courses and their lectures.
 
