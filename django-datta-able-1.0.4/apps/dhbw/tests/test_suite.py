@@ -18,6 +18,6 @@ print("------------------------------------------------------")
 print("----------------- Starting TestSuite -----------------")
 print("------------------------------------------------------")
 
-mySuit = suite()
+mySuite = suite()
 runner = unittest.TextTestRunner(verbosity=2)
-runner.run(mySuit)
+runner.run(mySuite)

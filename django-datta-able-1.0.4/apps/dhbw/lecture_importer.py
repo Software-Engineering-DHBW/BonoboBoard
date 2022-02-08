@@ -127,4 +127,5 @@ def all_courses_lectures():
 
 
 if __name__ == '__main__':
-    all_courses_lectures()
+    print("main lecture_importer.py")
+    # all_courses_lectures()
