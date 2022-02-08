@@ -105,23 +105,26 @@ class LectureImporter(Importer):
         d_future = datetime.today() + timedelta(days=days_future)
         df = self.lectures
         return df[(df["start"] > d_past) & (df["start"] < d_future)]
-    
+
 
 def all_courses_lectures():
     courses = CourseImporter()
-    all_lectures = pd.DataFrame(columns=["lecture", "location", "start", "end", "c_uid"])   #foreign key c_uid
+    all_lectures = pd.DataFrame(columns=["lecture", "location", "start", "end", "c_uid"])  # foreign key c_uid
     print(len(courses.uid_list))
     course_data = list(zip(courses.uid_list, courses.course_list))
     all_courses = pd.DataFrame(course_data, columns=["c_uid", "name"])
-    i=0
+    i = 0
     for course in courses.uid_list:
-        i+=1
-        if(i>0 and i%10 == 0):print(i)
+        i += 1
+        if i > 0 and i % 10 == 0:
+            print(i)
         lectures = LectureImporter(course)
         df = lectures.limit_days_in_list(14, 14).copy()
         df['c_uid'] = course
         all_lectures = pd.concat([all_lectures, df], ignore_index=True)
-        
+
     return [all_courses, all_lectures]
 
-all_courses_lectures()
+
+if __name__ == '__main__':
+    all_courses_lectures()
