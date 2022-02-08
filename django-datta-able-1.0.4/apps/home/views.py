@@ -10,8 +10,6 @@ from django.template import loader
 from django.urls import reverse
 from django.shortcuts import render
 from matplotlib.pyplot import table
-from .models import DualisEntry
-from .tables import DualisTable
 import matplotlib.pyplot as plt
 
 
