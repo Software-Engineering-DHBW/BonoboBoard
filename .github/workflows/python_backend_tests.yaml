@@ -1,7 +1,9 @@
 name: Continuous Integration
 on: [push]
+
 jobs:
-  build:
+  backend:
+    name: CI-Backend
     runs-on: ubuntu-latest
 
     steps:
