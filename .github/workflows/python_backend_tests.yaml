@@ -2,6 +2,7 @@ name: Continuous Integration
 on: [push]
 
 jobs:
+
   backend:
     name: CI-Backend
     runs-on: ubuntu-latest
@@ -16,10 +17,10 @@ jobs:
           python-version: 3.8
           architecture: x64
 
-     - name: Install dependencies
-       working-directory: ./django-datta-able-1.0.4/apps/dhbw
-       run: pip install -r requirements.txt
+      - name: Install dependencies
+        working-directory: ./django-datta-able-1.0.4/apps/dhbw
+        run: pip install -r requirements.txt
 
-     - name: Run tests
-       working-directory: ./django-datta-able-1.0.4/apps/dhbw/tests
-       run: python test_suite
+      - name: Run tests
+        working-directory: ./django-datta-able-1.0.4/apps/dhbw/tests
+        run: python test_suite
