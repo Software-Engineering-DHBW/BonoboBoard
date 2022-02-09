@@ -23,4 +23,4 @@ jobs:
 
       - name: Run tests
         working-directory: ./django-datta-able-1.0.4/apps/dhbw/tests
-        run: python test_suite
+        run: python test_suite.py
