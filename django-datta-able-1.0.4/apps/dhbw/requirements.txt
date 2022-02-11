@@ -1,0 +1,5 @@
+beautifulsoup4
+requests
+icalendar
+pandas
+lxml
