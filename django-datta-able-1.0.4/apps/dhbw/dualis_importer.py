@@ -3,7 +3,6 @@
 """
 """
 
-from email import header
 import sys
 import re
 from bs4 import BeautifulSoup
@@ -84,8 +83,6 @@ class DualisImporter(Importer):
 
         url = DualisImporter.url
 
-        print("login")
-
         # prepare for login
         self.headers["Content-Type"] = "application/x-www-form-urlencoded"
         data = {
@@ -118,7 +115,6 @@ class DualisImporter(Importer):
             print("Something went wrong while trying to login\n!", sys.stderr)
 
         # filter response for needed data
-        # format: "REFRESH': '0; URL=/scripts/mgrqispi.dll?APPNAME=CampusNet&PRGNAME=STARTPAGE_DISPATCH&ARGUMENTS=-N751888937367774,-N000019,-N000000000000000"
         arg_string = re.sub(
             "(^.*URL=)", "", r.headers["REFRESH"]).split("?")[1]
         arg_string = arg_string.split("&")
@@ -138,9 +134,6 @@ class DualisImporter(Importer):
             "arguments": arg_dict
         }
 
-        # TODO DEBUG --> LOGGER
-        print(f"COOKIE & ARGUMENTS\n{ ret_dict}", sys.stdout)
-
         # return
         return ret_dict
 
@@ -150,7 +143,6 @@ class DualisImporter(Importer):
 
         url = DualisImporter.url
 
-        print("query_data")
         # send request
         r = reqget(
             url=url,
@@ -162,30 +154,18 @@ class DualisImporter(Importer):
             # TODO ERROR --> LOGGER
             print("Something went wrong while trying to query the data\n!", sys.stderr)
         # TODO DEBUG --> LOGGER
-        print(
-            f"Status Code: { r.status_code }\nHeaders:\n{ r.headers }\n\n", sys.stdout)
-
-        #print(f"=== RAW CONTENT ===\n{ r.text }", sys.stdout)
+        print(f"Status Code: { r.status_code }\nHeaders:\n{ r.headers }\n\n", sys.stdout)
 
         # parse html content to work on it (1)
         # =========
         # WIP START
         html = BeautifulSoup(r.text, "lxml")
-        # TODO DEBUG --> LOGGER
-        #print(f"HTML BEAUTIFUL\n{ html }", sys.stdout)
-        print("===\n===\n===\n")
         # First Approach
-        #pruefung_url_1 = html.find(id="link000307").get("href")
         leistung_url_1 = html.find(id="link000310").a.get("href")
-        print("===\n===\n===\n")
-        print("===\n===\n===\n")
-        # print(f"{leistung_url_1}")
         # Second Approach
         for link in html.find_all("a"):
             if link.string == "LeistungsÃ¼bersicht":
                 leistung_url_2 = link.get("href")
-            # if link.string == "PrÃ¼fungsergebnisse":
-            #    pruefung_url_2 = link.get("href")
 
         # WIP END
         # =======
@@ -202,22 +182,12 @@ class DualisImporter(Importer):
         # change PRGNAME from STARTPAGE_DISPATCH to MLSSTART
         l_arg_dict["PRGNAME"] = "STUDENT_RESULT"
 
-        #r_pruefung = req(url=pruefung_url_1, headers=self.headers)
         r_leistung = reqget(
             url=url,
             headers=self.headers,
             params=l_arg_dict
         )
-        #r_leistung = req(url=leistung_url_2, headers=self.headers)
 
-        # write not parsed into file
-        #with open("response.html", "w") as f:
-        #    f.write(r_leistung.text)
-
-        # parse html content to work on it (2)
-        # return BeautifulSoup(r_leistung.text, "lxml")
-        #print(f"HTML BEAUTIFUL\n{ leistungen }", sys.stdout)
-        # print(leistungen.prettify())
         return r_leistung.text
 
     def logout(self, args):
@@ -229,7 +199,6 @@ class DualisImporter(Importer):
         """
 
         # change PRGNAME to LOGOUT
-        print("Logout")
         args["PRGNAME"] = "LOGOUT"
 
         r = reqget(
@@ -237,6 +206,3 @@ class DualisImporter(Importer):
             headers=self.headers,
             params=args
         )
-
-        # TODO DEBUG --> LOGGER
-        print(f"{ r.status_code }\n{ r.headers }", sys.stdout)
