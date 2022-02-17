@@ -5,7 +5,8 @@
 
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
-from util import ImporterSession, reqget, reqpost, url_get_fqdn, url_get_args
+
+from .util import ImporterSession, reqget, reqpost, url_get_fqdn, url_get_args
 
 ###              ###
 # HELPER FUNCTIONS #
@@ -72,14 +73,14 @@ class MoodleImporter(ImporterSession):
 
     Methods
     -------
-    login(self, username, password) : None
+    login(self, username, password): None
         creates a session for the user
-    find_all_bbb_rooms(self, course_dict) : MoodleCourseDict
+    find_all_bbb_rooms(self, course_dict): MoodleCourseDict
         find all bbb rooms and store them in the given dictionary
     scrape(self): None
         scrape for the website data
     logout(self): None
-        removes the session and destroys the instance
+        sends the logout request
     """
 
     url = "https://moodle.dhbw-mannheim.de/"
@@ -96,9 +97,9 @@ class MoodleImporter(ImporterSession):
 
         Parameters
         ----------
-        username : str
+        username: str
             username used to login
-        password : str
+        password: str
             password used to login
 
         Returns
@@ -108,7 +109,7 @@ class MoodleImporter(ImporterSession):
         if "@" in username:
             username = username.split("@")[0]
 
-        url: str = MoodleImporter.url
+        url = MoodleImporter.url
 
         # get token from login page
         r_token = reqget(url=url+"login/index.php", headers=self.headers)
@@ -242,5 +243,5 @@ class MoodleImporter(ImporterSession):
             headers=self.headers,
             return_code=303
         )
-        
+
         self.auth_token = ""

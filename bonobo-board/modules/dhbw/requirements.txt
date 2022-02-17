@@ -1,0 +1,5 @@
+beautifulsoup4>=4.8.2
+requests>=2.27.1
+icalendar>=4.0.9
+pandas>=1.4.0
+lxml>=4.5.0

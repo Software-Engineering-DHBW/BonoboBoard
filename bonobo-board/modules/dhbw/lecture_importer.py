@@ -1,27 +1,29 @@
-from datetime import datetime, timedelta
+# -*- coding: utf-8 -*-
 
-import icalendar
+"""provide functionality to interact with the students timetable
+"""
+
+from datetime import datetime, timedelta
 import pandas as pd
 from bs4 import BeautifulSoup
+import icalendar
 
-from util import *
-
+from .util import Importer, reqget
 
 class CourseImporter(Importer):
     """class to achieve the list of all courses of the DHBW Mannheim
 
     """
 
-    __url = "https://vorlesungsplan.dhbw-mannheim.de/ical.php"
+    url = "https://vorlesungsplan.dhbw-mannheim.de/ical.php"
 
-    # TODO @JH delete auth token ?
-    def __init__(self) -> None:
+    def __init__(self):
         super().__init__()
         self.course_list = []
         self.uid_list = []
         self.scrape()
 
-    def scrape(self) -> None:
+    def scrape(self):
         """method to scrape the list of all courses
 
         list is stored in course_list
@@ -30,8 +32,8 @@ class CourseImporter(Importer):
         -------
         None
         """
-        response = reqget(url=CourseImporter.__url, headers=self.headers)
-        result = BeautifulSoup(response.content, "html.parser").find(id="class_select")
+        response = reqget(url=CourseImporter.url, headers=self.headers)
+        result = BeautifulSoup(response.content, "lxml").find(id="class_select")
 
         # optgroup stores the list of courses
         all_optgroup = result.find_all('optgroup')
@@ -48,14 +50,13 @@ class LectureImporter(Importer):
     """
 
     # No HTTPS possible in this case?
-    __url = "http://vorlesungsplan.dhbw-mannheim.de/ical.php?uid="
+    url = "http://vorlesungsplan.dhbw-mannheim.de/ical.php?uid="
 
-    # TODO @JH delete auth token ?
-    def __init__(self, uid) -> None:
+    def __init__(self, uid):
         super().__init__()
         self.lectures = self.scrape(uid)
 
-    def scrape(self, uid) -> pd.DataFrame:
+    def scrape(self, uid):
         """method to scrape the courses-icalendar and parse it to a pandas.DataFrame
 
         Parameters
@@ -68,7 +69,7 @@ class LectureImporter(Importer):
         pandas.DataFrame
         """
         # set up url to the ical file
-        ical_url = LectureImporter.__url + str(uid)
+        ical_url = LectureImporter.url + str(uid)
 
         # Get ical from given address
         response = reqget(url=ical_url, headers=self.headers,
@@ -86,7 +87,7 @@ class LectureImporter(Importer):
                 df.loc[len(df)] = vevent
         return df
 
-    def limit_days_in_list(self, days_past, days_future) -> pd.DataFrame:
+    def limit_days_in_list(self, days_past, days_future):
         """method to limit/crop the lectures-DataFrame gathered in LectureImporter.scrape() by limiting the days
 
         Parameters
@@ -124,8 +125,3 @@ def all_courses_lectures():
         all_lectures = pd.concat([all_lectures, df], ignore_index=True)
 
     return [all_courses, all_lectures]
-
-
-if __name__ == '__main__':
-    print("main lecture_importer.py")
-    # all_courses_lectures()
