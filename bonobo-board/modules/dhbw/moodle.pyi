@@ -1,6 +1,7 @@
 from typing import ClassVar
-from util import ImporterSession, MoodleCourseDict, MoodleModuleDict
 from bs4.element import Tag
+
+from .util import ImporterSession, MoodleCourseDict, MoodleModuleDict
 
 def add_to_module_dict(name: str, url: str) -> MoodleModuleDict: ...
 

@@ -1,15 +1,15 @@
-import os
-import sys
-import unittest
+# -*- coding: utf-8 -*-
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+"""unittests for the lecture module
+"""
 
-from lecture_importer import LectureImporter
-from lecture_importer import CourseImporter
+from unittest import TestCase
 
+from dhbw.lecture_importer import LectureImporter
+from dhbw.lecture_importer import CourseImporter
 
-class LectureImporterTest(unittest.TestCase):
-
+class LectureImporterTest(TestCase):
+    """unittests for the lecture class"""
     def test_false_uid(self):
         lec = LectureImporter(776101)
         self.assertEqual(lec.lectures.empty, True)  # add assertion here
@@ -24,7 +24,8 @@ class LectureImporterTest(unittest.TestCase):
         self.assertEqual(lec.lectures.empty, False)
 
 
-class CourseImporterTest(unittest.TestCase):
+class CourseImporterTest(TestCase):
+    """unittests for the course module"""
     def test_course_importer(self):
         courses = CourseImporter()
         self.assertFalse(len(courses.course_list) == 0)
@@ -32,7 +33,3 @@ class CourseImporterTest(unittest.TestCase):
     def test_check_values(self):
         courses = CourseImporter()
         self.assertTrue("7761001" in courses.uid_list)
-
-
-if __name__ == '__main__':
-    unittest.main()

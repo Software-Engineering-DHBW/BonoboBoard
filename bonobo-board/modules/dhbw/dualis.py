@@ -5,7 +5,7 @@
 
 import re
 from bs4 import BeautifulSoup
-from util import (
+from .util import (
     ImporterSession, reqget, reqpost,
     url_get_args, url_get_fqdn
 )

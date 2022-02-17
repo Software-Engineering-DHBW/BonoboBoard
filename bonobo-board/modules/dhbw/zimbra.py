@@ -6,7 +6,7 @@
 import re
 import json
 from bs4 import BeautifulSoup
-from util import ImporterSession, reqget, reqpost, url_get_fqdn
+from .util import ImporterSession, reqget, reqpost, url_get_fqdn
 
 ###            ###
 # ZIMBRA HANDLER #

@@ -6,7 +6,8 @@ services:
     env_file: .env
     build: .
     volumes:
-      - ./apps:/apps
+      - ./apps:/bonobo-board/apps
+      - ./modules:/bonobo-board/modules
     networks:
       - db_network
       - web_network
