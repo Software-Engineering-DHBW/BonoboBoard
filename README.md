@@ -1,6 +1,6 @@
 # BonoboBoard
 
-**Projektname** | <img src="https://github.com/Software-Engineering-DHBW/BonoboBoard/blob/main/documents/latex_template/img/BonboBoardLogoWhite.png" height="64" >
+**Projektname** | <img src="https://github.com/Software-Engineering-DHBW/BonoboBoard/blob/main/documents/img/BonboBoardLogoWhite.png" height="64" >
 :--|:--
 **Unsere Vision** | BonoboBoard wird ein kostenfreier webbasierter Service für alle Studierenden der DHBW Mannheim, die statt vieler unabhängiger Websites eine einzige Übersicht aller auf die Hochschule bezogenen Inhalte erhalten wollen. Es soll Funktionen bereit stellen, die alle relevanten Websites der DHBW Mannheim nach Informationen durchsuchen und diese in Form eines Dashboards darstellen.
 

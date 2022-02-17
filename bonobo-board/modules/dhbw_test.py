@@ -9,6 +9,7 @@ from unittest import makeSuite, TestSuite,  TextTestRunner
 from dhbw.tests.lecture_test import LectureImporterTest, CourseImporterTest
 from dhbw.tests.moodle_test import TestMoodleImporter
 from dhbw.tests.zimbra_test import TestZimbraHandler
+from dhbw.tests.dualis_test import TestDualisImporter
 
 parser = ArgumentParser(
     description="Run all tests or a subset of tests",
@@ -38,7 +39,7 @@ def suite():
             if _args[i] == "course":
                 test_suite.addTest(makeSuite(CourseImporterTest))
             elif _args[i] == "dualis":
-                pass
+                test_suite.addTest(TestDualisImporter.cls_suite())
             elif _args[i] == "lecture":
                 test_suite.addTest(makeSuite(LectureImporterTest))
             elif _args[i] == "moodle":

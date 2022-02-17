@@ -1,5 +1,5 @@
 from abc import ABC, ABCMeta, abstractmethod
-from typing import Any, Dict, List, NoReturn, TypedDict, Union
+from typing import Any, Dict, List, Literal, NoReturn, TypedDict, Union
 from requests.models import Response
 
 class MoodleModuleDict(TypedDict):
@@ -12,6 +12,19 @@ class MoodleCourseDict(TypedDict):
     bbb_rooms: List[MoodleModuleDict]
 
 MoodleDict = Dict[str, Union[List[MoodleCourseDict], str]]
+
+class DualisModuleDict(TypedDict):
+    id: str
+    href: str
+    name: str
+    credits: int
+    grade: float
+    state: Literal["f", "o", "p"]
+
+class DualisDict(TypedDict):
+    gpa_total: float
+    gpa_main_subject: float
+    modules: List[DualisModuleDict]
 
 def reqpost(
     *,
@@ -40,7 +53,7 @@ def url_get_args(url: str) -> List[str]: ...
 
 class Importer(ABC):
     headers: Dict[str, str]
-    scraped_data: Dict[str, Union[MoodleDict, Any]]
+    scraped_data: Dict[str, Union[MoodleDict, DualisDict, Any]]
 
     def __init__(self) -> None: ...
 
