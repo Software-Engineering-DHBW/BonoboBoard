@@ -197,10 +197,7 @@ class DualisImporter(ImporterSession):
             elif "tbdata" in temp[i].get("class"):
                 href = ""
                 state = temp[i + 5].img.get("title")
-                if not state == "Offen":
-                    href = temp[i + 1].a.get("href")
-                    name = temp[i + 1].a.string
-                elif state == "Offen" and temp[i + 4].string:
+                if not state == "Offen" or (state == "Offen" and temp[i + 4].string):
                     href = temp[i + 1].a.get("href")
                     name = temp[i + 1].a.string
                 else:
