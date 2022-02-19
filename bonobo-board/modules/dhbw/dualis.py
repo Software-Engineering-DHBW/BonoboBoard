@@ -200,6 +200,9 @@ class DualisImporter(ImporterSession):
                 if not state == "Offen":
                     href = temp[i + 1].a.get("href")
                     name = temp[i + 1].a.string
+                elif state == "Offen" and temp[i + 4].string:
+                    href = temp[i + 1].a.get("href")
+                    name = temp[i + 1].a.string
                 else:
                     name = trim_str(temp[i + 1].string)
 
