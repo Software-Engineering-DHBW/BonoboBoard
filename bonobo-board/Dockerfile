@@ -25,8 +25,8 @@ ENV PYTHONPATH /bonobo-board/modules
 
 # install python dependencies
 RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir -r ./modules/dhbw/requirements.txt
+RUN pip install -r requirements.txt
+RUN pip install -r ./modules/dhbw/requirements.txt
 
 # running migrations
 RUN python manage.py migrate
