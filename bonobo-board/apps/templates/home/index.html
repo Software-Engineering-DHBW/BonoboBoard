@@ -18,20 +18,9 @@
             <div class="page-wrapper">
                 <!-- [ Main Content ] start -->
                 <div class="row">
-                    {% if form %}
-                    <div class="col-md-6">
-                        <form method="POST">
-                            {% csrf_token %}
-                            {{ form }}
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </form>
-                    </div>
-                    {% endif %}
                     <!-- [ tabs ] start -->
-                    {% if content %}
                     <div class=".col-12 .col-md-8">
-                        <h5>Dualis Übersicht</h5>
-                        <p>GPA-Total:  {{content.gpa_total}}</p>
+                        <h5>Dualis Results!!!</h5>
                         <table class="table">
                             <thead>
                                 <tr>
@@ -40,17 +29,16 @@
                                     <th>Grade</th>
                                 </tr>
                             </thead>
-                            {% for entry in content.modules %}
+                            {% for entry in content %}
                             <tr>
-                                <td>{{entry.name}}</td>
+                                <td>{{entry.subject}}</td>
                                 <td>{{entry.credits}}</td>
                                 <td>{{entry.grade}}</td>
                             </tr>
                             {% endfor %}
                         </table>
                     </div>
-                    {% endif %}
-
+                   
                 </div>
                 <!-- [ Main Content ] end -->
             </div>
