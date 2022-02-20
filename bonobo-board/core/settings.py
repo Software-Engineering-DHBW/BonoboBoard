@@ -18,8 +18,11 @@ SECRET_KEY = config('SECRET_KEY', default='S#perS3crEt_1122')
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 # load production server from .env
-ALLOWED_HOSTS        = ['localhost', 'localhost:85', '127.0.0.1', config('SERVER', default='127.0.0.1')]
-CSRF_TRUSTED_ORIGINS = ['http://localhost:85', 'http://127.0.0.1', 'https://' + config('SERVER', default='127.0.0.1')]
+ALLOWED_HOSTS        = ['localhost', 'localhost:80', '127.0.0.1', config('SERVER', default='127.0.0.1'), config('SERVER', default='127.0.0.1') + ':443']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:80', 'http://127.0.0.1', 'https://' + config('SERVER', default='127.0.0.1'), 'http://' + config('SERVER', default='127.0.0.1'), 'http://' + config('SERVER', default='127.0.0.1') + ':443']
+
+with open("settings_py.txt", "w+") as fd:
+    fd.write(f"allowed hosts {ALLOWED_HOSTS}\n\n\n trusted origins {CSRF_TRUSTED_ORIGINS}")
 
 # Application definition
 
