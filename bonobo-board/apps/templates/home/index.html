@@ -63,6 +63,13 @@
                             <div class="card-header">
                                 <h5>Leistungsübersicht</h5>
                             </div>
+                            <div class="card-block">
+                                <div class="col-sm-12">
+                                    {% if content %}
+                                    <p><b>GPA-Total:</b> {{content.gpa_total}}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

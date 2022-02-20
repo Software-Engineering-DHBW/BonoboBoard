@@ -19,9 +19,10 @@ dualis_entries = []
 @csrf_protect
 def index(request):
     global is_user_logged_in
+    global dualis_entries
 
     if is_user_logged_in: 
-        return render(request, 'home/index.html', {'is_user_logged_in': is_user_logged_in})
+        return render(request, 'home/index.html', {'is_user_logged_in': is_user_logged_in, 'content': dualis_entries})
 
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -33,7 +34,7 @@ def index(request):
             fetch_user_data(email, password)
 
             is_user_logged_in = True
-            return render(request, 'home/index.html', {'is_user_logged_in': is_user_logged_in})
+            return render(request, 'home/index.html', {'is_user_logged_in': is_user_logged_in, 'content': dualis_entries})
            
     else:
         form = LoginForm()
