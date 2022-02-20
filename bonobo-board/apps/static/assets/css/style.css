@@ -57,6 +57,8 @@ File: style.css
 /**  =====================
       Custom css start
 ==========================  **/
+@import url("../fonts/custom/css/custom.css");
+
 body {
   font-family: "Open Sans", sans-serif;
   font-size: 14px;
