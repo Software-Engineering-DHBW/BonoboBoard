@@ -10,31 +10,36 @@ from django.template import loader
 from django.urls import reverse
 from django.shortcuts import render
 
+from .forms import LoginForm
+from modules.dhbw.dualis import DualisImporter
 
-@login_required(login_url="/login/")
+
 def index(request):
-    context = {'segment': 'index'}
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
 
-    for entry in dualis_entries:
-        try:
-            if(entry["grade"] is not None):
-                entry["grade"] = int(entry["grade"])
-                entry["grade"] = entry["grade"]/10
-        except ValueError:
-            entry["grade"] = "Not yet set"
-        try:
-            if(entry["credits"] is not None):
-                entry["credits"] = int(entry["credits"])
-                entry["credits"] = entry["credits"]/10
-        except ValueError:
-            entry["grade"] = "Not yet set"
+        if form.is_valid():
+            email = form.cleaned_data.get("email")
+            password = form.cleaned_data.get("password")
 
-    html_template = loader.get_template('home/index.html')
-    # return HttpResponse(html_template.render(content, request))
-    return render(request, 'home/index.html', {"content": dualis_entries})
+            dualis_entries = getDualisResults(email, password)
+
+            return render(request, 'home/index.html',{"content": dualis_entries})
+
+    else:
+        form = LoginForm()
+
+    return render(request, 'home/index.html', {'form': form})
 
 
-@login_required(login_url="/login/")
+def getDualisResults(email, password):
+    dualis_importer =  DualisImporter()
+    dualis_importer.login(email, password)
+    dualis_importer.scrape()
+    dualis_importer.logout()
+    return dualis_importer.scraped_data
+
+
 def pages(request):
     context = {}
     # All resource paths end in .html.
