@@ -25,12 +25,12 @@
         <div class="main-body">
             <div class="page-wrapper">
                 <!-- [ Main Content ] start -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5>Email</h5>
-                    </div>
-                    <div class="card-block">
-                        <div class="col-md-6">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Email</h5>
+                        </div>
+                        <div class="card-block">
                             <form method="POST">
                                 {% csrf_token %}
                                 {{ form }}
@@ -39,14 +39,13 @@
                                     Email
                                 </button>
                             </form>
+                            <!-- [ Main Content ] end -->
                         </div>
-                        <!-- [ Main Content ] end -->
                     </div>
                 </div>
             </div>
-        </div>
 
-        {% endblock content %}
+            {% endblock content %}
 
-        <!-- Specific Page JS goes HERE  -->
-        {% block javascripts %}{% endblock javascripts %}
+            <!-- Specific Page JS goes HERE  -->
+            {% block javascripts %}{% endblock javascripts %}

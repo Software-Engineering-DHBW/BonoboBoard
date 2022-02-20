@@ -30,7 +30,7 @@ def index(request):
 
         if form.is_valid():
             email = form.cleaned_data.get("email")
-            password = form.cleaned_data.get("password")
+            password = form.cleaned_data.get("passwort")
 
             fetch_user_data(email, password)
 

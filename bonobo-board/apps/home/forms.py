@@ -6,8 +6,8 @@ from django import forms
 
 
 class LoginForm(forms.Form):
-  
-    email = forms.CharField(
+
+    email = forms.EmailField(
         widget=forms.TextInput(
             attrs={
                 "placeholder": "Email",
@@ -15,15 +15,51 @@ class LoginForm(forms.Form):
             }
         ))
 
-    password = forms.CharField(
-       widget=forms.PasswordInput(
+    passwort = forms.CharField(
+        widget=forms.PasswordInput(
             attrs={
-                "placeholder": "Password",
+                "placeholder": "Passwort",
                 "class": "form-control"
             }
         ))
 
+
 class ContactForm(forms.Form):
-    from_email = forms.EmailField(required=True)
-    subject = forms.CharField(required=True)
-    message = forms.CharField(widget=forms.Textarea, required=True)
+    empfänger = forms.EmailField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Email Empfänger",
+                "class": "form-control"
+            }
+        ),
+        required=True)
+    cc = forms.EmailField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Cc",
+                "class": "form-control"
+            }
+        ))
+    bcc = forms.EmailField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Bcc",
+                "class": "form-control"
+            }
+        ))
+    betreff = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Betreff",
+                "class": "form-control"
+            }
+        ),
+        required=True)
+    nachricht = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                "placeholder": "Nachricht. Bitte sei immer freundlich!",
+                "class": "form-control"
+            }
+        ),
+        required=True)
