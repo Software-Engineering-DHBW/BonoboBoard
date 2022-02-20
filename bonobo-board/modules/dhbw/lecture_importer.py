@@ -129,6 +129,14 @@ class LectureImporter(Importer):
 #
 #     return [all_courses, all_lectures]
 
+# -------------- HELPERS --------------------
+
+def get_unique_lectures(df):
+    unique = df["lecture"].unique()
+    data = []
+    for entry in unique:
+        data.append(str(entry))
+    return data
 
 # ----------------- DATABASE --------------------
 # WRITE
