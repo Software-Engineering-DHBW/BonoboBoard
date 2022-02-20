@@ -138,7 +138,7 @@ def get_unique_lectures(df):
         data.append(str(entry))
     return data
 
-# ----------------- DATABASE --------------------
+# ----------------- LECTURE DATABASE --------------------
 # WRITE
 def write_all_courses_lectures_to_database():
     courses = CourseImporter()
@@ -156,12 +156,6 @@ def write_lectures_to_database(df, course_uid):
     return
 
 
-def write_lecture_links_to_database(df, course_uid):    #df-columns: lecture, link
-    engine_string = "sqlite:///lectures_links.db"
-    engine = sqlalchemy.create_engine(engine_string)
-    df.to_sql(str(course_uid), engine, if_exists='replace', index=False)
-    return
-
 # READ
 def read_lectures_from_database(course_uid):
     engine_string = "sqlite:///lectures.db"
@@ -169,7 +163,17 @@ def read_lectures_from_database(course_uid):
     return pd.read_sql("SELECT * FROM \'" + str(course_uid) + "\';", engine)
 
 
-def read_lecture_links_from_database(course_uid):
-    engine_string = "sqlite:///lectures_links.db"
+# ----------------- LECTURE LINK DATABASE --------------------
+def write_lecture_links_to_database(df, user_uid):    #df-columns: lecture, link
+    engine_string = "sqlite:///users.db"
+    table_name = str(user_uid) + "_link"
     engine = sqlalchemy.create_engine(engine_string)
-    return pd.read_sql("SELECT * FROM \'" + str(course_uid) + "\';", engine)
+    df.to_sql(table_name, engine, if_exists='replace', index=False)
+    return
+
+
+def read_lecture_links_from_database(user_uid):
+    engine_string = "sqlite:///users.db"
+    table_name = str(user_uid) + "_link"
+    engine = sqlalchemy.create_engine(engine_string)
+    return pd.read_sql("SELECT * FROM \'" + table_name + "\';", engine)
