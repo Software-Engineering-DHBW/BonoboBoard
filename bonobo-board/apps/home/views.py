@@ -9,15 +9,21 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_protect
 from .forms import LoginForm
 from modules.dhbw.dualis import DualisImporter
 
 is_user_logged_in = False
 dualis_entries = []
 
+@csrf_protect
 def index(request):
+    global is_user_logged_in
+
+    if is_user_logged_in: 
+        return render(request, 'home/index.html', {'is_user_logged_in': is_user_logged_in})
+
     if request.method == 'POST':
-        return HTTPResponse("brah")
         form = LoginForm(request.POST)
 
         if form.is_valid():
