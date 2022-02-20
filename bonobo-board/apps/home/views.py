@@ -3,6 +3,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
+from http.client import HTTPResponse
 from django import template
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
@@ -11,19 +12,23 @@ from django.shortcuts import render
 from .forms import LoginForm
 from modules.dhbw.dualis import DualisImporter
 
+is_user_logged_in = False
+dualis_entries = []
 
 def index(request):
     if request.method == 'POST':
+        return HTTPResponse("brah")
         form = LoginForm(request.POST)
 
         if form.is_valid():
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password")
+            
+            fetch_user_data(email, password)
 
-            dualis_entries = getDualisResults(email, password)
-
-            return render(request, 'home/index.html', {"content": dualis_entries})
-
+            is_user_logged_in = True
+            return render(request, 'home/index.html', {'is_user_logged_in': is_user_logged_in})
+           
     else:
         form = LoginForm()
 
@@ -31,12 +36,21 @@ def index(request):
 
 
 def leistungsuebersicht(request):
-    return render(request, 'home/leistungsuebersicht.html')
+    if not is_user_logged_in:
+        return HttpResponseRedirect('/')
+    
+    return render(request, 'home/leistungsuebersicht.html',{"content": dualis_entries})
+
 
 def email(request):
+    if not is_user_logged_in:
+        return HttpResponseRedirect('/')
     return render(request, 'home/email.html')
 
+
 def vorlesungsplan(request):
+    if not is_user_logged_in:
+        return HttpResponseRedirect('/')
     return render(request, 'home/vorlesungsplan.html')
 
 
@@ -64,10 +78,15 @@ def pages(request):
         html_template = loader.get_template('home/page-500.html')
         return HttpResponse(html_template.render(context, request))
 
+def fetch_user_data(email, password):
+    global dualis_entries 
+    dualis_entries = get_dualis_results(email, password)
 
-def getDualisResults(email, password):
+def get_dualis_results(email, password):
     dualis_importer = DualisImporter()
     dualis_importer.login(email, password)
     dualis_importer.scrape()
     dualis_importer.logout()
     return dualis_importer.scraped_data
+
+

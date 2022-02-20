@@ -27,30 +27,9 @@
                         </form>
                     </div>
                     {% endif %}
-                    <!-- [ tabs ] start -->
-                    {% if content %}
-                    <div class=".col-12 .col-md-8">
-                        <h5>Dualis Übersicht</h5>
-                        <p>GPA-Total:  {{content.gpa_total}}</p>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Subject</th>
-                                    <th>Credits</th>
-                                    <th>Grade</th>
-                                </tr>
-                            </thead>
-                            {% for entry in content.modules %}
-                            <tr>
-                                <td>{{entry.name}}</td>
-                                <td>{{entry.credits}}</td>
-                                <td>{{entry.grade}}</td>
-                            </tr>
-                            {% endfor %}
-                        </table>
-                    </div>
+                    {% if is_user_logged_in %}
+                    <h1>You are logged in already</h1>    
                     {% endif %}
-
                 </div>
                 <!-- [ Main Content ] end -->
             </div>
