@@ -30,17 +30,23 @@
                         <h5>Email</h5>
                     </div>
                     <div class="card-block">
-                        <button type="button" class="btn btn-primary"
-                                title="Send Email" data-toggle="tooltip">Send Email
-                        </button>
+                        <div class="col-md-6">
+                            <form method="POST">
+                                {% csrf_token %}
+                                {{ form }}
+                                <button type="button" class="btn btn-primary" title="Send Email"
+                                    data-toggle="tooltip">Send
+                                    Email
+                                </button>
+                            </form>
+                        </div>
+                        <!-- [ Main Content ] end -->
                     </div>
-                    <!-- [ Main Content ] end -->
                 </div>
             </div>
         </div>
-    </div>
 
-    {% endblock content %}
+        {% endblock content %}
 
-    <!-- Specific Page JS goes HERE  -->
-    {% block javascripts %}{% endblock javascripts %}
+        <!-- Specific Page JS goes HERE  -->
+        {% block javascripts %}{% endblock javascripts %}

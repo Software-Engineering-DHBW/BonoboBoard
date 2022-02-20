@@ -10,17 +10,18 @@ from django.template import loader
 from django.urls import reverse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
-from .forms import LoginForm
+from .forms import LoginForm, ContactForm
 from modules.dhbw.dualis import DualisImporter
 
 is_user_logged_in = False
 dualis_entries = []
 
+
 @csrf_protect
 def index(request):
     global is_user_logged_in
 
-    if is_user_logged_in: 
+    if is_user_logged_in:
         return render(request, 'home/index.html', {'is_user_logged_in': is_user_logged_in})
 
     if request.method == 'POST':
@@ -29,12 +30,12 @@ def index(request):
         if form.is_valid():
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password")
-            
+
             fetch_user_data(email, password)
 
             is_user_logged_in = True
             return render(request, 'home/index.html', {'is_user_logged_in': is_user_logged_in})
-           
+
     else:
         form = LoginForm()
 
@@ -44,15 +45,23 @@ def index(request):
 def leistungsuebersicht(request):
     if not is_user_logged_in:
         return HttpResponseRedirect('/')
-    
-    return render(request, 'home/leistungsuebersicht.html',{"content": dualis_entries})
+
+    return render(request, 'home/leistungsuebersicht.html', {"content": dualis_entries})
 
 
 def email(request):
     if not is_user_logged_in:
         return HttpResponseRedirect('/')
-    return render(request, 'home/email.html')
 
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+
+        if form.is_valid():
+            return render(request, 'home/email.html', {'form': form})
+    else:
+        form = ContactForm()
+
+    return render(request, 'home/email.html', {'form': form})
 
 def vorlesungsplan(request):
     if not is_user_logged_in:
@@ -84,9 +93,11 @@ def pages(request):
         html_template = loader.get_template('home/page-500.html')
         return HttpResponse(html_template.render(context, request))
 
+
 def fetch_user_data(email, password):
-    global dualis_entries 
+    global dualis_entries
     dualis_entries = get_dualis_results(email, password)
+
 
 def get_dualis_results(email, password):
     dualis_importer = DualisImporter()
@@ -94,5 +105,3 @@ def get_dualis_results(email, password):
     dualis_importer.scrape()
     dualis_importer.logout()
     return dualis_importer.scraped_data
-
-
