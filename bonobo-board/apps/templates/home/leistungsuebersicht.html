@@ -11,39 +11,48 @@
 
 <div class="pcoded-content">
     <div class="pcoded-inner-content">
-        <!-- [ breadcrumb ] start -->
-
-        <!-- [ breadcrumb ] end -->
+        <div class="page-header-title">
+            <h3 class="m-b-10">Leistungsübersicht</h3>
+        </div>
+        <nav aria-label="breadcrumb">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i class="feather icon-home"></i></a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Leistungsübersicht</li>
+                </ol>
+            </nav>
+        </nav>
         <div class="main-body">
             <div class="page-wrapper">
                 <!-- [ Main Content ] start -->
-                <div class="row">
-                    <!-- [ tabs ] start -->
-                    {% if content %}
-                    <div class=".col-12 .col-md-8">
-                        <h5>Dualis Übersicht</h5>
-                        <p>GPA-Total:  {{content.gpa_total}}</p>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Subject</th>
-                                    <th>Credits</th>
-                                    <th>Grade</th>
-                                </tr>
-                            </thead>
-                            {% for entry in content.modules %}
-                            <tr>
-                                <td>{{entry.name}}</td>
-                                <td>{{entry.credits}}</td>
-                                <td>{{entry.grade}}</td>
-                            </tr>
-                            {% endfor %}
-                        </table>
+                <div class="card">
+                    <div class="card-block">
+                        <div class="row">
+                            <!-- [ tabs ] start -->
+                            {% if content %}
+                            <div class=".col-12 .col-md-8">
+                                <p>GPA-Total: {{content.gpa_total}}</p>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Subject</th>
+                                        <th>Credits</th>
+                                        <th>Grade</th>
+                                    </tr>
+                                    </thead>
+                                    {% for entry in content.modules %}
+                                    <tr>
+                                        <td>{{entry.name}}</td>
+                                        <td>{{entry.credits}}</td>
+                                        <td>{{entry.grade}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
-                    {% endif %}
-
                 </div>
-                <!-- [ Main Content ] end -->
             </div>
         </div>
     </div>
