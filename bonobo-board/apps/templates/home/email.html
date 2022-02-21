@@ -11,20 +11,41 @@
 
 <div class="pcoded-content">
     <div class="pcoded-inner-content">
-        <!-- [ breadcrumb ] start -->
-
-        <!-- [ breadcrumb ] end -->
+        <div class="page-header-title">
+            <h3 class="m-b-10">Email</h3>
+        </div>
+        <nav aria-label="breadcrumb">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i class="feather icon-home"></i></a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Email</li>
+                </ol>
+            </nav>
+        </nav>
         <div class="main-body">
             <div class="page-wrapper">
                 <!-- [ Main Content ] start -->
-                <h1>Email</h1>
-                <!-- [ Main Content ] end -->
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Email</h5>
+                        </div>
+                        <div class="card-block">
+                            <form method="POST">
+                                {% csrf_token %}
+                                {{ form }}
+                                <button type="button" class="btn btn-primary" title="Send Email"
+                                    data-toggle="tooltip">Send
+                                    Email
+                                </button>
+                            </form>
+                            <!-- [ Main Content ] end -->
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
 
-{% endblock content %}
+            {% endblock content %}
 
-<!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+            <!-- Specific Page JS goes HERE  -->
+            {% block javascripts %}{% endblock javascripts %}

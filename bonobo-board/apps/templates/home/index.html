@@ -9,54 +9,75 @@
 
 {% block content %}
 
+{% if form %}
 <div class="pcoded-content">
     <div class="pcoded-inner-content">
-        <!-- [ breadcrumb ] start -->
-
-        <!-- [ breadcrumb ] end -->
+        <div class="page-header-title">
+            <h3 class="m-b-10">Login</h3>
+        </div>
+        <div class="col-md-6">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form }}
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% if is_user_logged_in %}
+<div class="pcoded-content">
+    <div class="pcoded-inner-content">
+        <div class="page-header-title">
+            <h3 class="m-b-10">Dashboard</h3>
+        </div>
+        <nav aria-label="breadcrumb">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i class="feather icon-home"></i></a>
+                    </li>
+                </ol>
+            </nav>
+        </nav>
         <div class="main-body">
             <div class="page-wrapper">
                 <!-- [ Main Content ] start -->
                 <div class="row">
-                    {% if form %}
-                    <div class="col-md-6">
-                        <form method="POST">
-                            {% csrf_token %}
-                            {{ form }}
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </form>
+                    <div class="col-sm">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Vorlesungsplan</h5>
+                            </div>
+                        </div>
                     </div>
-                    {% endif %}
-                    <!-- [ tabs ] start -->
-                    {% if content %}
-                    <div class=".col-12 .col-md-8">
-                        <h5>Dualis Übersicht</h5>
-                        <p>GPA-Total:  {{content.gpa_total}}</p>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Subject</th>
-                                    <th>Credits</th>
-                                    <th>Grade</th>
-                                </tr>
-                            </thead>
-                            {% for entry in content.modules %}
-                            <tr>
-                                <td>{{entry.name}}</td>
-                                <td>{{entry.credits}}</td>
-                                <td>{{entry.grade}}</td>
-                            </tr>
-                            {% endfor %}
-                        </table>
+                    <div class="col-sm">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Email</h5>
+                            </div>
+                            <div class="card-block">
+                                <button type="button" class="btn btn-primary">Send Email</button>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Leistungsübersicht</h5>
+                            </div>
+                            <div class="card-block">
+                                <div class="col-sm-12">
+                                    {% if content %}
+                                    <p><b>GPA-Total:</b> {{content.gpa_total}}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    {% endif %}
-
                 </div>
-                <!-- [ Main Content ] end -->
             </div>
         </div>
     </div>
 </div>
+{% endif %}
 
 {% endblock content %}
 
