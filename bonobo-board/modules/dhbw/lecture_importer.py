@@ -138,6 +138,15 @@ def get_unique_lectures(df):
         data.append(str(entry))
     return data
 
+def link_lectures_and_links(df_lectures, df_links):
+    df = df_lectures.copy()
+    df["link"] = "NO LINK"
+    for unique_lecture in df_lectures["lecture"].unique():
+        link_for_unique = df_links[df_links["lecture"] == unique_lecture]["link"].values[0]
+        df.loc[df["lecture"] == unique_lecture, "link"] = link_for_unique
+    return df
+
+
 # ----------------- LECTURE DATABASE --------------------
 # WRITE
 def write_all_courses_lectures_to_database():
