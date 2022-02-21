@@ -3,6 +3,7 @@ from typing import Any, ClassVar, Dict, List, TypedDict
 from dhbw.util import ImporterSession
 
 class ContactsDict(TypedDict):
+    id: str
     email: str
     firstName: str
     lastName: str
@@ -38,6 +39,10 @@ class ZimbraHandler(ImporterSession):
     def scrape(self) -> None: ...
 
     def get_contacts(self) -> None: ...
+
+    def new_contact(self, contact_dict: ContactsDict) -> None: ...
+
+    def remove_contact(self, contact_id: str) -> None: ...
 
     def _create_entities_list(
         self,

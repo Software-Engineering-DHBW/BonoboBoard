@@ -36,6 +36,7 @@ def _fill_contacts_dict_elem(contact):
     temp = {}
     if "email" in contact.keys():
         temp["email"] = contact["email"]
+        temp["id"] = contact["id"]
         temp["firstName"] = None
         temp["lastName"] = None
         temp["jobTitle"] = None
@@ -59,6 +60,14 @@ class ZimbraHandler(ImporterSession):
     ----------
     url: str
         the given url for zimbra
+    accountname: str
+        the dhbw mail account
+    contacts: List[Dict[str, str]]
+        a list representing all contacts from zimbra
+    realname: str
+        the real name of the logged in user
+    signatures: List[str]
+        a list of all available signatures to the user
 
     Methods
     -------
@@ -70,6 +79,10 @@ class ZimbraHandler(ImporterSession):
         scrape the wanted data from the website
     get_contacts(self): None
         import contacts from the default "contact" book
+    new_contact(self, contact_dict): None
+        create a new contact inside the default contact book
+    remove_contact(self, contact_id): None
+        remove an existing contact from the default contact book
     _create_entities_list(self, recipients, rec_cc, rec_bcc): List[Dict[str, str]]
         create a list with dictionary elements
     _generate_mail(self, mail_dict): Dict[str, Any]
@@ -171,7 +184,7 @@ class ZimbraHandler(ImporterSession):
         self.scraped_data = temp_json
 
     def get_contacts(self):
-        """import contacts from the default "contact" book
+        """import contacts from the default contact book
 
         Returns
         -------
@@ -216,9 +229,111 @@ class ZimbraHandler(ImporterSession):
 
         for contact in r_contacts["Body"]["SearchResponse"]["cn"]:
             cn = contact["_attrs"]
+            cn["id"] = contact["id"]
             temp = _fill_contacts_dict_elem(cn)
             if temp:
                 self.contacts.append(temp)
+
+    def new_contact(self, contact_dict):
+        """create a new contact inside the default contact book"""
+        url = ZimbraHandler.url
+        origin = "https://" + url_get_fqdn(url)
+
+        self.headers["Content-Type"] = "application/soap+xml; charset=utf-8"
+        self.headers["Referer"] = url
+        self.headers["Origin"] = origin
+
+        contact_details = []
+        for key, value in contact_dict.items():
+            if value:
+                contact_details.append(
+                    {
+                        "n": key,
+                        "_content": value
+                    }
+                )
+
+        contact = {
+            "Header": {
+                "context": {
+                    "_jsns":"urn:zimbra",
+                    "account": {
+                        "_content": self.accountname,
+                        "by": "name"
+                    },
+                    "auth_token": self.auth_token
+                }
+            },
+            "Body": {
+                "CreateContactRequest": {
+                    "_jsns": "urn:zimbraMail",
+                    "cn": {
+                        "l": "7",
+                        "a": contact_details
+                    }
+                }
+            }
+        }
+
+        r_contact = reqpost(
+            url=origin+"/service/soap/CreateContactRequest",
+            headers=self.headers,
+            payload=json.dumps(contact),
+        ).json()
+
+        self.drop_header("Content-Type")
+
+        #TODO response filter for id
+        contact_dict["id"] = r_contact["Body"]["CreateContactResponse"]["cn"][0]["id"]
+        self.contacts.append(contact_dict)
+
+    def remove_contact(self, contact_id):
+        """remove an existing contact from the default contact book"""
+        url = ZimbraHandler.url
+        origin = "https://" + url_get_fqdn(url)
+
+        self.headers["Content-Type"] = "application/soap+xml; charset=utf-8"
+        self.headers["Referer"] = url
+        self.headers["Origin"] = origin
+
+        del_contact = {
+            "Header": {
+                "context": {
+                    "_jsns":"urn:zimbra",
+                    "account": {
+                        "_content": self.accountname,
+                        "by": "name"
+                    },
+                    "auth_token": self.auth_token
+                }
+            },
+            "Body": {
+                "ContactActionRequest": {
+                    "_jsns": "urn:zimbraMail",
+                    "action": {
+                        "id": contact_id,
+                        "l": "3",
+                        "op": "move"
+                    }
+                }
+            }
+        }
+
+        reqpost(
+            url=origin+"/service/soap/ContactActionRequest",
+            headers=self.headers,
+            payload=json.dumps(del_contact)
+        )
+
+        self.drop_header("Content-Type")
+
+        i = 0
+        while i < len(self.contacts):
+            if self.contacts[i]["id"] == contact_id:
+                break
+            i+=1
+
+        del self.contacts[i]
 
     def _create_entities_list(self, recipients, rec_cc, rec_bcc):
         """create a list with dictionary elements"""
