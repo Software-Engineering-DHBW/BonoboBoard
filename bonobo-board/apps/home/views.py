@@ -12,10 +12,11 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
 from .forms import LoginForm, ContactForm
 from modules.dhbw.dualis import DualisImporter
+from modules.dhbw.lecture_importer import LectureImporter
+import json
 
 is_user_logged_in = False
 dualis_entries = []
-
 
 @csrf_protect
 def index(request):
@@ -65,9 +66,12 @@ def email(request):
     return render(request, 'home/email.html', {'form': form})
 
 def vorlesungsplan(request):
+
     if not is_user_logged_in:
         return HttpResponseRedirect('/')
-    return render(request, 'home/vorlesungsplan.html')
+
+    lectures = get_lecture_results(7761001)
+    return render(request, 'home/vorlesungsplan.html', {"lectures": lectures})
 
 
 def pages(request):
@@ -97,8 +101,8 @@ def pages(request):
 
 def fetch_user_data(email, password):
     global dualis_entries
-    dualis_entries = get_dualis_results(email, password)
 
+    dualis_entries = get_dualis_results(email, password)
 
 def get_dualis_results(email, password):
     dualis_importer = DualisImporter()
@@ -106,3 +110,14 @@ def get_dualis_results(email, password):
     dualis_importer.scrape()
     dualis_importer.logout()
     return dualis_importer.scraped_data
+
+def get_lecture_results(uid):
+    #lecture_importer = LectureImporter.read_lectures_from_database(uid)
+    lecture_importer = LectureImporter(uid)
+    lectures_df = lecture_importer.limit_days_in_list(14, 14)
+
+    json_records = lectures_df.reset_index().to_json(orient='records')
+    lectures = json.loads(json_records)
+
+    return lectures
+
