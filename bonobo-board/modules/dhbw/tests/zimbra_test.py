@@ -7,7 +7,7 @@ from os import environ
 from unittest import TestCase, TestSuite
 from dhbw.zimbra import ZimbraHandler
 
-z_hdlr = ZimbraHandler()
+zimbra_handler = ZimbraHandler()
 
 class TestZimbraHandler(TestCase):
     """unittests for the zimbra class"""
@@ -15,21 +15,21 @@ class TestZimbraHandler(TestCase):
         """test login functionality"""
         usr_name = environ.get("STUDENTMAIL")
         passwd = environ.get("STUDENTPASS")
-        z_hdlr.login(usr_name, passwd)
-        self.assertIsNotNone(z_hdlr.auth_token)
-        self.assertIsNotNone(z_hdlr.headers["Cookie"])
-        self.assertIsNotNone(z_hdlr.accountname)
+        zimbra_handler.login(usr_name, passwd)
+        self.assertIsNotNone(zimbra_handler.auth_token)
+        self.assertIsNotNone(zimbra_handler.headers["Cookie"])
+        self.assertIsNotNone(zimbra_handler.accountname)
 
     def test_scrape(self):
         """test scraping functionality"""
-        z_hdlr.scrape()
-        self.assertIsNotNone(z_hdlr.scraped_data)
-        self.assertIsNotNone(z_hdlr.realname)
+        zimbra_handler.scrape()
+        self.assertIsNotNone(zimbra_handler.scraped_data)
+        self.assertIsNotNone(zimbra_handler.realname)
 
     def test_get_contacts(self):
         """test get contacts functionality"""
-        z_hdlr.get_contacts()
-        self.assertIsNotNone(z_hdlr.contacts)
+        zimbra_handler.get_contacts()
+        self.assertIsNotNone(zimbra_handler.contacts)
 
     def test_new_contact(self):
         """test creating a new contact"""
@@ -39,21 +39,21 @@ class TestZimbraHandler(TestCase):
             "lastName": "bonoboboard",
             "jobTitle": "BONOBOTESTER"
         }
-        z_hdlr.new_contact(contact)
+        zimbra_handler.new_contact(contact)
 
         contact_found = False
-        for elem in z_hdlr.contacts:
+        for elem in zimbra_handler.contacts:
             if elem["firstName"] == contact["firstName"]:
                 contact_found = True
         # meaningful test output
         print(f"\n\n>>> Created Contact: \"{ contact_found }\"\n")
 
-        self.assertIn(contact, z_hdlr.contacts)
+        self.assertIn(contact, zimbra_handler.contacts)
 
     def test_remove_contact(self):
         """test removing an existing contact"""
         contact_id = ""
-        for elem in z_hdlr.contacts:
+        for elem in zimbra_handler.contacts:
             if elem["firstName"] == "unittest":
                 contact_id = elem["id"]
                 break
@@ -61,9 +61,9 @@ class TestZimbraHandler(TestCase):
         # meaningful test output
         print(f"\n\n>>> Removing contact with firstName \"unittest\" and id \"{ contact_id }\"")
 
-        z_hdlr.remove_contact(contact_id)
+        zimbra_handler.remove_contact(contact_id)
         contact_found = False
-        for elem in z_hdlr.contacts:
+        for elem in zimbra_handler.contacts:
             if not elem:
                 continue
             if elem["firstName"] == "unittest":
@@ -86,12 +86,12 @@ class TestZimbraHandler(TestCase):
             "cttype": "text/plain",
             "content": "Hello there my old me,\n\nif this mail reached you then sending mails works as expected\n\nBest Regards\n~ future you ~"
         }
-        z_hdlr.send_mail(mail_dict)
+        zimbra_handler.send_mail(mail_dict)
 
     def test_logout(self):
         """test logout functionality"""
-        z_hdlr.logout()
-        self.assertEqual("", z_hdlr.auth_token)
+        zimbra_handler.logout()
+        self.assertEqual("", zimbra_handler.auth_token)
 
     @classmethod
     def cls_suite(cls):
