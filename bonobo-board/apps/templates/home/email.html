@@ -33,9 +33,11 @@
                         <div class="card-block">
                             <form method="POST">
                                 {% csrf_token %}
-                                {{ form }}
+                                <div class="form-group">
+                                    {{ form }}
+                                </div>
                                 <button type="button" class="btn btn-primary" title="Send Email"
-                                    data-toggle="tooltip">Send
+                                        data-toggle="tooltip">Send
                                     Email
                                 </button>
                             </form>
@@ -44,8 +46,11 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
 
-            {% endblock content %}
+{% endblock content %}
 
-            <!-- Specific Page JS goes HERE  -->
-            {% block javascripts %}{% endblock javascripts %}
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

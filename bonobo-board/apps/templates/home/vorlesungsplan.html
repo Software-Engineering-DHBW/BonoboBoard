@@ -26,7 +26,24 @@
             <div class="page-wrapper">
                 <!-- [ Main Content ] start -->
                 <div class="card">
-
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Fach</th>
+                            <th>Ort</th>
+                            <th>Start</th>
+                            <th>Ende</th>
+                        </tr>
+                        </thead>
+                        {% for entry in lectures %}
+                        <tr>
+                            <td>{{entry.lecture}}</td>
+                            <td>{{entry.location}}</td>
+                            <td>{{entry.start}}</td>
+                            <td>{{entry.end}}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
                 </div>
                 <!-- [ Main Content ] end -->
             </div>
