@@ -26,6 +26,11 @@ class TestZimbraHandler(TestCase):
         self.assertIsNotNone(z_hdlr.scraped_data)
         self.assertIsNotNone(z_hdlr.realname)
 
+    def test_get_contacts(self):
+        """test get contacts functionality"""
+        z_hdlr.get_contacts()
+        self.assertIsNotNone(z_hdlr.contacts)
+
     def test_send_mail(self):
         """test send mail functionality"""
         mymail = environ.get("STUDENTMAIL")
@@ -50,6 +55,7 @@ class TestZimbraHandler(TestCase):
         cls_suite = TestSuite()
         cls_suite.addTest(cls("test_login"))
         cls_suite.addTest(cls("test_scrape"))
+        cls_suite.addTest(cls("test_get_contacts"))
         cls_suite.addTest(cls("test_send_mail"))
         cls_suite.addTest(cls("test_logout"))
         return cls_suite

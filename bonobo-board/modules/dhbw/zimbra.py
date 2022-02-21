@@ -31,6 +31,23 @@ def _entity_list(in_list, out_list, in_type):
 
     return out_list
 
+def _fill_contacts_dict_elem(contact):
+    """checks for existing keys inside the response contact dict and creates contact dict"""
+    temp = {}
+    if "email" in contact.keys():
+        temp["email"] = contact["email"]
+        temp["firstName"] = None
+        temp["lastName"] = None
+        temp["jobTitle"] = None
+        if "firstName" in contact.keys():
+            temp["firstName"] = contact["firstName"]
+        if "lastName" in contact.keys():
+            temp["lastName"] = contact["lastName"]
+        if "jobTitle" in contact.keys():
+            temp["jobTitle"] = contact["jobTitle"]
+
+    return temp
+
 ###            ###
 # ZIMBRA HANDLER #
 ###            ###
@@ -42,17 +59,23 @@ class ZimbraHandler(ImporterSession):
     ----------
     url: str
         the given url for zimbra
-    auth_token: str
-        the string representing the authentication cookie for the created session
-    headers: dict
-        a dictionary with default headers and their respective values
 
     Methods
     -------
-    drop_header(self, header) : None
-        drop the given header from headers dict
-    login(self) : None
+    login(self): None
         creates a session for the user
+    logout(self): None
+        sends a logout request
+    scrape(self): None
+        scrape the wanted data from the website
+    get_contacts(self): None
+        import contacts from the default "contact" book
+    _create_entities_list(self, recipients, rec_cc, rec_bcc): List[Dict[str, str]]
+        create a list with dictionary elements
+    _generate_mail(self, mail_dict): Dict[str, Any]
+        build the mail in the needed format for zimbra
+    send_mail(self, mail_dict): None
+        sends a mail to the soap backend of zimbra
     """
 
     url = "https://studgate.dhbw-mannheim.de/zimbra/"
@@ -61,6 +84,7 @@ class ZimbraHandler(ImporterSession):
 
     def __init__(self):
         super().__init__()
+        self.accountname = ""
         self.contacts = []
         self.headers["Host"] = url_get_fqdn(ZimbraHandler.url)
         self.realname = ""
@@ -146,6 +170,56 @@ class ZimbraHandler(ImporterSession):
 
         self.scraped_data = temp_json
 
+    def get_contacts(self):
+        """import contacts from the default "contact" book
+
+        Returns
+        -------
+        None
+        """
+        url = ZimbraHandler.url
+        origin = "https://" + url_get_fqdn(url)
+
+        self.headers["Content-Type"] = "application/soap+xml; charset=utf-8"
+        self.headers["Referer"] = url
+        self.headers["Origin"] = origin
+
+        #TODO query is limited to 100 contact entities --> query all contact entities
+
+        query = {
+            "Header": {
+                "context": {
+                    "_jsns": "urn:zimbra",
+                    "account": {
+                        "_content": self.accountname,
+                        "by": "name"
+                    }
+                }
+            },
+            "Body": {
+                "SearchRequest": {
+                    "_jsns": "urn:zimbraMail",
+                    "sortBy": "nameAsc",
+                    "offset":  0,
+                    "limit": 100,
+                    "query": "in:contacts",
+                    "types": "contact"
+                }
+            }
+        }
+
+        r_contacts = reqpost(
+            url=origin+"/service/soap/SearchRequest",
+            headers=self.headers,
+            payload=json.dumps(query)
+        ).json()
+
+        for contact in r_contacts["Body"]["SearchResponse"]["cn"]:
+            cn = contact["_attrs"]
+            temp = _fill_contacts_dict_elem(cn)
+            if temp:
+                self.contacts.append(temp)
+
     def _create_entities_list(self, recipients, rec_cc, rec_bcc):
         """create a list with dictionary elements"""
         entities_list = [
@@ -211,6 +285,8 @@ class ZimbraHandler(ImporterSession):
         """sends a mail to the soap backend of zimbra
         Parameters
         ----------
+        mail_dict: SendMailDict
+            a dictionary containing recipients, subject, content-type and the actual content
 
         Returns
         -------
@@ -232,6 +308,8 @@ class ZimbraHandler(ImporterSession):
             payload=json.dumps(mail),
             return_code=200
         )
+
+        self.drop_header("Content-Type")
 
     def logout(self):
         """sends a logout request

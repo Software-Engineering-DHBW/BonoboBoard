@@ -2,6 +2,12 @@ from typing import Any, ClassVar, Dict, List, TypedDict
 
 from dhbw.util import ImporterSession
 
+class ContactsDict(TypedDict):
+    email: str
+    firstName: str
+    lastName: str
+    jobTitle: str
+
 class SendMailDict(TypedDict):
     recipients: List[str]
     rec_cc: List[str]
@@ -16,20 +22,22 @@ def _entity_list(
     in_type: str
 ) -> List[Dict[str, str]]: ...
 
+def _fill_contacts_dict_elem(contact: Dict[str, str]) -> ContactsDict: ...
+
 class ZimbraHandler(ImporterSession):
     accountname: str
-    contacts: List[str]
+    contacts: List[ContactsDict]
     realname: str
     signatures: List[str]
     url: ClassVar[str]
 
     def __init__(self) -> None: ...
 
-    def drop_header(self, header: str) -> None: ...
-
     def login(self, username: str, password: str) -> None: ...
 
     def scrape(self) -> None: ...
+
+    def get_contacts(self) -> None: ...
 
     def _create_entities_list(
         self,
