@@ -131,12 +131,21 @@ class LectureImporter(Importer):
 
 # -------------- HELPERS --------------------
 
-def get_unique_lectures(df):
-    unique = df["lecture"].unique()
+def get_unique_lectures(df_lectures):
+    unique = df_lectures["lecture"].unique()
     data = []
     for entry in unique:
         data.append(str(entry))
     return data
+
+
+def create_empty_user_links_df(df_lectures):
+    unique_lectures = get_unique_lectures(df_lectures)
+    df_links = pd.DataFrame()
+    df_links["lecture"] = unique_lectures
+    df_links["link"] = ""
+    return df_links
+
 
 def link_lectures_and_links(df_lectures, df_links):
     df = df_lectures.copy()
