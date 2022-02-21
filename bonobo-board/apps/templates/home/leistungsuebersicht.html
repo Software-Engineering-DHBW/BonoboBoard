@@ -11,20 +11,70 @@
 
 <div class="pcoded-content">
     <div class="pcoded-inner-content">
-        <!-- [ breadcrumb ] start -->
-
-        <!-- [ breadcrumb ] end -->
+        <div class="page-header-title">
+            <h3 class="m-b-10">Leistungsübersicht</h3>
+        </div>
+        <nav aria-label="breadcrumb">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i class="feather icon-home"></i></a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Leistungsübersicht</li>
+                </ol>
+            </nav>
+        </nav>
         <div class="main-body">
             <div class="page-wrapper">
                 <!-- [ Main Content ] start -->
-                <h1>Leistungsübersicht</h1>
-                <!-- [ Main Content ] end -->
-            </div>
-        </div>
-    </div>
-</div>
+                <div class="row">
+                    <div class="col-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Noten</h5>
+                            </div>
+                            <div class="card-block">
+                                <div class="row">
+                                    {% if content %}
+                                    <div class="col">
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>Subject</th>
+                                                <th>Credits</th>
+                                                <th>Grade</th>
+                                            </tr>
+                                            </thead>
+                                            {% for entry in content.modules %}
+                                            <tr>
+                                                <td>{{entry.name}}</td>
+                                                <td>{{entry.credits}}</td>
+                                                <td>{{entry.grade}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </table>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>GPA</h5>
+                            </div>
+                            <div class="card-block">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        {% if content %}
+                                        <p><b>GPA-Total:</b> {{content.gpa_total}}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-{% endblock content %}
+                    {% endblock content %}
 
-<!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+                    <!-- Specific Page JS goes HERE  -->
+                    {% block javascripts %}{% endblock javascripts %}
