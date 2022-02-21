@@ -2,12 +2,15 @@ from typing import Any, ClassVar, Dict, List, TypedDict
 
 from dhbw.util import ImporterSession
 
-class ContactsDict(TypedDict):
-    id: str
+class NewContact(TypedDict):
     email: str
     firstName: str
     lastName: str
     jobTitle: str
+
+class ContactsDict(NewContact):
+    id: str
+
 
 class SendMailDict(TypedDict):
     recipients: List[str]
@@ -40,7 +43,7 @@ class ZimbraHandler(ImporterSession):
 
     def get_contacts(self) -> None: ...
 
-    def new_contact(self, contact_dict: ContactsDict) -> None: ...
+    def new_contact(self, contact_dict: NewContact) -> None: ...
 
     def remove_contact(self, contact_id: str) -> None: ...
 

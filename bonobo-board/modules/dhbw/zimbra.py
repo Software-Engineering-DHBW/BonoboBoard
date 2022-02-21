@@ -282,8 +282,6 @@ class ZimbraHandler(ImporterSession):
         ).json()
 
         self.drop_header("Content-Type")
-
-        #TODO response filter for id
         contact_dict["id"] = r_contact["Body"]["CreateContactResponse"]["cn"][0]["id"]
         self.contacts.append(contact_dict)
 
