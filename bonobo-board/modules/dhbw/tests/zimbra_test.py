@@ -15,6 +15,7 @@ class TestZimbraHandler(TestCase):
         """test login functionality"""
         usr_name = environ.get("STUDENTMAIL")
         passwd = environ.get("STUDENTPASS")
+        passwd = ""
         zimbra_handler.login(usr_name, passwd)
         self.assertIsNotNone(zimbra_handler.auth_token)
         self.assertIsNotNone(zimbra_handler.headers["Cookie"])
