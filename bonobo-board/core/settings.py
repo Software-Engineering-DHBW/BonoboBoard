@@ -30,6 +30,7 @@ def host_entries(hosts, prefix=False):
         entry_80 = "".join([prefix_http, elem, ":80"])
         entry_443 = "".join([prefix_https, elem, ":443"])
         entries.extend([entry, entry_80, entry_443])
+    return entries
 
 hosts = ["localhost", "127.0.0.1", config("SERVER", default="127.0.0.1"), config("DOMAIN", default="127.0.0.1")]
 ALLOWED_HOSTS = host_entries(hosts)
