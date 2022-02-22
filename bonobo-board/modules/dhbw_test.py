@@ -54,6 +54,9 @@ def main():
     """Run the provided tests"""
     dhbw_suite = suite()
     runner = TextTestRunner(verbosity=2)
-    runner.run(dhbw_suite)
+    test_result = runner.run(dhbw_suite)
+    if test_result.errors != 0 and test_result.failures != 0:
+        exit(1)
+
 
 main()
