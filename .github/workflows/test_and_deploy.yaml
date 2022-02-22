@@ -10,8 +10,8 @@ jobs:
     environment:
       name: unittests
     env:
-      STUDENTMAIL: ${{ env.STUDENTMAIL }}
-      STUDENTPASS: ${{ env.STUDENTPASS }}
+      STUDENTMAIL: ${{ secrets.STUDENTMAIL }}
+      STUDENTPASS: ${{ secrets.STUDENTPASS }}
     runs-on: ubuntu-latest
 
     steps:
