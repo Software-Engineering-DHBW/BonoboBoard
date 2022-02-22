@@ -21,7 +21,7 @@
 \graphicspath{ {../img/} }
 \renewcommand\familydefault{\sfdefault}
 
-
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 
 
 \pagestyle{fancy}
@@ -90,7 +90,7 @@ Diese orientieren sich an den, durch uns identifizierten, Haupt-Aufgabengebieten
 
 \begin{table}[H]
 \begin{center}
-\begin{tabular}{|p{4cm}|p{8cm}|}
+\begin{tabular}{|L{4cm}|L{8cm}|}
 \hline
 \textbf{Tool} &\textbf{Grund/Einsatzzweck} \\ \hline
 Pycharm, Visual Studio Code & Code schreiben \\ \hline
@@ -108,7 +108,7 @@ GitHub & Repository-Verwaltung\\ \hline
 
 \begin{table}[H]
 \begin{center}
-\begin{tabular}{|p{4cm}|p{8cm}|}
+\begin{tabular}{|L{4cm}|L{8cm}|}
 \hline
 \textbf{Tool} &\textbf{Grund/Einsatzzweck} \\ \hline
 GitHub Actions, Unittests & Code testen \\ \hline
@@ -122,7 +122,7 @@ GitHub Actions & Produkt integrieren\\ \hline
 
 \begin{table}[H]
 \begin{center}
-\begin{tabular}{|p{4cm}|p{8cm}|}
+\begin{tabular}{|L{4cm}|L{8cm}|}
 \hline
 \textbf{Tool} &\textbf{Grund/Einsatzzweck} \\ \hline
 Pycharm, Visual Studio Code & Code formatieren\\ \hline
@@ -137,7 +137,7 @@ GitHub, Discord & Code Reviews\\ \hline
 
 \begin{table}[H]
 \begin{center}
-\begin{tabular}{|p{4cm}|p{8cm}|}
+\begin{tabular}{|L{4cm}|L{8cm}|}
 \hline
 \textbf{Tool} &\textbf{Grund/Einsatzzweck} \\ \hline
 offizielle Dokumentationen (Python, Django), Stackoverflow, Youtube, ... & Wissensgenerierung\\ \hline
@@ -152,7 +152,7 @@ OneNote, Discord, GitHub & Dokumentation neuer Tools/Verfahren und Änderungen\\
 
 \begin{table}[H]
 \begin{center}
-\begin{tabular}{|p{4cm}|p{8cm}|}
+\begin{tabular}{|L{4cm}|L{8cm}|}
 \hline
 \textbf{Tool} &\textbf{Grund/Einsatzzweck} \\ \hline
 Server (VPS) & Ressourcen bereitstellen\\ \hline
