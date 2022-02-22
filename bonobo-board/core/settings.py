@@ -21,6 +21,7 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 ALLOWED_HOSTS        = ['localhost', 'localhost:80', 'localhost:443', '127.0.0.1', config('SERVER', default='127.0.0.1'), config('SERVER', default='127.0.0.1') + ':443']
 CSRF_TRUSTED_ORIGINS = ['http://localhost:443', 'http://localhost:80', 'http://127.0.0.1', 'https://' + config('SERVER', default='127.0.0.1'), 'http://' + config('SERVER', default='127.0.0.1'), 'http://' + config('SERVER', default='127.0.0.1') + ':443']
 
+
 with open("settings_py.txt", "w+") as fd:
     fd.write(f"allowed hosts {ALLOWED_HOSTS}\n\n\n trusted origins {CSRF_TRUSTED_ORIGINS}")
 
