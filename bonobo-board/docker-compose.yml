@@ -17,8 +17,11 @@ services:
     image: "nginx:latest"
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - ./nginx:/etc/nginx/conf.d
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/certs:/etc/letsencrypt:ro
+      - ./nginx/acme:/var/www/letsencrypt
     networks:
       - web_network
     depends_on: 
