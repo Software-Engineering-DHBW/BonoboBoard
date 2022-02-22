@@ -9,6 +9,9 @@ jobs:
     name: Unittests backend
     environment:
       name: unittests
+    env:
+      STUDENTMAIL: ${{ env.STUDENTMAIL }}
+      STUDENTPASS: ${{ env.STUDENTPASS }}
     runs-on: ubuntu-latest
 
     steps:
@@ -37,4 +40,5 @@ jobs:
     runs-on: ubuntu latest
 
     steps:
-      - run: echo "To the moon! (insert rocket image here)"
+      - name: Run deployment
+        run: echo "To the moon! (insert rocket image here)"

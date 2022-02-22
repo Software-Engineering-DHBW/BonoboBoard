@@ -9,6 +9,9 @@ jobs:
     name: Unittests Backend
     environment:
       name: unittests
+    env:
+      STUDENTMAIL: ${{ env.STUDENTMAIL }}
+      STUDENTPASS: ${{ env.STUDENTPASS }}
     runs-on: ubuntu-latest
 
     steps:
