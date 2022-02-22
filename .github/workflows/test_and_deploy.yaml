@@ -37,4 +37,4 @@ jobs:
     runs-on: ubuntu latest
 
     steps:
-      - run echo "To the moon! (insert rocket image here)"
+      - run: echo "To the moon! (insert rocket image here)"
