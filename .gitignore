@@ -131,6 +131,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Certs through certbot
+bonobo-board/nginx/certs
+
 # WHITELIST
 !bonobo-board/.env
 

@@ -18,12 +18,24 @@ SECRET_KEY = config('SECRET_KEY', default='S#perS3crEt_1122')
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 # load production server from .env
-ALLOWED_HOSTS        = ['localhost', 'localhost:80', 'localhost:443', '127.0.0.1', config('SERVER', default='127.0.0.1'), config('SERVER', default='127.0.0.1') + ':443']
-CSRF_TRUSTED_ORIGINS = ['http://localhost:443', 'http://localhost:80', 'http://127.0.0.1', 'https://' + config('SERVER', default='127.0.0.1'), 'http://' + config('SERVER', default='127.0.0.1'), 'http://' + config('SERVER', default='127.0.0.1') + ':443']
+def host_entries(hosts, prefix=False):
+    entries = []
+    prefix_http = ""
+    prefix_https = ""
+    if prefix:
+        prefix_http = "http://"
+        prefix_https = "https://"
+    for elem in hosts:
+        entry = "".join([prefix_https, elem])
+        entry_80 = "".join([prefix_http, elem, ":80"])
+        entry_443 = "".join([prefix_https, elem, ":443"])
+        entries.extend([entry, entry_80, entry_443])
+    return entries
 
-
-with open("settings_py.txt", "w+") as fd:
-    fd.write(f"allowed hosts {ALLOWED_HOSTS}\n\n\n trusted origins {CSRF_TRUSTED_ORIGINS}")
+hosts = ["localhost", "127.0.0.1", config("SERVER", default="127.0.0.1"), config("DOMAIN", default="127.0.0.1")]
+ALLOWED_HOSTS = host_entries(list(set(hosts)))
+CSRF_TRUSTED_ORIGINS = host_entries(list(set(hosts)), True)
+del hosts
 
 # Application definition
 

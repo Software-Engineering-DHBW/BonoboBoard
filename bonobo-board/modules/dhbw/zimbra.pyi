@@ -11,7 +11,6 @@ class NewContact(TypedDict):
 class ContactsDict(NewContact):
     id: str
 
-
 class SendMailDict(TypedDict):
     recipients: List[str]
     rec_cc: List[str]
