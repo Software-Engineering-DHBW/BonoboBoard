@@ -40,5 +40,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Run deployment
-        run: echo "To the moon! (insert rocket image here)"
+      - name: Start deployment
+        run: echo "Ready to go, deploying..."
+      
+      - name: Run Remote Script
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: whoami
