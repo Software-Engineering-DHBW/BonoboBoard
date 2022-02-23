@@ -55,7 +55,7 @@ def main():
     dhbw_suite = suite()
     runner = TextTestRunner(verbosity=2)
     test_result = runner.run(dhbw_suite)
-    if test_result.errors != 0 and test_result.failures != 0:
+    if len(test_result.errors) != 0 or len(test_result.failures) != 0:
         exit(1)
 
 
