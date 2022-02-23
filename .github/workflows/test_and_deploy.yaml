@@ -56,11 +56,17 @@ jobs:
         working-directory: ./bonobo-board
         run: docker-compose build
 
+      - name: Create deploy archive
+        run: |
+          mkdir ../build
+          cp -TR ./bonobo-board ../build
+          tar -cvf deploy.tar ../build/
+
       - name: Upload production artifact
         uses: actions/upload-artifact@v2
         with:
-          name: prod-docker-folder
-          path: ./bonobo-board
+          name: production-artifact
+          path: deploy.tar
       
       # - name: Save SSL certificates and cleanup
       #   uses: appleboy/ssh-action@master
@@ -83,5 +89,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          source: "prod-docker-folder/*"
+          source: "deploy.tar"
           target: "/bonobo-prod"
