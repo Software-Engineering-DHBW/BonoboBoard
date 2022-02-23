@@ -50,7 +50,7 @@ jobs:
         run: |
           cp ./server-deployment/install.sh ./bonobo-board/
           cp ./server-deployment/docker-compose.yml ./bonobo-board/
-          echo "SECRETKEY=${{secrets.DJANGOSECRET}}" >> ./bonobo-board/.env
+          echo "SECRET_KEY=${{secrets.DJANGOSECRET}}" >> ./bonobo-board/.env
         
       - name: Test-build docker
         working-directory: ./bonobo-board
@@ -62,13 +62,26 @@ jobs:
           name: prod-docker-folder
           path: ./bonobo-board
       
-      - name: Run Remote Script
-        uses: appleboy/ssh-action@master
+      # - name: Save SSL certificates and cleanup
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.HOST }}
+      #     username: ${{ secrets.USERNAME }}
+      #     password: ${{ secrets.PASSWORD }}
+      #     port: ${{ secrets.PORT }}
+      #     script: |
+      #       echo "${{ secrets.PASSWORD }}" | sudo -S cd /bonobo-prod
+      #       echo "${{ secrets.PASSWORD }}" | sudo -S cp -r /bonobo-prod/nginx/certs /bonobo-tmp
+      #       echo "${{ secrets.PASSWORD }}" | sudo -S docker-compose stop
+      #       echo "${{ secrets.PASSWORD }}" | sudo -S cd /bonobo-tmp
+      #       echo "${{ secrets.PASSWORD }}" | sudo -S rm -rf /bonobo-prod
+      
+      - name: Copy productive environment to server
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          script: |
-            whoami
-            ls -al
+          source: "prod-docker-folder/*"
+          target: "/bonobo-prod"
