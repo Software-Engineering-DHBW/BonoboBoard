@@ -45,10 +45,22 @@ jobs:
       
       - name: Checkout repository
         uses: actions/checkout@v2
+      
+      - name: Initialize production environment
+        run: |
+          cp ./server-deployment/install.sh ./bonobo-board/
+          cp ./server-deployment/docker-compose.yml ./bonobo-board/
+          echo "SECRETKEY=${{secrets.DJANGOSECRET}}" >> ./bonobo-board/.env
         
       - name: Test-build docker
         working-directory: ./bonobo-board
         run: docker-compose build
+
+      - name: Upload production artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: prod-docker-folder
+          path: ./bonobo-board
       
       - name: Run Remote Script
         uses: appleboy/ssh-action@master
@@ -57,4 +69,6 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          script: bash test_gh_actions.sh
+          script: |
+            whoami
+            ls -al
