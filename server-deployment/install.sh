@@ -11,15 +11,19 @@ if [ `id -u` -ne 0 ]; then
 fi
 
 function exit_on_error {
-	if [ `$?` -ne 0 ]; then
+	if [ $? -ne 0 ]; then
 		echo "An error appeared, aborting container creation"
 		exit $FAILURE
+	fi
 }
 
-echo "Starting the Docker Containers ..."
-docker-compose up -d appseed-app
+echo "Stopping the old Docker Containers"
+sudo docker-compose stop appseed-app nginx
 exit_on_error
-docker-compose up -d nginx
+echo "Starting the Docker Containers ..."
+sudo docker-compose up -d appseed-app
+exit_on_error
+sudo docker-compose up -d nginx
 exit_on_error
 echo "Docker Container are successfully deployed!"
 exit $SUCCESS
