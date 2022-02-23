@@ -43,6 +43,13 @@ jobs:
       - name: Start deployment
         run: echo "Ready to go, deploying..."
       
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        
+      - name: Test-build docker
+        working-directory: ./bonobo-board
+        run: docker-compose build
+      
       - name: Run Remote Script
         uses: appleboy/ssh-action@master
         with:
