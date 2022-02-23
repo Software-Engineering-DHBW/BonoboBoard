@@ -33,8 +33,8 @@ def host_entries(hosts, prefix=False):
     return entries
 
 hosts = ["localhost", "127.0.0.1", config("SERVER", default="127.0.0.1"), config("DOMAIN", default="127.0.0.1")]
-ALLOWED_HOSTS = host_entries(hosts)
-CSRF_TRUSTED_ORIGINS = host_entries(hosts, True)
+ALLOWED_HOSTS = host_entries(list(set(hosts)))
+CSRF_TRUSTED_ORIGINS = host_entries(list(set(hosts)), True)
 del hosts
 
 # Application definition
