@@ -87,7 +87,7 @@ jobs:
           script: |
             echo "${{ secrets.PASSWORD }}" | sudo -S mkdir -p /bonobo-tmp
             echo "${{ secrets.PASSWORD }}" | sudo -S cp -a /bonobo-prod/nginx/certs /bonobo-tmp
-            echo "${{ secrets.PASSWORD }}" | sudo -S mkdir /bonobo-tmp/www
+            echo "${{ secrets.PASSWORD }}" | sudo -S mkdir -p /bonobo-tmp/www
             
       - name: Cleanup before deployment
         uses: appleboy/ssh-action@master
