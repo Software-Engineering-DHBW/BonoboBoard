@@ -5,35 +5,35 @@ on:
       - main
 
 jobs:
-  # unittests:
-  #   name: Unittests backend
-  #   environment:
-  #     name: unittests
-  #   env:
-  #     STUDENTMAIL: ${{ secrets.STUDENTMAIL }}
-  #     STUDENTPASS: ${{ secrets.STUDENTPASS }}
-  #   runs-on: ubuntu-latest
+  unittests:
+    name: Unittests backend
+    environment:
+      name: unittests
+    env:
+      STUDENTMAIL: ${{ secrets.STUDENTMAIL }}
+      STUDENTPASS: ${{ secrets.STUDENTPASS }}
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v2
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v2
-  #       with:
-  #         python-version: 3.8
-  #         architecture: x64
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+          architecture: x64
 
-  #     - name: Install dependencies
-  #       working-directory: ./bonobo-board/modules/dhbw/
-  #       run: pip3 install -r requirements.txt
+      - name: Install dependencies
+        working-directory: ./bonobo-board/modules/dhbw/
+        run: pip3 install -r requirements.txt
 
-  #     - name: Run tests
-  #       working-directory: ./bonobo-board/modules/
-  #       run: ./dhbw_test.py
+      - name: Run tests
+        working-directory: ./bonobo-board/modules/
+        run: ./dhbw_test.py
   
   deployment:
-    # needs: unittests
+    needs: unittests
     name: Deploy on server
     environment: 
       name: deployment
@@ -48,8 +48,7 @@ jobs:
       
       - name: Initialize production environment
         run: |
-          cp ./server-deployment/install.sh ./bonobo-board/
-          cp ./server-deployment/docker-compose.yml ./bonobo-board/
+          cp -a ./server-deployment/. ./bonobo-board/
           echo "SECRET_KEY=${{secrets.DJANGOSECRET}}" >> ./bonobo-board/.env
         
       - name: Test-build docker
@@ -67,21 +66,7 @@ jobs:
         with:
           name: production-artifact
           path: deploy.tar
-      
-      # - name: Save SSL certificates and cleanup
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{ secrets.HOST }}
-      #     username: ${{ secrets.USERNAME }}
-      #     password: ${{ secrets.PASSWORD }}
-      #     port: ${{ secrets.PORT }}
-      #     script: |
-      #       echo "${{ secrets.PASSWORD }}" | sudo -S cd /bonobo-prod
-      #       echo "${{ secrets.PASSWORD }}" | sudo -S cp -r /bonobo-prod/nginx/certs /bonobo-tmp
-      #       echo "${{ secrets.PASSWORD }}" | sudo -S docker-compose stop
-      #       echo "${{ secrets.PASSWORD }}" | sudo -S cd /bonobo-tmp
-      #       echo "${{ secrets.PASSWORD }}" | sudo -S rm -rf /bonobo-prod
-      
+
       - name: Copy productive environment to server
         uses: appleboy/scp-action@master
         with:
@@ -90,4 +75,54 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           source: "deploy.tar"
-          target: "bonobo-upload"
+          target: "bonobo-upload-tmp"
+      
+      - name: Save SSL certificates
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: echo "${{ secrets.PASSWORD }}" | sudo -S cp -r /bonobo-prod/nginx/certs /bonobo-tmp
+            
+      - name: Cleanup
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            echo "${{ secrets.PASSWORD }}" | sudo -S cd /bonobo-prod
+            sudo docker-compose stop
+            sudo -S cd /bonobo-tmp
+            sudo -S rm -rf /bonobo-prod
+      
+      - name: Create productive environment on server
+        uses: appleboy/ssh-action@master
+        with: 
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd bonobo-upload-tmp/
+            tar xvf deploy.tar
+            echo "${{ secrets.PASSWORD }}" | sudo -S cp -a build/. /bonobo-prod/
+            cd ~
+            rm -rf ~/bonobo-upload-tmp
+
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with: 
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: | # copy certs, run install script
+            echo "${{ secrets.PASSWORD }}" | sudo -S cp -a /bonobo-tmp/. /bonobo-prod/nginx/
+            sudo chmod +x /bonobo-prod/install.sh
+            sudo /bonobo-prod/install.sh
+
+      - name: Clean 
