@@ -59,13 +59,13 @@ jobs:
         run: |
           mkdir ../build
           cp -TR ./bonobo-board ../build
-          tar -cvf deploy.tar ../build/
+          tar -cvzf deploy.tar.gz ../build/
 
       - name: Upload production artifact
         uses: actions/upload-artifact@v2
         with:
           name: production-artifact
-          path: deploy.tar
+          path: deploy.tar.gz
 
       - name: Copy productive environment to server
         uses: appleboy/scp-action@master
@@ -74,7 +74,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          source: "deploy.tar"
+          source: "deploy.tar.gz"
           target: "bonobo-upload-tmp"
       
       - name: Save SSL certificates
@@ -84,9 +84,12 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          script: echo "${{ secrets.PASSWORD }}" | sudo -S cp -r /bonobo-prod/nginx/certs /bonobo-tmp
+          script: |
+            echo "${{ secrets.PASSWORD }}" | sudo -S mkdir -p /bonobo-tmp
+            sudo cp -a /bonobo-prod/nginx/certs /bonobo-tmp
+            sudo mkdir /bonobo-tmp/www
             
-      - name: Cleanup
+      - name: Cleanup before deployment
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -96,8 +99,8 @@ jobs:
           script: |
             echo "${{ secrets.PASSWORD }}" | sudo -S cd /bonobo-prod
             sudo docker-compose stop
-            sudo -S cd /bonobo-tmp
-            sudo -S rm -rf /bonobo-prod
+            sudo cd /bonobo-tmp
+            sudo rm -rf /bonobo-prod/*
       
       - name: Create productive environment on server
         uses: appleboy/ssh-action@master
@@ -108,7 +111,7 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd bonobo-upload-tmp/
-            tar xvf deploy.tar
+            tar -xvzf deploy.tar.gz
             echo "${{ secrets.PASSWORD }}" | sudo -S cp -a build/. /bonobo-prod/
             cd ~
             rm -rf ~/bonobo-upload-tmp
@@ -120,9 +123,17 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          script: | # copy certs, run install script
+          script: | # copy certs, run install | script sudo chmod +x /bonobo-prod/install.sh
             echo "${{ secrets.PASSWORD }}" | sudo -S cp -a /bonobo-tmp/. /bonobo-prod/nginx/
-            sudo chmod +x /bonobo-prod/install.sh
             sudo /bonobo-prod/install.sh
 
-      - name: Clean 
+      - name: Cleanup after deployment
+        uses: appleboy/ssh-action@master
+        with: 
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: | # copy certs, run install | script sudo chmod +x /bonobo-prod/install.sh
+            echo "${{ secrets.PASSWORD }}" | sudo -S rm -rf /bonobo-tmp/*
+
