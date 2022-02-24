@@ -5,35 +5,35 @@ on:
       - main
 
 jobs:
-  # unittests:
-  #   name: Unittests backend
-  #   environment:
-  #     name: unittests
-  #   env:
-  #     STUDENTMAIL: ${{ secrets.STUDENTMAIL }}
-  #     STUDENTPASS: ${{ secrets.STUDENTPASS }}
-  #   runs-on: ubuntu-latest
+  unittests:
+    name: Unittests backend
+    environment:
+      name: unittests
+    env:
+      STUDENTMAIL: ${{ secrets.STUDENTMAIL }}
+      STUDENTPASS: ${{ secrets.STUDENTPASS }}
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v2
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v2
-  #       with:
-  #         python-version: 3.8
-  #         architecture: x64
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+          architecture: x64
 
-  #     - name: Install dependencies
-  #       working-directory: ./bonobo-board/modules/dhbw/
-  #       run: pip3 install -r requirements.txt
+      - name: Install dependencies
+        working-directory: ./bonobo-board/modules/dhbw/
+        run: pip3 install -r requirements.txt
 
-  #     - name: Run tests
-  #       working-directory: ./bonobo-board/modules/
-  #       run: ./dhbw_test.py
+      - name: Run tests
+        working-directory: ./bonobo-board/modules/
+        run: ./dhbw_test.py
   
   deployment:
-    # needs: unittests
+    needs: unittests
     name: Deploy on server
     environment: 
       name: deployment
@@ -51,9 +51,9 @@ jobs:
           cp -a ./server-deployment/. ./bonobo-board/
           echo "SECRET_KEY=${{secrets.DJANGOSECRET}}" >> ./bonobo-board/.env
         
-      # - name: Test-build docker
-      #   working-directory: ./bonobo-board
-      #   run: docker-compose build
+      - name: Test-build docker
+        working-directory: ./bonobo-board
+        run: docker-compose build
 
       - name: Create deploy archive
         run: |
@@ -135,6 +135,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          script: | # copy certs, run install | script echo "${{ secrets.PASSWORD }}" | sudo -S chmod +x /bonobo-prod/install.sh
-            echo "${{ secrets.PASSWORD }}" | sudo -S rm -rf /bonobo-tmp/*
+          script: echo "${{ secrets.PASSWORD }}" | sudo -S rm -rf /bonobo-tmp/*
 
