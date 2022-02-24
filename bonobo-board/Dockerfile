@@ -30,6 +30,7 @@ RUN pip install -r ./modules/dhbw/requirements.txt
 
 # running migrations
 RUN python manage.py migrate
+RUN python manage.py collectstatic --no-input
 
 # gunicorn
 #CMD ["/bin/bash", "-c", "source /etc/profile.d/python_inc_bonobo_modules.sh && gunicorn --config gunicorn-cfg.py core.wsgi"]
