@@ -86,8 +86,8 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             echo "${{ secrets.PASSWORD }}" | sudo -S mkdir -p /bonobo-tmp
-            sudo cp -a /bonobo-prod/nginx/certs /bonobo-tmp
-            sudo mkdir /bonobo-tmp/www
+            echo "${{ secrets.PASSWORD }}" | sudo -S cp -a /bonobo-prod/nginx/certs /bonobo-tmp
+            echo "${{ secrets.PASSWORD }}" | sudo -S mkdir /bonobo-tmp/www
             
       - name: Cleanup before deployment
         uses: appleboy/ssh-action@master
@@ -98,9 +98,9 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             echo "${{ secrets.PASSWORD }}" | sudo -S cd /bonobo-prod
-            sudo docker-compose stop
-            sudo cd /bonobo-tmp
-            sudo rm -rf /bonobo-prod/*
+            echo "${{ secrets.PASSWORD }}" | sudo -S docker-compose stop
+            echo "${{ secrets.PASSWORD }}" | sudo -S cd /bonobo-tmp
+            echo "${{ secrets.PASSWORD }}" | sudo -S rm -rf /bonobo-prod/*
       
       - name: Create productive environment on server
         uses: appleboy/ssh-action@master
@@ -123,9 +123,9 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          script: | # copy certs, run install | script sudo chmod +x /bonobo-prod/install.sh
+          script: | # copy certs, run install | script echo "${{ secrets.PASSWORD }}" | sudo -S chmod +x /bonobo-prod/install.sh
             echo "${{ secrets.PASSWORD }}" | sudo -S cp -a /bonobo-tmp/. /bonobo-prod/nginx/
-            sudo /bonobo-prod/install.sh
+            echo "${{ secrets.PASSWORD }}" | sudo -S /bonobo-prod/install.sh
 
       - name: Cleanup after deployment
         uses: appleboy/ssh-action@master
@@ -134,6 +134,6 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          script: | # copy certs, run install | script sudo chmod +x /bonobo-prod/install.sh
+          script: | # copy certs, run install | script echo "${{ secrets.PASSWORD }}" | sudo -S chmod +x /bonobo-prod/install.sh
             echo "${{ secrets.PASSWORD }}" | sudo -S rm -rf /bonobo-tmp/*
 
