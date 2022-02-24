@@ -124,6 +124,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: | # copy certs, run install | script echo "${{ secrets.PASSWORD }}" | sudo -S chmod +x /bonobo-prod/install.sh
+            echo "${{ secrets.PASSWORD }}" | sudo -S cd /bonobo-prod
             echo "${{ secrets.PASSWORD }}" | sudo -S cp -a /bonobo-tmp/. /bonobo-prod/nginx/
             echo "${{ secrets.PASSWORD }}" | sudo -S /bonobo-prod/install.sh
 
