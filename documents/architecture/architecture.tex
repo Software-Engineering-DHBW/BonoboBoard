@@ -62,6 +62,7 @@
 	\begin{tabular}{@{} p{20mm} p{25mm} p{35mm} p{75mm}}
 		\textbf{Revision} & \textbf{Datum} & \textbf{Autor(en)} & \textbf{Beschreibung}\\
 		1.0 & 22.02.2022 & NK|PK|JW|PH|JH & A: 1, 2, 3\\
+		1.1 & 25.02.2022 & NK|PK|JW|PH|JH & C: 2, 3\\
 	\end{tabular}
 \end{table}
 \noindent
@@ -90,7 +91,7 @@ Bei dem BonoboBoard handelt es sich um eine Webanwendung (Client-Server), die mi
 	\label{img:Serverstruktur}
 \end{figure}
 
-Die Anwendung selbst folgt dem "`Model-View-Presenter"' Schema (MVP), welches aus dem "`Model-View-Controller"' Schema (MVC) hervorgegangen ist. %TODO hervorgeht? Steht so auf wikipedia
+\noindent Die Anwendung selbst folgt dem "`Model-View-Presenter"' Schema (MVP), welches aus dem "`Model-View-Controller"' Schema (MVC) hervorgegangen ist. 
 Dieses wird vom Django Framework vorgegeben. 
 
 \begin{figure}[H]
@@ -102,20 +103,20 @@ Dieses wird vom Django Framework vorgegeben.
 \end{figure}
 
 
-Abbildung \ref{img:MVP} zeigt das Model-View-Presenter Schema des BonoboBoards und, wie die einzelnen Komponenten miteinander agieren. Diese Komponenten werden im Folgenden näher beschriebebn.
+\noindent Abbildung \ref{img:MVP} zeigt das Model-View-Presenter Schema des BonoboBoards und wie die einzelnen Komponenten miteinander agieren. Diese Komponenten werden im Folgenden näher beschrieben.
 
 \paragraph{Model}
 Das Model beinhaltet die Daten, welche angezeigt werden sollen. Es stellt die Logik der View dar und wird vom Presenter gesteuert. Das Modell ist die Schnittstelle zu den Scrapern, die die Daten von den jeweiligen Websites beziehen und zu einer SQLite Datenbank, welche aufbereitete Daten hält. Das Model wird durch Objekte in \texttt{modules/dhbw} realisiert, über die es mit der Datenbasis interagieren kann.
 
 \paragraph{View}
-Die View ist für die Darstellung der Website gegenüber den Nutzer*innen verantwortlich. Sie hat keinen Zugriff auf das Model oder den Presenter, sondern kümmert sich lediglich darum, wie die bereitgestellten Informationen angezeigt werden und nimmt Nutzereingaben für den Presenter entgegen. In Django werden die Views in Form von HTML-Templates realisiert. Dabei handelt es sich um HTML-Dateien, bei denen variable Informationen mittels spezieller Tags gekennzeichnet werden.
+Die View ist für die Darstellung der Website gegenüber den Nutzer*innen verantwortlich. Sie hat keinen Zugriff auf das Model oder auf den Presenter, sondern kümmert sich lediglich darum, wie die bereitgestellten Informationen angezeigt werden und nimmt Nutzereingaben für den Presenter entgegen. In Django werden die Views in Form von HTML-Templates realisiert. Dabei handelt es sich um HTML-Dateien, bei denen variable Informationen mittels spezieller Tags gekennzeichnet werden.
 
 \paragraph{Presenter}
-Der Presenter ist das Bindeglied zwischen View und Model. Er steuert, welche Elemente aus dem Modell an die View übergeben werden, damit diese angezeigt werden können. Der Presenter ist für die Verarbeitung von Nutzereingaben zuständig. Diese Funktion wird in Django von zwei Modulen übernommen: \texttt{urls.py} und den \texttt{urls.py} Modulen. \texttt{urls.py} ist für die Weiterleitung von Nutzeranfragen an die entsprechende Funktion in \texttt{view.py} zuständig, während \texttt{views.py} die Anfrage entgegennimmt und ein Sprechendes HTML-Template mit Informationen befüllt.
+Der Presenter ist das Bindeglied zwischen View und Model. Er steuert, welche Elemente aus dem Modell an die View übergeben werden, damit diese angezeigt werden können. Der Presenter ist für die Verarbeitung von Nutzereingaben zuständig. Diese Funktion wird in Django von zwei Modulen übernommen: \texttt{urls.py} und den \texttt{urls.py} Modulen. \texttt{urls.py} ist für die Weiterleitung von Nutzeranfragen an die entsprechende Funktion in \texttt{view.py} zuständig, während \texttt{views.py} die Anfrage entgegennimmt und ein entprechendes HTML-Template mit Informationen befüllt.
 
 
 \section{Zusammenfassung}
-Bei dem BonoboBoard handelt es sich um eine Client-Server-Anwendung, die ein Framework zur Grundlage hat, dass weite Teile der Architektur vorgibt. Das verwendete Framework Django folgt dem Model-View-Presenter Schema und wird verwendet, um Informationen aus einer Datenbank oder - mittels Scrapern - von Websites zu beziehen und anzuzeigen. %TODO der Gedankenstrich richtig platziert? -> - oder mittels Scrapern -% aus einer Datenbank oder von Websites
+Bei dem BonoboBoard handelt es sich um eine Client-Server-Anwendung, die ein Framework zur Grundlage hat, dass weitere Teile der Architektur vorgibt. Das verwendete Framework Django folgt dem Model-View-Presenter Schema und wird verwendet, um Informationen aus einer Datenbank oder - mittels Scrapern - von Websites zu beziehen und anzuzeigen. 
 
 
 		%------------------------------------------------------------
