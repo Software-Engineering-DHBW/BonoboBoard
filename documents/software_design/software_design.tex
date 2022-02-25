@@ -62,7 +62,7 @@
 	\begin{tabular}{@{} p{20mm} p{25mm} p{25mm} p{75mm}}
 		\textbf{Revision} & \textbf{Datum} & \textbf{Autor(en)} & \textbf{Beschreibung}\\
 		1.0 & 24.01.2022 & JW & A: 1, 3 \\ 
-		1.1 & 25.01.2022 & JW|PH|NK|PK & A: 2, 4  \\ 
+		1.1 & 25.01.2022 & JW|PH|NK|PK & A: 2, 4, 5  \\ 
 	\end{tabular}
 \end{table}
 \noindent
@@ -114,7 +114,7 @@ Verwendete Software und Libiaries Versionen:
 \end{table}
 	\subsection{Hosting bei 1Blu}
 Um die Webanwendung anderen Studierenden zur Verfügung stellen zu können, haben wir uns dafür entschieden, die Anwendung auf einem virtuellen privaten Server (VPS) laufen zu lassen. Der VPS läuft bei dem Hosting-Anbieter 1Blu. 
-Da die Anwendung mit Docker bereitgestellt wird, hält sich der Konfigurationsaufwand auf dem Server in Grenzen. Auch ein einfaches "Neu-Bauen" ist möglich, was im automatisierten Deployment-Prozess genutzt wird (siehe Abschnitt \ref{ci}).
+Da die Anwendung mit Docker bereitgestellt wird, hält sich der Konfigurationsaufwand auf dem Server in Grenzen. Auch ein einfaches Neu-Bauen ist möglich, was im automatisierten Deployment-Prozess genutzt wird (siehe Abschnitt \ref{ci}).
 
 \section{Verwendete Tools}
 Für ein gemeinsames strukturiertes Arbeiten am Projekt, werden je nach Aufgabe verschiedene Tools eingesetzt. 
@@ -139,6 +139,7 @@ Adobe XD & Ideen Entwicklung, Erstellung von Mockups \\ \hline
 Alle verwendeten Tools für die Softwareentwicklung sind aus dem seperaten Dokument: \glqq Tools für die Softwareentwicklung\grqq{} zu entnehmen.
 
 \section{Zentrale Designentscheidung}
+Im folgenden werden die zentralen Design Entscheidungen aufgegriffen und erläutert.
 	\subsection{Automatisierter Workflow (CI-Pipeline)} \label{ci}
 Damit der Test und Deployment-Prozess nicht manuell ausgeführt werden muss, nutzen wir GitHub-Actions zur Verwaltung der Continous Integration (CI).
 Dabei nutzen wir zwei Workflows:
@@ -148,6 +149,9 @@ Dabei nutzen wir zwei Workflows:
 \end{itemize}
 Da das automatische Deployment eine komplexere Schrittfolge beinhaltet, beschreiben wir diese genauer.
 Über GitHub-Actions wird ein Ordner erzeugt, welcher alle Dateien beinhaltet, um die Produktivumgebung auf dem Server zu starten. Dieses Artefakt wird auf den Server kopiert und anstelle der alten Produktivinstanz eingesetzt. Vorher ist es notwendig, die SSL-Zertifikate zu sichern und nach dem Umstellen wieder einzusetzen.
+
+\section{UML}
+Das gesamte UML ist dem Link: \href{https://raw.githubusercontent.com/Software-Engineering-DHBW/BonoboBoard/main/documents/img/BonoboUML.drawio.svg}{BonoboBoard UML} zu entnehmen. 
 
 \section{Zusammenfassung}
 
