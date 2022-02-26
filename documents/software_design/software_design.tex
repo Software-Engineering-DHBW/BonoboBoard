@@ -40,7 +40,7 @@
 \begin{titlepage}
     \begin{center}
         \vspace*{1cm}\Huge
-        \textbf{Software Design Dokumentation}\par                
+        \textbf{Softwaredesign Dokumentation}\par                
         \vspace{0.5cm}\LARGE        
         Software Engineering II\par           
         \vspace{2cm}
@@ -63,6 +63,7 @@
 		\textbf{Revision} & \textbf{Datum} & \textbf{Autor(en)} & \textbf{Beschreibung}\\
 		1.0 & 24.01.2022 & JW & A: 1, 3 \\ 
 		1.1 & 25.01.2022 & JW|PH|NK|PK & A: 2, 4, 5  \\ 
+        1.2 & 26.01.2022 & JH & A: 4, 6 \\ 
 	\end{tabular}
 \end{table}
 \noindent
@@ -79,14 +80,14 @@ Abkürzungen: Hinzugefügt/Added (A), Änderung/Changed (C), Löschung/Deleted (
 
 
 \section{Motivation}
-Um sicher zu gehen, dass alle Software Design Ziele des BonoboBoard-Projekts richtig umgesetzt werden, werden diese in diesem Dokument festgehalten. Das Dokument erleichtert die Analyse, Planung, Implementierung und Entscheidungsfindung. Anders als im Anforderungsdokument wird nun hier beschrieben wie die Ziele umgesetzt werden. 
+Um sicher zu gehen, dass alle Softwaredesignziele des BonoboBoard-Projekts richtig umgesetzt werden, werden diese in diesem Dokument festgehalten. Das Dokument erleichtert die Analyse, Planung, Implementierung und Entscheidungsfindung. Anders als im Anforderungsdokument wird nun hier beschrieben wie die Ziele umgesetzt werden. 
 
 \section{Entwicklersetup}
-Verwendete Software und Libiaries Versionen:
+Verwendete Software und Libraries Versionen:
 \begin{table}[H]
 \begin{tabular}{|p{5cm}|p{5cm}|}
 \hline
-\textbf{Software/Libary} & \textbf{Version} \\ \hline
+\textbf{Software/Library} & \textbf{Version} \\ \hline
 	Django &  4.0.2\\ \hline
 	Django Tables & 2.4.1 \\ \hline
 	dj-database-url & 0.5.0 \\ \hline
@@ -135,11 +136,35 @@ Git und GitHub & Versionskontrolle und Repository-Verwaltung \\ \hline
 Adobe XD & Ideen Entwicklung, Erstellung von Mockups \\ \hline
 \end{tabular}
 \end{table}
-	\subsection{Tools für das Projektmanagement/Organisation}
-Alle verwendeten Tools für die Softwareentwicklung sind aus dem seperaten Dokument: \glqq Tools für die Softwareentwicklung\grqq{} zu entnehmen.
+	\subsection{Tools für die Softwareentwicklung}
+Diese sind dem separaten Dokument: \glqq Tools für die Softwareentwicklung\grqq{} zu entnehmen.
 
 \section{Zentrale Designentscheidung}
-Im folgenden werden die zentralen Design Entscheidungen aufgegriffen und erläutert.
+Im folgenden werden die zentralen Designentscheidungen aufgegriffen und erläutert.
+    \subsection{Backend: SOLID-Prinzip}
+Für die Interaktion mit den DHBW Webseiten bietet sich das SOLID-Prinzip an. \\
+Gründe hierfür sind:
+\begin{itemize}
+    \item{Die Zugriffsmöglichkeiten auf die benötigten Inhalte (DHBW-Webseiten) sind Subjekt für Änderungen,
+    daher Abstraktion dieser Inhalte (mittels Klassen und Klassenattributen),
+    sodass das Frontend weiterhin die gleichen Schnittstellen benutzen kann.}
+    \item{Die gleichen Schnittstellen wie für das Frontend erleichtern auch das standardisierte Persistieren der Daten
+    in eine Datenbank.}
+    \item{Zur Interaktion braucht es immer HTTP Anfragen, somit bietet sich eine Oberklasse A an,
+    welche diese Logik implementiert und den Unterklassen einfach anbietet.}
+    \item{Bei den Webseiten: Zimbra, Dualis und Moodle braucht es eine Authentifizierung des Endnutzers,
+    folglich ist eine weitere Oberklasse B, welche die Oberklasse A um die Funktionalität zum Authentifizieren erweitert, vonnöten.}
+    \item{Die Interaktion mit Dualis, Moodle und dem Vorlesungsplan hat als Ziel den Erhalt und die Filterung der Daten;
+    Zimbra hat allerdings den Erhalt / die Filterung der Daten und das Verschicken der Daten als Funktionalität.
+    Hier bietet sich es ebenfalls an, zwei Oberklassen einzuführen, welche die eben genannten Punkte unterstützen.}
+\end{itemize}
+
+    \subsection{Frontend: DRY-Prinzip}
+Im Frontend haben wir Zugriff auf die abstrakte Darstellung der \textquotedbl Datensätze\textquotedbl{} aus dem Backend und
+die vorgegebenen Funktionen / Klassen von Django. Die einzige Aufgabe besteht darin, die Daten zu visualisieren und
+den entsprechenden Pfaden zu zuordnen. Mit diesen Gegebenheiten wird im Frontend \textquotedbl nur\textquotedbl{}
+darauf geachtet, dass keine Code-Duplizierungen auftreten, wie es das DRY-Prinzip vorgibt.
+
 	\subsection{Automatisierter Workflow (CI-Pipeline)} \label{ci}
 Damit der Test und Deployment-Prozess nicht manuell ausgeführt werden muss, nutzen wir GitHub-Actions zur Verwaltung der Continous Integration (CI).
 Dabei nutzen wir zwei Workflows:
@@ -154,7 +179,11 @@ Da das automatische Deployment eine komplexere Schrittfolge beinhaltet, beschrei
 Das gesamte UML ist dem Link: \href{https://raw.githubusercontent.com/Software-Engineering-DHBW/BonoboBoard/main/documents/img/BonoboUML.drawio.svg}{BonoboBoard UML} zu entnehmen. 
 
 \section{Zusammenfassung}
-
+Das BonoboBoard wird sich im Frontend am DRY-Prinzip orientieren und im Backend an dem SOLID-Prinzip.
+Eine erste prototypische Version dieser Orientierung ist im UML-Diagramm dargestellt.
+Das Projekt wird auf einem VPS bei 1Blu gehostet und mit Docker \textquotedbl containerized\textquotedbl.
+Auf dieser \textquotedbl Containerization\textquotedbl{} baut die CI-Pipeline auf, für ein automatisches Testing
+und Deployment.
 
 
 		%------------------------------------------------------------
