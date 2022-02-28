@@ -39,7 +39,7 @@ def index(request):
             dualis_results_dump = json.dumps(dualis_entries)
             is_user_logged_in = True
             html_template = loader.get_template('home/index.html')
-            response = HttpResponse(html_template.render({'is_user_logged_in': is_user_logged_in, 'content_dump': str(dualis_entries), 'content': dualis_entries}, request))
+            response = HttpResponse(html_template.render({'is_user_logged_in': is_user_logged_in, 'content_dump': dualis_results_dump, 'content': dualis_entries}, request))
             return response
 
     else:
@@ -52,7 +52,7 @@ def leistungsuebersicht(request):
     if not is_user_logged_in:
         return HttpResponseRedirect('/')
 
-    return render(request, 'home/leistungsuebersicht.html', {"content": dualis_entries})
+    return render(request, 'home/leistungsuebersicht.html')
 
 
 def email(request):
