@@ -18,12 +18,13 @@ import json
 is_user_logged_in = False
 dualis_entries = []
 
+
 @csrf_protect
 def index(request):
     global is_user_logged_in
     global dualis_entries
 
-    if is_user_logged_in: 
+    if is_user_logged_in:
         return render(request, 'home/index.html', {'is_user_logged_in': is_user_logged_in, 'content': dualis_entries})
 
     if request.method == 'POST':
@@ -33,11 +34,14 @@ def index(request):
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("passwort")
 
-            fetch_user_data(email, password)
-
+            #fetch_user_data(email, password)
+            dualis_entries = get_dualis_results(email, password)
+            dualis_results_dump = json.dumps(dualis_entries)
             is_user_logged_in = True
-            return render(request, 'home/index.html', {'is_user_logged_in': is_user_logged_in, 'content': dualis_entries})
-           
+            html_template = loader.get_template('home/index.html')
+            response = HttpResponse(html_template.render({'is_user_logged_in': is_user_logged_in, 'content_dump': str(dualis_entries), 'content': dualis_entries}, request))
+            return response
+
     else:
         form = LoginForm()
 
@@ -64,6 +68,7 @@ def email(request):
         form = ContactForm()
 
     return render(request, 'home/email.html', {'form': form})
+
 
 def vorlesungsplan(request):
 
@@ -104,12 +109,14 @@ def fetch_user_data(email, password):
 
     dualis_entries = get_dualis_results(email, password)
 
+
 def get_dualis_results(email, password):
     dualis_importer = DualisImporter()
     dualis_importer.login(email, password)
     dualis_importer.scrape()
     dualis_importer.logout()
     return dualis_importer.scraped_data
+
 
 def get_lecture_results(uid):
     #lecture_importer = LectureImporter.read_lectures_from_database(uid)
@@ -120,4 +127,3 @@ def get_lecture_results(uid):
     lectures = json.loads(json_records)
 
     return lectures
-

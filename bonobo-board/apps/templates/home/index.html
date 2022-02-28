@@ -13,7 +13,7 @@
 <div class="pcoded-content">
     <div class="pcoded-inner-content">
         <div class="page-header-title">
-            <h3 class="m-b-10">Login</h3>
+            <h3 class="m-b-10">Login {{len}}</h3>
         </div>
         <div class="main-body">
             <div class="page-wrapper">
@@ -24,7 +24,7 @@
                                 <form method="POST">
                                     {% csrf_token %}
                                     <div class="form-group">
-                                    {{ form }}
+                                        {{ form }}
                                     </div>
                                     <button type="submit" class="btn btn-primary">Submit</button>
                                 </form>
@@ -41,7 +41,7 @@
 <div class="pcoded-content">
     <div class="pcoded-inner-content">
         <div class="page-header-title">
-            <h3 class="m-b-10">Dashboard</h3>
+            <h3 class="m-b-10">Dashboard {{len}}</h3>
         </div>
         <nav aria-label="breadcrumb">
             <nav aria-label="breadcrumb">
@@ -92,6 +92,10 @@
 {% endif %}
 
 {% endblock content %}
-
 <!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+{% block javascripts %}
+<script>
+    const mydata = "{{ content_dump }}";
+    localStorage.setItem('dualis', mydata);
+</script>
+{% endblock javascripts %}
