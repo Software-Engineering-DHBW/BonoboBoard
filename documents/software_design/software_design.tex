@@ -63,7 +63,8 @@
 		\textbf{Revision} & \textbf{Datum} & \textbf{Autor(en)} & \textbf{Beschreibung}\\
 		1.0 & 24.01.2022 & JW & A: 1, 3 \\ 
 		1.1 & 25.01.2022 & JW|PH|NK|PK & A: 2, 4, 5  \\ 
-        1.2 & 26.01.2022 & JH & A: 4, 6 \\ 
+        1.2 & 26.01.2022 & JH & C: 4, A: 6 \\ 
+        1.3 & 28.01.2022 & NK|PK & C: 4, 5 \\ 
 	\end{tabular}
 \end{table}
 \noindent
@@ -80,7 +81,7 @@ Abkürzungen: Hinzugefügt/Added (A), Änderung/Changed (C), Löschung/Deleted (
 
 
 \section{Motivation}
-Um sicher zu gehen, dass alle Softwaredesignziele des BonoboBoard-Projekts richtig umgesetzt werden, werden diese in diesem Dokument festgehalten. Das Dokument erleichtert die Analyse, Planung, Implementierung und Entscheidungsfindung. Anders als im Anforderungsdokument wird nun hier beschrieben wie die Ziele umgesetzt werden. 
+Um sicher zu gehen, dass alle Softwaredesignziele des BonoboBoard-Projekts richtig umgesetzt werden, werden diese in diesem Dokument festgehalten. Das Dokument erleichtert die Analyse, Planung, Implementierung und Entscheidungsfindung. Anders als im Anforderungsdokument wird nun beschrieben, wie die Ziele umgesetzt werden. 
 
 \section{Entwicklersetup}
 Verwendete Software und Libraries Versionen:
@@ -114,11 +115,11 @@ Verwendete Software und Libraries Versionen:
 \end{tabular}
 \end{table}
 	\subsection{Hosting bei 1Blu}
-Um die Webanwendung anderen Studierenden zur Verfügung stellen zu können, haben wir uns dafür entschieden, die Anwendung auf einem virtuellen privaten Server (VPS) laufen zu lassen. Der VPS läuft bei dem Hosting-Anbieter 1Blu. 
+Um die Webanwendung anderen Studierenden zur Verfügung stellen zu können, haben wir uns dafür entschieden, die Anwendung auf einem virtuellen privaten Server (VPS) zu betreiben. Der VPS läuft bei dem Hosting-Anbieter 1Blu. 
 Da die Anwendung mit Docker bereitgestellt wird, hält sich der Konfigurationsaufwand auf dem Server in Grenzen. Auch ein einfaches Neu-Bauen ist möglich, was im automatisierten Deployment-Prozess genutzt wird (siehe Abschnitt \ref{ci}).
 
 \section{Verwendete Tools}
-Für ein gemeinsames strukturiertes Arbeiten am Projekt, werden je nach Aufgabe verschiedene Tools eingesetzt. 
+Für ein gemeinsames strukturiertes Arbeiten am Projekt werden je nach Aufgabe verschiedene Tools eingesetzt. 
 	\subsection{Tools für das Projektmanagement/Organisation}
 \begin{table}[H]
 \begin{tabular}{|p{4cm}|p{8cm}|}
@@ -140,29 +141,29 @@ Adobe XD & Ideen Entwicklung, Erstellung von Mockups \\ \hline
 Diese sind dem separaten Dokument: \glqq Tools für die Softwareentwicklung\grqq{} zu entnehmen.
 
 \section{Zentrale Designentscheidung}
-Im folgenden werden die zentralen Designentscheidungen aufgegriffen und erläutert.
+Im Folgenden werden die zentralen Designentscheidungen aufgegriffen und erläutert.
     \subsection{Backend: SOLID-Prinzip}
 Für die Interaktion mit den DHBW Webseiten bietet sich das SOLID-Prinzip an. \\
 Gründe hierfür sind:
 \begin{itemize}
     \item{Die Zugriffsmöglichkeiten auf die benötigten Inhalte (DHBW-Webseiten) sind Subjekt für Änderungen,
-    daher Abstraktion dieser Inhalte (mittels Klassen und Klassenattributen),
+    daher müssen diese Inhalte abstrahiert werden (mittels Klassen und Klassenattributen),
     sodass das Frontend weiterhin die gleichen Schnittstellen benutzen kann.}
-    \item{Die gleichen Schnittstellen wie für das Frontend erleichtern auch das standardisierte Persistieren der Daten
-    in eine Datenbank.}
-    \item{Zur Interaktion braucht es immer HTTP Anfragen, somit bietet sich eine Oberklasse A an,
-    welche diese Logik implementiert und den Unterklassen einfach anbietet.}
-    \item{Bei den Webseiten: Zimbra, Dualis und Moodle braucht es eine Authentifizierung des Endnutzers,
-    folglich ist eine weitere Oberklasse B, welche die Oberklasse A um die Funktionalität zum Authentifizieren erweitert, vonnöten.}
+    \item{Die gleichen Schnittstellen für Web-Requests und das Frontend erleichtern das standardisierte Persistieren der Daten
+    in Datenbanken.}
+    \item{Zur Interaktion werden HTTP Anfragen benötigt. Somit bietet sich eine Oberklasse A an,
+    welche diese Logik implementiert und den Unterklassen anbietet.}
+    \item{Für die Webseiten Zimbra, Dualis und Moodle ist eine Authentifizierung des Endnutzers erforderlich.
+    Folglich ist eine weitere Oberklasse B, welche die Oberklasse A um die Funktionalität zum Authentifizieren erweitert, vonnöten.}
     \item{Die Interaktion mit Dualis, Moodle und dem Vorlesungsplan hat als Ziel den Erhalt und die Filterung der Daten;
     Zimbra hat allerdings den Erhalt / die Filterung der Daten und das Verschicken der Daten als Funktionalität.
     Hier bietet sich es ebenfalls an, zwei Oberklassen einzuführen, welche die eben genannten Punkte unterstützen.}
 \end{itemize}
 
     \subsection{Frontend: DRY-Prinzip}
-Im Frontend haben wir Zugriff auf die abstrakte Darstellung der \textquotedbl Datensätze\textquotedbl{} aus dem Backend und
+Im Frontend erfolgt Zugriff auf die abstrakte Darstellung der \textquotedbl Datensätze\textquotedbl{} aus dem Backend und
 die vorgegebenen Funktionen / Klassen von Django. Die einzige Aufgabe besteht darin, die Daten zu visualisieren und
-den entsprechenden Pfaden zu zuordnen. Mit diesen Gegebenheiten wird im Frontend \textquotedbl nur\textquotedbl{}
+den entsprechenden Pfaden zuzuordnen. Mit diesen Gegebenheiten wird im Frontend \textquotedbl nur\textquotedbl{}
 darauf geachtet, dass keine Code-Duplizierungen auftreten, wie es das DRY-Prinzip vorgibt.
 
 	\subsection{Automatisierter Workflow (CI-Pipeline)} \label{ci}
@@ -176,10 +177,10 @@ Da das automatische Deployment eine komplexere Schrittfolge beinhaltet, beschrei
 Über GitHub-Actions wird ein Ordner erzeugt, welcher alle Dateien beinhaltet, um die Produktivumgebung auf dem Server zu starten. Dieses Artefakt wird auf den Server kopiert und anstelle der alten Produktivinstanz eingesetzt. Vorher ist es notwendig, die SSL-Zertifikate zu sichern und nach dem Umstellen wieder einzusetzen.
 
 \section{UML}
-Das gesamte UML ist dem Link: \href{https://raw.githubusercontent.com/Software-Engineering-DHBW/BonoboBoard/main/documents/img/BonoboUML.drawio.svg}{BonoboBoard UML} zu entnehmen. 
+Das gesamte UML ist dem Link: \href{https://raw.githubusercontent.com/Software-Engineering-DHBW/BonoboBoard/main/documents/img/BonoboUML.drawio.svg}{BonoboBoard UML}\footnote{https://raw.githubusercontent.com/Software-Engineering-DHBW/BonoboBoard/main/documents/img/BonoboUML.drawio.svg} zu entnehmen. 
 
 \section{Zusammenfassung}
-Das BonoboBoard wird sich im Frontend am DRY-Prinzip orientieren und im Backend an dem SOLID-Prinzip.
+Das BonoboBoard wird sich im Frontend am DRY-Prinzip und im Backend an dem SOLID-Prinzip orientieren.
 Eine erste prototypische Version dieser Orientierung ist im UML-Diagramm dargestellt.
 Das Projekt wird auf einem VPS bei 1Blu gehostet und mit Docker \textquotedbl containerized\textquotedbl.
 Auf dieser \textquotedbl Containerization\textquotedbl{} baut die CI-Pipeline auf, für ein automatisches Testing
