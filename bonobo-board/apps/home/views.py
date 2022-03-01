@@ -12,7 +12,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
 from .forms import LoginForm, ContactForm
 from modules.dhbw.dualis import DualisImporter
-from modules.dhbw.lecture_importer import LectureImporter
+from modules.dhbw.lecture_importer import LectureImporter, CourseImporter
 import json
 
 is_user_logged_in = False
@@ -31,12 +31,15 @@ def index(request):
         if form.is_valid():
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("passwort")
+            kurs = form.cleaned_data.get("kurs")
 
-            dualis_results_dump = json.dumps(get_dualis_results(email, password))
+            dualis_results_dump = json.dumps(
+                get_dualis_results(email, password))
             is_user_logged_in = True
             html_template = loader.get_template('home/index.html')
             response = HttpResponse(html_template.render(
                 {'is_user_logged_in': is_user_logged_in, 'content_dump': dualis_results_dump}, request))
+            response.set_cookie('kurs', kurs)
             return response
 
     else:
@@ -71,14 +74,16 @@ def vorlesungsplan(request):
 
     if not is_user_logged_in:
         return HttpResponseRedirect('/')
-
-    lectures = get_lecture_results(7761001)
+    kurs = request.COOKIES.get('kurs')
+    lectures = get_lecture_results(CourseImporter().get_course_uid(kurs))
     return render(request, 'home/vorlesungsplan.html', {"lectures": lectures})
+
 
 def logout(request):
     global is_user_logged_in
     is_user_logged_in = False
     return HttpResponseRedirect('/')
+
 
 def pages(request):
     context = {}

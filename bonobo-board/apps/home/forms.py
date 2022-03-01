@@ -23,6 +23,14 @@ class LoginForm(forms.Form):
             }
         ))
 
+    kurs = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Kurs Name",
+                "class": "form-control"
+            }
+        ))
+
 
 class ContactForm(forms.Form):
     empfänger = forms.EmailField(
