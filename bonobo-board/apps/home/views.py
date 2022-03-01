@@ -16,16 +16,14 @@ from modules.dhbw.lecture_importer import LectureImporter
 import json
 
 is_user_logged_in = False
-dualis_entries = []
 
 
 @csrf_protect
 def index(request):
     global is_user_logged_in
-    global dualis_entries
 
     if is_user_logged_in:
-        return render(request, 'home/index.html', {'is_user_logged_in': is_user_logged_in, 'content': dualis_entries})
+        return render(request, 'home/index.html', {'is_user_logged_in': is_user_logged_in})
 
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -34,12 +32,11 @@ def index(request):
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("passwort")
 
-            #fetch_user_data(email, password)
-            dualis_entries = get_dualis_results(email, password)
-            dualis_results_dump = json.dumps(dualis_entries)
+            dualis_results_dump = json.dumps(get_dualis_results(email, password))
             is_user_logged_in = True
             html_template = loader.get_template('home/index.html')
-            response = HttpResponse(html_template.render({'is_user_logged_in': is_user_logged_in, 'content_dump': dualis_results_dump, 'content': dualis_entries}, request))
+            response = HttpResponse(html_template.render(
+                {'is_user_logged_in': is_user_logged_in, 'content_dump': dualis_results_dump}, request))
             return response
 
     else:
@@ -78,6 +75,10 @@ def vorlesungsplan(request):
     lectures = get_lecture_results(7761001)
     return render(request, 'home/vorlesungsplan.html', {"lectures": lectures})
 
+def logout(request):
+    global is_user_logged_in
+    is_user_logged_in = False
+    return HttpResponseRedirect('/')
 
 def pages(request):
     context = {}
@@ -102,12 +103,6 @@ def pages(request):
     except:
         html_template = loader.get_template('home/page-500.html')
         return HttpResponse(html_template.render(context, request))
-
-
-def fetch_user_data(email, password):
-    global dualis_entries
-
-    dualis_entries = get_dualis_results(email, password)
 
 
 def get_dualis_results(email, password):

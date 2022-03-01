@@ -65,16 +65,18 @@
                         const dualis_data = JSON.parse(rawData);
                         var grades = document.getElementById("all_grades")
 
-
-                        grades.innerHTML += ' <table class="table"><thead><tr><th>Subject</th><th>Credits</th><th>Grade</th></tr></thead> <tbody>'
+                        let content = ''
+                        content += ' <table class="table"><thead><tr><th>Veranstaltung</th><th>Credits</th><th>Note</th></tr></thead> <tbody>'
 
                         for (let index in dualis_data["modules"]) {
                             const entry = dualis_data["modules"][index]
-                            grades.innerHTML += '<tr><td>' + entry["name"] + '</td><td>' + entry["credits"] + '</td><td>' + entry["grade"] + '</td></tr>'
+                            content += '<tr><td>' + entry["name"] + '</td>'
+                            content += '<td>' + entry["credits"] + '</td>'
+                            content += '<td>' + entry["grade"] + '</td></tr>'
                         }
 
-                        grades.innerHTML += '  </tbody> </table>'
-
+                        content += '  </tbody> </table>'
+                        grades.innerHTML += content
                         var gpaNode = document.getElementById("gpa")
                         gpaNode.innerHTML += '<p><b>GPA-Total:</b> ' + dualis_data["gpa_total"] + '</p>'
                     </script>
