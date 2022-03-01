@@ -12,6 +12,8 @@ class CourseImporter(Importer):
 
     def scrape(self) -> None: ...
 
+    def get_course_uid(self, course_name: str) -> str: ...
+
 class LectureImporter(Importer):
     url: ClassVar[str]
     lectures: DataFrame

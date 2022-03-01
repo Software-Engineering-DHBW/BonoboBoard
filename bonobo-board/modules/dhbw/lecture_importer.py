@@ -35,7 +35,8 @@ class CourseImporter(Importer):
         None
         """
         response = reqget(url=CourseImporter.url, headers=self.headers)
-        result = BeautifulSoup(response.content, "lxml").find(id="class_select")
+        result = BeautifulSoup(
+            response.content, "lxml").find(id="class_select")
 
         # optgroup stores the list of courses
         all_optgroup = result.find_all('optgroup')
@@ -44,6 +45,10 @@ class CourseImporter(Importer):
                 if course.get("value"):
                     self.course_list.append(course['label'])
                     self.uid_list.append(course['value'])
+
+    def get_course_uid(self, course_str):
+        index = self.course_list.index(course_str)
+        return self.uid_list[index]
 
 
 class LectureImporter(Importer):
@@ -131,6 +136,7 @@ class LectureImporter(Importer):
 
 # -------------- HELPERS --------------------
 
+
 def get_unique_lectures(df_lectures):
     unique = df_lectures["lecture"].unique()
     data = []
@@ -151,7 +157,8 @@ def link_lectures_and_links(df_lectures, df_links):
     df = df_lectures.copy()
     df["link"] = "NO LINK"
     for unique_lecture in df_lectures["lecture"].unique():
-        link_for_unique = df_links[df_links["lecture"] == unique_lecture]["link"].values[0]
+        link_for_unique = df_links[df_links["lecture"]
+                                   == unique_lecture]["link"].values[0]
         df.loc[df["lecture"] == unique_lecture, "link"] = link_for_unique
     return df
 
@@ -182,7 +189,7 @@ def read_lectures_from_database(course_uid):
 
 
 # ----------------- LECTURE LINK DATABASE --------------------
-def write_lecture_links_to_database(df, user_uid):    #df-columns: lecture, link
+def write_lecture_links_to_database(df, user_uid):  # df-columns: lecture, link
     engine_string = "sqlite:///users.db"
     table_name = str(user_uid) + "_link"
     engine = sqlalchemy.create_engine(engine_string)
