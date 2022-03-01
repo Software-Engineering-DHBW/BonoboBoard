@@ -15,25 +15,28 @@
         <div class="navbar-content scroll-div">
             <ul class="nav pcoded-inner-navbar">
                 <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project"
-                    class="nav-item {% if ' index' in segment %} active {% endif %}">
+                    class="nav-item {% if 'index' in segment %} active {% endif %}">
                     <a href="/" class="nav-link "><span class="pcoded-micon"><i
                                 class="feather icon-home"></i></span><span class="pcoded-mtext">Home</span></a>
                 </li>
+                {% url 'vorlesungsplan' as url %}
                 <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project"
-                    class="nav-item {% if 'index' in segment %} active {% endif %}">
-                    <a href="/vorlesungsplan" class="nav-link "><span class="pcoded-micon"><i
+                    class="nav-item {% if request.path == url %}active{% endif %}">
+                    <a href="{{ url }}" class="nav-link "><span class="pcoded-micon"><i
                                 class="feather icon-calendar"></i></span><span
                             class="pcoded-mtext">Vorlesungsplan</span></a>
                 </li>
+                {% url 'leistungsuebersicht' as url %}
                 <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project"
-                    class="nav-item {% if 'index' in segment %} active {% endif %}">
-                    <a href="/leistungsuebersicht" class="nav-link "><span class="pcoded-micon"><i
+                    class="nav-item {% if request.path == url %}active{% endif %}">
+                    <a href="{{ url }}" class="nav-link "><span class="pcoded-micon"><i
                                 class="feather icon-award"></i></span><span
                             class="pcoded-mtext">Leistungsübersicht</span></a>
                 </li>
+                {% url 'email' as url %}
                 <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project"
-                    class="nav-item {% if 'index' in segment %} active {% endif %}">
-                    <a href="/email" class="nav-link "><span class="pcoded-micon"><i
+                    class="nav-item {% if request.path == url %}active{% endif %}">
+                    <a href="{{ url }}" class="nav-link "><span class="pcoded-micon"><i
                                 class="feather icon-mail"></i></span><span class="pcoded-mtext">Emails</span></a>
                 </li>
                 <li class="nav-item pcoded-menu-caption">
