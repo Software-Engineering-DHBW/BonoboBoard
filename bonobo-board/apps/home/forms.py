@@ -22,14 +22,15 @@ class LoginForm(forms.Form):
                 "class": "form-control"
             }
         ))
-
+    
     kurs = forms.CharField(
         widget=forms.TextInput(
             attrs={
                 "placeholder": "Kurs Name",
-                "class": "form-control"
+                "class": "form-control" ,
+                "id": "kurs"
             }
-        ))
+        ), required=True) 
 
 
 class ContactForm(forms.Form):

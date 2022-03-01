@@ -31,7 +31,7 @@ def index(request):
         if form.is_valid():
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("passwort")
-            kurs = form.cleaned_data.get("kurs")
+            course = form.cleaned_data.get("kurs")
 
             dualis_results_dump = json.dumps(
                 get_dualis_results(email, password))
@@ -39,7 +39,7 @@ def index(request):
             html_template = loader.get_template('home/index.html')
             response = HttpResponse(html_template.render(
                 {'is_user_logged_in': is_user_logged_in, 'content_dump': dualis_results_dump}, request))
-            response.set_cookie('kurs', kurs)
+            response.set_cookie('kurs', course)
             return response
 
     else:
@@ -119,7 +119,7 @@ def get_dualis_results(email, password):
 
 
 def get_lecture_results(uid):
-    #lecture_importer = LectureImporter.read_lectures_from_database(uid)
+    # lecture_importer = LectureImporter.read_lectures_from_database(uid)
     lecture_importer = LectureImporter(uid)
     lectures_df = lecture_importer.limit_days_in_list(14, 14)
 

@@ -21,7 +21,7 @@
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-block">
-                                <form method="POST">
+                                <form method="POST" autocomplete="off" >
                                     {% csrf_token %}
                                     <div class="form-group">
                                         {{ form }}
@@ -93,6 +93,9 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 <script>
+
+    autocomplete(document.getElementById("{{ form.kurs.name }}"), countries);
+
     const mydata = "{{ content_dump }}";
     if (mydata !== "") {
         localStorage.setItem('dualis', mydata);
@@ -102,9 +105,11 @@
     const dualis_data = JSON.parse(rawData);
 
     var gpa = document.getElementById("gpa")
-    if (dualis_data["gpa_total"] !== undefined) {
+    console.log(gpa)
+    if (gpa !== null && dualis_data["gpa_total"] !== undefined) {
         gpa.innerHTML += '<p><b>GPA-Total:</b> ' + dualis_data["gpa_total"] + '</p>'
     }
+
 
 </script>
 {% endblock javascripts %}
