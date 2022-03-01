@@ -1,0 +1,201 @@
+\documentclass[a4paper,11pt]{scrartcl}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[scaled]{helvet}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{mathptmx}
+\usepackage{courier}
+\usepackage{graphicx}
+\usepackage{ulem}
+\usepackage{bookmark}
+\usepackage{paralist}
+\usepackage{ngerman}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{array}
+\usepackage{lipsum}
+
+
+\graphicspath{ {../img/} }
+\renewcommand\familydefault{\sfdefault}
+
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\includegraphics[width=\textwidth]{Polygon_gruen}\\ \thepage}
+
+
+\rhead{\includegraphics[width=\textwidth]{LogoHeader}}
+\setlength\headheight{30pt}
+\setlength\footskip{15pt}
+
+\begin{document}
+\renewcommand*{\arraystretch}{1.2}
+\pagenumbering{gobble}
+\begin{titlepage}
+    \begin{center}
+        \vspace*{1cm}\Huge
+        \textbf{Tools für die Softwareentwicklung}\par                
+        \vspace{0.5cm}\LARGE        
+        Software Engineering II\par           
+        \vspace{2cm}
+        \includegraphics[width=0.5\textwidth]{OptimaLogo_long}\par   
+        \vspace{1cm}
+        \textbf{Projekttitel: BonoboBoard}\par        
+        \vfill\Large   
+        Jakob Hutschenreiter (1419081)\\Jiesen Wang (9839152)\\Nick Kramer (3122448)\\Patrick Küsters (2598689)\\Peter Moritz Hinkel (2783930)\par
+        %\vspace{2cm}  
+        %\includegraphics[width=0.5\textwidth]{Bonobo_Logo}\par        
+        \vspace{2cm}
+        DHBW Mannheim\\
+        \today     
+    \end{center}
+\end{titlepage}
+
+\section*{Änderungshistorie}
+\begin{table}[h]
+	\begin{tabular}{@{} p{20mm} p{25mm} p{35mm} p{75mm}}
+		\textbf{Revision} & \textbf{Datum} & \textbf{Autor(en)} & \textbf{Beschreibung}\\
+		1.0 & 22.02.2022 & NK|PK|JW|MH|JH & A: 1, 2\\
+	\end{tabular}
+\end{table}
+\noindent
+Abkürzungen: Hinzugefügt/Added (A), Änderung/Changed (C), Löschung/Deleted (D)
+\vspace{2cm}
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+
+		%------------------------------------------------------------
+		%-----  -----  ----- Begin actual content -----  -----  -----
+		%------------------------------------------------------------
+
+
+\section{Motivation}
+
+Um gemeinsam strukturiert am Projekt arbeiten zu können, setzen wir verschiedene Entwicklertools ein.
+Dabei reicht die Spanne von Tools zur Versionsverwaltung hin zu Lern- und Dokumentationstools.
+
+\section{Übersicht der Entwicklertools}
+
+Die Gesamtheit der Entwicklertools wird in verschiedene Kategorien aufgeteilt.
+Diese orientieren sich an den, durch uns identifizierten, Haupt-Aufgabengebieten der Projektentwicklung.
+
+\subsection{Entwicklung}
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|L{4cm}|L{8cm}|}
+\hline
+\textbf{Tool} &\textbf{Grund/Einsatzzweck} \\ \hline
+Pycharm, Visual Studio Code & Code schreiben \\ \hline
+Unittests, Webbrowser & Debuggen\\ \hline
+pip, Anaconda & Python Abhängigkeiten verwalten\\ \hline
+AdobeXD & Produktdesign (Mockups, Images)\\ \hline
+Anaconda, venv & Python-Umgebung verwalten\\ \hline
+Git & Versionskontrolle\\ \hline
+GitHub & Repository-Verwaltung\\ \hline    
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{Test und Automatisierung}
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|L{4cm}|L{8cm}|}
+\hline
+\textbf{Tool} &\textbf{Grund/Einsatzzweck} \\ \hline
+GitHub Actions, Unittests & Code testen \\ \hline
+Docker, Docker-compose & Container bauen\\ \hline
+GitHub Actions & Produkt integrieren\\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+ 
+\subsection{Verbesserung}
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|L{4cm}|L{8cm}|}
+\hline
+\textbf{Tool} &\textbf{Grund/Einsatzzweck} \\ \hline
+Pycharm, Visual Studio Code & Code formatieren\\ \hline
+Pylint (Syntax, Semantik), mypy (Statische Typechecks) &  Code-Fehlererkennung\\ \hline
+Pycharm, Visual Studio Code & Refactoring\\ \hline
+GitHub, Discord & Code Reviews\\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{Lernen}
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|L{4cm}|L{8cm}|}
+\hline
+\textbf{Tool} &\textbf{Grund/Einsatzzweck} \\ \hline
+offizielle Dokumentationen (Python, Django), Stackoverflow, Youtube, ... & Wissensgenerierung\\ \hline
+OneNote, Discord, Screensharing & Wissen teilen\\ \hline
+AdobeXD & Neue Designs ausprobieren\\ \hline
+OneNote, Discord, GitHub & Dokumentation neuer Tools/Verfahren und Änderungen\\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{Ausführen und Verwenden}
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|L{4cm}|L{8cm}|}
+\hline
+\textbf{Tool} &\textbf{Grund/Einsatzzweck} \\ \hline
+Server (VPS) & Ressourcen bereitstellen\\ \hline
+Docker & Projekt bauen und Webanwendung bereitstellen\\ \hline
+LetsEncrypt, Certbot & SSL-Verschlüsselung der Domain\\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+		%------------------------------------------------------------
+		%-----  -----  ------ End actual content ------  -----  -----
+		%------------------------------------------------------------
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
