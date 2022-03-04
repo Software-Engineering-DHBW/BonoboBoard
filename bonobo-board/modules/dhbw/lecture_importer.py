@@ -163,6 +163,26 @@ def link_lectures_and_links(df_lectures, df_links):
     return df
 
 
+# ----------------- COURSE DATABASE --------------------
+# WRITE
+def write_courses_to_database():
+    courses = CourseImporter()
+    engine_string = "sqlite:///courses.db"
+    engine = sqlalchemy.create_engine(engine_string)
+
+    df = pd.DataFrame(columns=["course", "uid"])
+    for i in range(0, len(courses.course_list)):
+        df.loc[i] = [courses.course_list[i], courses.uid_list[i]]
+    df.to_sql("courses", engine, if_exists='replace', index=False)
+    return
+
+# READ
+def read_courses_from_database():
+    engine_string = "sqlite:///courses.db"
+    engine = sqlalchemy.create_engine(engine_string)
+    df = pd.read_sql("SELECT * FROM \'courses\';", engine)
+    return df['course'].tolist(), df['uid'].tolist()
+
 # ----------------- LECTURE DATABASE --------------------
 # WRITE
 def write_all_courses_lectures_to_database():

@@ -64,18 +64,26 @@
 {% block javascripts %}
 <!-- {{ content_dump }} -->
 <script>
-    const mydata = "{{ content_dump }}";
-    if (mydata !== "") {
-        localStorage.setItem('dualis', mydata);
+    let rawCourseImport = "{{ course_list }}"
+    rawCourseImport = rawCourseImport.replace(/&quot;/g, '"')
+    const courseImport = JSON.parse(rawCourseImport);
+    const courseList = courseImport[0]
+    autocomplete(document.getElementById("{{ form.kurs.name }}"), courseList);
+
+    const dualisDump = "{{ content_dump }}";
+    if (dualisDump !== "") {
+        localStorage.setItem('dualis', dualisDump);
     }
-    let rawData = localStorage.getItem('dualis')
-    rawData = rawData.replace(/&quot;/g, '"')
-    const dualis_data = JSON.parse(rawData);
+    let rawDualisData = localStorage.getItem('dualis')
+    rawDualisData = rawDualisData.replace(/&quot;/g, '"')
+    const dualisData = JSON.parse(rawDualisData);
 
     var gpa = document.getElementById("gpa")
-    if (dualis_data["gpa_total"] !== undefined) {
-        gpa.innerHTML += '<p><b>GPA-Total:</b> ' + dualis_data["gpa_total"] + '</p>'
+    console.log(gpa)
+    if (gpa !== null && dualisData["gpa_total"] !== undefined) {
+        gpa.innerHTML += '<p><b>GPA-Total:</b> ' + dualisData["gpa_total"] + '</p>'
     }
+
 
 </script>
 {% endblock javascripts %}
