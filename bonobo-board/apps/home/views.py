@@ -12,7 +12,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
 from .forms import LoginForm, ContactForm
 from modules.dhbw.dualis import DualisImporter
-from modules.dhbw.lecture_importer import LectureImporter, CourseImporter
+from modules.dhbw.lecture_importer import LectureImporter, CourseImporter, write_courses_to_database, read_courses_from_database
 import json
 
 is_user_logged_in = False
@@ -25,6 +25,10 @@ def index(request):
     if is_user_logged_in:
         return render(request, 'home/index.html', {'is_user_logged_in': is_user_logged_in})
 
+    write_courses_to_database()   
+    courses_dump = json.dumps(read_courses_from_database())
+
+
     if request.method == 'POST':
         form = LoginForm(request.POST)
 
@@ -32,6 +36,10 @@ def index(request):
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("passwort")
             course = form.cleaned_data.get("kurs")
+
+            if course not in read_courses_from_database()[0]:
+                form.add_error("kurs","Unbekannter Kurs!")
+                return render(request, 'home/index.html', {'form': form, 'course_list': courses_dump})
 
             dualis_results_dump = json.dumps(
                 get_dualis_results(email, password))
@@ -45,7 +53,7 @@ def index(request):
     else:
         form = LoginForm()
 
-    return render(request, 'home/index.html', {'form': form})
+    return render(request, 'home/index.html', {'form': form, 'course_list': courses_dump})
 
 
 def leistungsuebersicht(request):
