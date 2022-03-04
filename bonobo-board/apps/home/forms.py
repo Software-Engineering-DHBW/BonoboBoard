@@ -5,33 +5,6 @@ Copyright (c) 2019 - present AppSeed.us
 from django import forms
 
 
-class LoginForm(forms.Form):
-
-    email = forms.EmailField(
-        widget=forms.TextInput(
-            attrs={
-                "placeholder": "Email",
-                "class": "form-control"
-            }
-        ))
-
-    passwort = forms.CharField(
-        widget=forms.PasswordInput(
-            attrs={
-                "placeholder": "Passwort",
-                "class": "form-control"
-            }
-        ))
-
-    kurs = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                "placeholder": "Kurs Name",
-                "class": "form-control"
-            }
-        ))
-
-
 class ContactForm(forms.Form):
     empfänger = forms.EmailField(
         widget=forms.TextInput(

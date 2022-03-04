@@ -9,35 +9,6 @@
 
 {% block content %}
 
-{% if form %}
-<div class="pcoded-content">
-    <div class="pcoded-inner-content">
-        <div class="page-header-title">
-            <h3 class="m-b-10">Login </h3>
-        </div>
-        <div class="main-body">
-            <div class="page-wrapper">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-block">
-                                <form method="POST">
-                                    {% csrf_token %}
-                                    <div class="form-group">
-                                        {{ form }}
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endif %}
-{% if is_user_logged_in %}
 <div class="pcoded-content">
     <div class="pcoded-inner-content">
         <div class="page-header-title">
@@ -87,11 +58,11 @@
         </div>
     </div>
 </div>
-{% endif %}
 
 {% endblock content %}
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
+<!-- {{ content_dump }} -->
 <script>
     const mydata = "{{ content_dump }}";
     if (mydata !== "") {

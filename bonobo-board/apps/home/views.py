@@ -3,87 +3,49 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
-from http.client import HTTPResponse
+import json
 from django import template
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
-from .forms import LoginForm, ContactForm
-from modules.dhbw.dualis import DualisImporter
-from modules.dhbw.lecture_importer import LectureImporter, CourseImporter
-import json
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 
-is_user_logged_in = False
+from apps.authentication.models import BonoboUser
+from .forms import ContactForm
 
+BonoboUser = get_user_model()
 
 @csrf_protect
+@login_required(login_url="/login/")
 def index(request):
-    global is_user_logged_in
+    content_dump = get_dualis_results(BonoboUser.objects.get(email=request.user))
+    return render(request, 'home/index.html', {"content_dump": content_dump})
 
-    if is_user_logged_in:
-        return render(request, 'home/index.html', {'is_user_logged_in': is_user_logged_in})
-
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-
-        if form.is_valid():
-            email = form.cleaned_data.get("email")
-            password = form.cleaned_data.get("passwort")
-            kurs = form.cleaned_data.get("kurs")
-
-            dualis_results_dump = json.dumps(
-                get_dualis_results(email, password))
-            is_user_logged_in = True
-            html_template = loader.get_template('home/index.html')
-            response = HttpResponse(html_template.render(
-                {'is_user_logged_in': is_user_logged_in, 'content_dump': dualis_results_dump}, request))
-            response.set_cookie('kurs', kurs)
-            return response
-
-    else:
-        form = LoginForm()
-
-    return render(request, 'home/index.html', {'form': form})
-
-
+@login_required(login_url="/login/")
 def leistungsuebersicht(request):
-    if not is_user_logged_in:
-        return HttpResponseRedirect('/')
-
     return render(request, 'home/leistungsuebersicht.html')
 
-
+@login_required(login_url="/login/")
 def email(request):
-    if not is_user_logged_in:
-        return HttpResponseRedirect('/')
-
     if request.method == 'POST':
         form = ContactForm(request.POST)
 
         if form.is_valid():
+            #current_user = BonoboUser.objects.get(email=request.user)
+            #current_user.user_objects["zimbra"].sendmail()
             return render(request, 'home/email.html', {'form': form})
     else:
         form = ContactForm()
 
     return render(request, 'home/email.html', {'form': form})
 
-
+@login_required(login_url="/login/")
 def vorlesungsplan(request):
-
-    if not is_user_logged_in:
-        return HttpResponseRedirect('/')
-    kurs = request.COOKIES.get('kurs')
-    lectures = get_lecture_results(CourseImporter().get_course_uid(kurs))
+    lectures = get_lecture_results(request.user)
     return render(request, 'home/vorlesungsplan.html', {"lectures": lectures})
-
-
-def logout(request):
-    global is_user_logged_in
-    is_user_logged_in = False
-    return HttpResponseRedirect('/')
-
 
 def pages(request):
     context = {}
@@ -110,17 +72,12 @@ def pages(request):
         return HttpResponse(html_template.render(context, request))
 
 
-def get_dualis_results(email, password):
-    dualis_importer = DualisImporter()
-    dualis_importer.login(email, password)
-    dualis_importer.scrape()
-    dualis_importer.logout()
-    return dualis_importer.scraped_data
+def get_dualis_results(current_user):
+    return current_user.user_objects["dualis"].scraped_data
 
-
-def get_lecture_results(uid):
+def get_lecture_results(current_user):
     #lecture_importer = LectureImporter.read_lectures_from_database(uid)
-    lecture_importer = LectureImporter(uid)
+    lecture_importer = current_user.user_objects["lecture"]
     lectures_df = lecture_importer.limit_days_in_list(14, 14)
 
     json_records = lectures_df.reset_index().to_json(orient='records')
