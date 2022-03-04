@@ -11,9 +11,8 @@ jobs:
       with:
         docs-folder: "docs/"
         build-command: "sphinx-build -v -b html . _build"
-    - run: "ls -al"
         
     - uses: actions/upload-artifact@v1
       with:
         name: DocumentationHTML
-        path: docs/
+        path: docs/_build
