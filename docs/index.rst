@@ -7,7 +7,7 @@ Welcome to No Errors Test Project's documentation!
 ==================================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 5
    :caption: Hello World!
 
 
