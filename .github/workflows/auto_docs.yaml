@@ -16,4 +16,10 @@ jobs:
     - uses: actions/upload-artifact@v1
       with:
         name: DocumentationHTML
-        path: sphinx_doc/_build
+        path: sphinx_doc/_build/html
+        
+    - name: deploy GH-page
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+        publish_dir: ./sphinx_doc/_build/html
