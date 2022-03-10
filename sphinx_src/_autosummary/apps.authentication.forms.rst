@@ -1,0 +1,33 @@
+apps.authentication.forms
+=========================
+
+.. automodule:: apps.authentication.forms
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+      :nosignatures:
+   
+      LoginForm
+      SignUpForm
+   
+   
+
+   
+   
+   
+
+
+
