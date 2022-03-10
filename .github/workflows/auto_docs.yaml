@@ -1,6 +1,8 @@
-name: "Pull Request Docs Check"
-on: 
-- push
+name: "On main push documentation build"
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   docs:
@@ -9,10 +11,9 @@ jobs:
     - uses: actions/checkout@v1
     - uses: ammaraskar/sphinx-action@master
       with:
-        docs-folder: "docs/"
-        build-command: "sphinx-build -v -b html . _build"
+        docs-folder: "sphinx_src/"
         
     - uses: actions/upload-artifact@v1
       with:
         name: DocumentationHTML
-        path: docs/_build
+        path: sphinx_doc/_build
