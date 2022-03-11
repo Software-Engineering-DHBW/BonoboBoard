@@ -8,6 +8,7 @@ import pandas as pd
 import sqlalchemy
 from bs4 import BeautifulSoup
 import icalendar
+import asyncio
 
 from .util import Importer, reqget
 
@@ -63,6 +64,12 @@ class LectureImporter(Importer):
         super().__init__()
         self.uid = uid
         self.lectures = self.scrape(uid)
+
+    @classmethod
+    async def create(cls, uid):
+        super().__init__()
+        cls.uid = uid
+        cls.lectures = cls.scrape(uid)
 
     def scrape(self, uid):
         """method to scrape the courses-icalendar and parse it to a pandas.DataFrame

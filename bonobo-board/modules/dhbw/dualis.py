@@ -110,7 +110,8 @@ class DualisImporter(ImporterSession):
         self.headers["Host"] = url_get_fqdn(DualisImporter.url)
         self.params = {}
 
-    def login(self, username, password):
+    @classmethod
+    async def login(cls, username, password):
         """aquire the authentication token
 
         Parameters
@@ -127,7 +128,7 @@ class DualisImporter(ImporterSession):
 
         url = DualisImporter.url
 
-        self.headers["Content-Type"] = "application/x-www-form-urlencoded"
+        cls.headers["Content-Type"] = "application/x-www-form-urlencoded"
         data = {
             "APPNAME": "CampusNet",
             "PRGNAME": "LOGINCHECK",
@@ -143,21 +144,21 @@ class DualisImporter(ImporterSession):
 
         r_login = reqpost(
             url=url,
-            headers=self.headers,
+            headers=cls.headers,
             payload=data
         )
 
-        self.drop_header("Content-Type")
+        cls.drop_header("Content-Type")
 
         for keyval in url_get_args(r_login.headers["REFRESH"]):
             temp = keyval.split("=")
-            self.params[temp[0]] = temp[1]
+            cls.params[temp[0]] = temp[1]
 
-        self.params["PRGNAME"] = "MLSSTART"
-        self.params["ARGUMENTS"] = self.params["ARGUMENTS"].split(",")[:2]
+        cls.params["PRGNAME"] = "MLSSTART"
+        cls.params["ARGUMENTS"] = cls.params["ARGUMENTS"].split(",")[:2]
 
-        self.auth_token = re.sub(r"[\s]|(;.*)", "", r_login.headers["Set-Cookie"])
-        self.headers["Cookie"] = self.auth_token
+        cls.auth_token = re.sub(r"[\s]|(;.*)", "", r_login.headers["Set-Cookie"])
+        cls.headers["Cookie"] = cls.auth_token
 
     def _fill_grades_into_dict(self, response_text):
         """extract needed data and fills the dictionary
