@@ -9,6 +9,10 @@ __pycache__/
 # C extensions
 *.so
 
+# Sphinx doc (generated)
+sphinx_doc/
+sphinx_src/_autosummary/
+
 # Distribution / packaging
 .Python
 build/
