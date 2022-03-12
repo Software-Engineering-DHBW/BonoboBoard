@@ -11,15 +11,15 @@ jobs:
     - uses: actions/checkout@v1
     - uses: ammaraskar/sphinx-action@master
       with:
-        docs-folder: "sphinx_src/"
+        build-command: "sphinx-build -b html ./sphinx_src ./sphinx_doc/html"
         
     - uses: actions/upload-artifact@v1
       with:
         name: DocumentationHTML
-        path: sphinx_doc/_build/html
+        path: sphinx_doc/html
         
     - name: deploy GH-page
       uses: peaceiris/actions-gh-pages@v3
       with:
         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-        publish_dir: ./sphinx_doc/_build/html
+        publish_dir: ./sphinx_doc/html
