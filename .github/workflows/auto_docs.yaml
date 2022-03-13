@@ -12,7 +12,6 @@ jobs:
       
     - uses: ammaraskar/sphinx-action@master
       with:
-        build-command: "cd ./sphinx_src && make html"
         docs-folder: "sphinx_src/"
         
     - uses: actions/upload-artifact@v1
