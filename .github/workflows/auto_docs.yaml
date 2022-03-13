@@ -9,16 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    
-    - run: ls -la
-    
-    - run: |
-        cd ./sphinx_src/
-        ls -la
       
     - uses: ammaraskar/sphinx-action@master
       with:
-        build-command: "sphinx-build -b html ./sphinx_src ./sphinx_doc/html"
+        build-command: "sphinx-build -b html . ../sphinx_doc/html"
         docs-folder: "sphinx_src/"
         
     - uses: actions/upload-artifact@v1
