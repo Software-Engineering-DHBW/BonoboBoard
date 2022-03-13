@@ -13,6 +13,11 @@ jobs:
     - uses: ammaraskar/sphinx-action@master
       with:
         docs-folder: "sphinx_src/"
+    
+    - run: |
+        ls -la
+        cd ..
+        ls -la
         
     - uses: actions/upload-artifact@v1
       with:
