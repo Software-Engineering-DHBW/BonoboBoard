@@ -15,9 +15,14 @@ import sys
 _HERE = os.path.dirname(__file__)
 _ROOT_DIR = os.path.abspath(os.path.join(_HERE, '..'))
 _PACKAGE_DIR = os.path.abspath(os.path.join(_HERE, '../bonobo-board'))
+_MODULES_DIR = os.path.abspath(os.path.join(_HERE, '../bonobo-board/modules'))
+_DHBW_DIR = os.path.abspath(os.path.join(
+    _HERE, '../bonobo-board/modules/dhbw'))
 
 sys.path.insert(0, _ROOT_DIR)
 sys.path.insert(0, _PACKAGE_DIR)
+sys.path.insert(0, _MODULES_DIR)
+sys.path.insert(0, _DHBW_DIR)
 
 # sys.path.insert(0, os.path.abspath('../bonobo-board'))
 
