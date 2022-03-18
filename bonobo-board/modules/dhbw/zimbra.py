@@ -20,14 +20,11 @@ def _entity_list(in_list, out_list, in_type):
     else:
         temp = "b"
 
-    i = 0
     for account in in_list:
         temp_dict = {}
         temp_dict["t"] = temp
         temp_dict["a"] = account
-        temp_dict["add"] = i
         out_list.insert(0, temp_dict)
-        i+=1
 
     return out_list
 
