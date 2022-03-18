@@ -92,8 +92,7 @@ class MoodleImporter(ImporterSession):
         self.headers["Host"] = url_get_fqdn(MoodleImporter.url)
         self.logout_url = ""
 
-    @classmethod
-    async def login(cls, username, password):
+    async def login(self, username, password):
         """aquire the authentication token
 
         Parameters
@@ -105,7 +104,7 @@ class MoodleImporter(ImporterSession):
 
         Returns
         -------
-        None
+        MoodleImporter
         """
         if "@" in username:
             username = username.split("@")[0]
@@ -113,12 +112,12 @@ class MoodleImporter(ImporterSession):
         url = MoodleImporter.url
 
         # get token from login page
-        r_token = reqget(url=url+"login/index.php", headers=cls.headers)
+        r_token = reqget(url=url+"login/index.php", headers=self.headers)
 
         # extract the token from response
-        cls.headers["Cookie"] = r_token.headers["Set-Cookie"].split(";")[0]
-        cls.headers["Referer"] = url + "login/index.php"
-        cls.headers["Origin"] = url
+        self.headers["Cookie"] = r_token.headers["Set-Cookie"].split(";")[0]
+        self.headers["Referer"] = url + "login/index.php"
+        self.headers["Origin"] = url
         content_token = BeautifulSoup(r_token.text, "lxml")
         tag_list = content_token.find(id="login").find_all("input")
         for elem in tag_list:
@@ -127,7 +126,7 @@ class MoodleImporter(ImporterSession):
                 break
 
         # set form data
-        cls.headers["Content-Type"] = "application/x-www-form-urlencoded"
+        self.headers["Content-Type"] = "application/x-www-form-urlencoded"
         payload = {
             "anchor": "",
             "logintoken": logintoken,
@@ -138,18 +137,22 @@ class MoodleImporter(ImporterSession):
         # post request for login
         r_login = reqpost(
             url=url+"login/index.php",
-            headers=cls.headers,
+            headers=self.headers,
             payload=payload,
             return_code=303
         )
 
         # add authentication cookie to the headers
-        cls.auth_token = r_login.headers["Set-Cookie"].split(";")[0]
-        cls.headers["Cookie"] = cls.auth_token
+        self.auth_token = r_login.headers["Set-Cookie"].split(";")[0]
+        self.headers["Cookie"] = self.auth_token
 
         # drop content-type header
-        cls.drop_header("Content-Type")
-        cls.drop_header("Origin")
+        self.drop_header("Content-Type")
+        self.drop_header("Origin")
+
+        self.email = username
+
+        return self
 
     def find_all_bbb_rooms(self, course_dict):
         """method to find all bbc rooms for a given course
@@ -178,7 +181,7 @@ class MoodleImporter(ImporterSession):
                 )
         return course_dict
 
-    def scrape(self):
+    async def scrape(self):
         """scrape the wanted data from the website
 
         Returns

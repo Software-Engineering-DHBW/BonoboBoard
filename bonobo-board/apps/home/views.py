@@ -30,13 +30,27 @@ def leistungsuebersicht(request):
 
 @login_required(login_url="/login/")
 def email(request):
+    write_log("email intit")
     if request.method == 'POST':
         form = ContactForm(request.POST)
 
         if form.is_valid():
-            #current_user = BonoboUser.objects.get(email=request.user)
-            #current_user.user_objects["zimbra"].sendmail()
+            mail_dict = {
+                "recipients": form.cleaned_data.get("empfänger"),
+                "rec_cc": form.cleaned_data.get("cc"),
+                "rec_bcc": form.cleaned_data.get("bcc"),
+                "subject": form.cleaned_data.get("betreff"),
+                "cttype": "text/plain",
+                "content": form.cleaned_data.get("nachricht"),
+            }
+            write_log(str(mail_dict))
+
+            current_user = BonoboUser.objects.get(email=request.user)
+            current_user.user_objects["zimbra"].send_mail(mail_dict)
             return render(request, 'home/email.html', {'form': form})
+        else:
+            write_log("form not valid")
+
     else:
         form = ContactForm()
 
@@ -73,6 +87,8 @@ def pages(request):
 
 
 def get_dualis_results(current_user):
+    if current_user.user_objects["dualis"] == None:
+        return
     return current_user.user_objects["dualis"].scraped_data
 
 def get_lecture_results(current_user):
@@ -84,3 +100,9 @@ def get_lecture_results(current_user):
     lectures = json.loads(json_records)
 
     return lectures
+
+
+def write_log(msg):
+    f = open("log.txt", "a")
+    f.write(str(msg)+"\n")
+    f.close()

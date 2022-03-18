@@ -204,11 +204,12 @@ class ImporterSession(Importer, metaclass=ABCMeta):
         the string representing the authentication cookie for the created session
     """
 
-    __slots__ = ("auth_token",)
+    __slots__ = ("auth_token","email",)
 
     def __init__(self):
         super().__init__()
         self.auth_token = ""
+        self.email = ""
 
     @abstractmethod
     def login(self, username, password):

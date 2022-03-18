@@ -60,18 +60,15 @@ class LectureImporter(Importer):
     # No HTTPS possible in this case?
     url = "http://vorlesungsplan.dhbw-mannheim.de/ical.php?uid="
 
-    def __init__(self, uid):
+    def __init__(self):
         super().__init__()
-        self.uid = uid
-        self.lectures = self.scrape(uid)
+        
 
-    @classmethod
-    async def create(cls, uid):
-        super().__init__()
-        cls.uid = uid
-        cls.lectures = cls.scrape(uid)
+    async def login(self):
+        return self 
 
-    def scrape(self, uid):
+
+    async def scrape(self, uid):
         """method to scrape the courses-icalendar and parse it to a pandas.DataFrame
 
         Parameters

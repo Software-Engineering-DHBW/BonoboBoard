@@ -110,8 +110,8 @@ class DualisImporter(ImporterSession):
         self.headers["Host"] = url_get_fqdn(DualisImporter.url)
         self.params = {}
 
-    @classmethod
-    async def login(cls, username, password):
+
+    async def login(self, username, password):
         """aquire the authentication token
 
         Parameters
@@ -123,12 +123,12 @@ class DualisImporter(ImporterSession):
 
         Returns
         -------
-        None
+        DualisImporter
         """
 
         url = DualisImporter.url
 
-        cls.headers["Content-Type"] = "application/x-www-form-urlencoded"
+        self.headers["Content-Type"] = "application/x-www-form-urlencoded"
         data = {
             "APPNAME": "CampusNet",
             "PRGNAME": "LOGINCHECK",
@@ -144,21 +144,25 @@ class DualisImporter(ImporterSession):
 
         r_login = reqpost(
             url=url,
-            headers=cls.headers,
+            headers=self.headers,
             payload=data
         )
 
-        cls.drop_header("Content-Type")
+        self.drop_header("Content-Type")
 
         for keyval in url_get_args(r_login.headers["REFRESH"]):
             temp = keyval.split("=")
-            cls.params[temp[0]] = temp[1]
+            self.params[temp[0]] = temp[1]
 
-        cls.params["PRGNAME"] = "MLSSTART"
-        cls.params["ARGUMENTS"] = cls.params["ARGUMENTS"].split(",")[:2]
+        self.params["PRGNAME"] = "MLSSTART"
+        self.params["ARGUMENTS"] = self.params["ARGUMENTS"].split(",")[:2]
 
-        cls.auth_token = re.sub(r"[\s]|(;.*)", "", r_login.headers["Set-Cookie"])
-        cls.headers["Cookie"] = cls.auth_token
+        self.auth_token = re.sub(r"[\s]|(;.*)", "", r_login.headers["Set-Cookie"])
+        self.headers["Cookie"] = self.auth_token
+
+        self.email = username
+        
+        return self
 
     def _fill_grades_into_dict(self, response_text):
         """extract needed data and fills the dictionary
@@ -219,7 +223,7 @@ class DualisImporter(ImporterSession):
             else:
                 i += 1
 
-    def scrape(self):
+    async def scrape(self):
         """scrape the wanted data from the website
 
         Returns

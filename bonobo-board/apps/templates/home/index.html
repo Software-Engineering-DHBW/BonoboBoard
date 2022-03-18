@@ -62,22 +62,20 @@
 {% endblock content %}
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
-<!-- {{ content_dump }} -->
-<script>
-    let rawCourseImport = "{{ course_list }}"
-    rawCourseImport = rawCourseImport.replace(/&quot;/g, '"')
-    const courseImport = JSON.parse(rawCourseImport);
-    const courseList = courseImport[0]
-    autocomplete(document.getElementById("{{ form.kurs.name }}"), courseList);
 
+<script>
+    //save dualis data to local storage
     const dualisDump = "{{ content_dump }}";
     if (dualisDump !== "") {
         localStorage.setItem('dualis', dualisDump);
     }
+    //encode dualis data from local storage
     let rawDualisData = localStorage.getItem('dualis')
     rawDualisData = rawDualisData.replace(/&quot;/g, '"')
+    rawDualisData = rawDualisData.replace(/&#x27;/g, '"')
     const dualisData = JSON.parse(rawDualisData);
 
+    //show gpa
     var gpa = document.getElementById("gpa")
     console.log(gpa)
     if (gpa !== null && dualisData["gpa_total"] !== undefined) {

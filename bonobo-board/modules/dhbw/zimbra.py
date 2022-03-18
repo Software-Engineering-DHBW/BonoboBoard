@@ -103,8 +103,7 @@ class ZimbraHandler(ImporterSession):
         self.realname = ""
         self.signatures = []
 
-    @classmethod
-    async def login(cls, username, password):
+    async def login(self, username, password):
         """authenticate the user against zimbra
 
         Parameters
@@ -116,16 +115,16 @@ class ZimbraHandler(ImporterSession):
 
         Returns
         -------
-        None
+        ZimbraHandler
         """
         url = ZimbraHandler.url
 
         # add accountname
-        cls.accountname = username
+        self.accountname = username
 
         # set headers for post request
-        cls.headers["Content-Type"] = "application/x-www-form-urlencoded"
-        cls.headers["Cookie"] = "ZM_TEST=true"
+        self.headers["Content-Type"] = "application/x-www-form-urlencoded"
+        self.headers["Cookie"] = "ZM_TEST=true"
 
         # form data
         payload = {
@@ -138,20 +137,24 @@ class ZimbraHandler(ImporterSession):
         # LOGIN - POST REQUEST
         r_login = reqpost(
             url=url,
-            headers=cls.headers,
+            headers=self.headers,
             payload=payload,
             allow_redirects=False,
             return_code=302
         )
 
         # add authentication cookie to the headers
-        cls.auth_token = r_login.headers["Set-Cookie"].split(";")[0]
-        cls.headers["Cookie"] = cls.headers["Cookie"] + "; " + cls.auth_token
+        self.auth_token = r_login.headers["Set-Cookie"].split(";")[0]
+        self.headers["Cookie"] = self.headers["Cookie"] + "; " + self.auth_token
 
         # drop content-type header
-        cls.drop_header("Content-Type")
+        self.drop_header("Content-Type")
 
-    def scrape(self):
+        self.email = username
+
+        return self
+
+    async def scrape(self):
         """scrape the wanted data from the website
 
         Returns
