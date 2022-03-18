@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""
+"""Provide functionality to scrape student grades from dualis.
 """
 
 import re
@@ -34,12 +34,14 @@ def trim_str(content, empty_string=""):
 
 
 def repl_comma_with_dot(content):
-    """replaces every comma with a dot"""
+    """Replaces every comma with a dot.
+    """
     return re.sub(r",", ".", content)
 
 
 def fit_credits(credits_string):
-    """fits the string containing the credits to int"""
+    """Fits the string containing the credits to an integer.
+    """
     _credits = 0
     if credits_string:
         credits_string = repl_comma_with_dot(trim_str(credits_string))
@@ -48,7 +50,8 @@ def fit_credits(credits_string):
 
 
 def fit_grade(grade_string):
-    """fits the string containing the grade to float"""
+    """Fits the string containing the grade to a float.
+    """
     grade = 0.0
     if grade_string:
         grade_string = repl_comma_with_dot(trim_str(grade_string))
@@ -58,7 +61,8 @@ def fit_grade(grade_string):
 
 
 def fit_state(state_string):
-    """a mapping for state values to shortcut literals"""
+    """Provides mapping for state values to shortcut literals.
+    """
     if state_string == "bestanden" or state_string == "Bestanden":
         state_string = "p"
     elif state_string == "Offen" or state_string == "offen":
@@ -69,7 +73,7 @@ def fit_state(state_string):
 
 
 def add_module_to_dualis_dict(m_id, m_name, m_href, m_credits, m_grade, m_state):
-    """create with the provided values the DualisModuleDict"""
+    """Create the DualisModuleDict with provided values."""
     dualis_module = {
         "id": m_id,
         "name": m_name,
@@ -82,7 +86,7 @@ def add_module_to_dualis_dict(m_id, m_name, m_href, m_credits, m_grade, m_state)
 
 
 class DualisImporter(ImporterSession):
-    """class to import data from dualis
+    """Class to import data from dualis.
 
     Attributes
     ----------
@@ -111,7 +115,7 @@ class DualisImporter(ImporterSession):
         self.params = {}
 
     def login(self, username, password):
-        """aquire the authentication token
+        """Aquire the authentication token by authenticating the user.
 
         Parameters
         ----------
@@ -160,7 +164,7 @@ class DualisImporter(ImporterSession):
         self.headers["Cookie"] = self.auth_token
 
     def _fill_grades_into_dict(self, response_text):
-        """extract needed data and fills the dictionary
+        """Extracts needed data and fills the dictionary.
 
         Parameters
         ----------
@@ -219,7 +223,7 @@ class DualisImporter(ImporterSession):
                 i += 1
 
     def scrape(self):
-        """scrape the wanted data from the website
+        """Scrape the wanted data from the dualis-website.
 
         Returns
         -------
@@ -250,7 +254,7 @@ class DualisImporter(ImporterSession):
         self._fill_grades_into_dict(r_grades.text)
 
     def logout(self):
-        """sends a logout request
+        """Sends a logout request (log the user out of the dualis session).
 
         Returns
         -------

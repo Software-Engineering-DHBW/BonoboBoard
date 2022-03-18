@@ -9,7 +9,8 @@ from dhbw.lecture_importer import LectureImporter
 from dhbw.lecture_importer import CourseImporter
 
 class LectureImporterTest(TestCase):
-    """unittests for the lecture class"""
+    """unittests for the lecture class
+    """
     def test_false_uid(self):
         lec = LectureImporter(776101)
         self.assertEqual(lec.lectures.empty, True)  # add assertion here
@@ -25,7 +26,8 @@ class LectureImporterTest(TestCase):
 
 
 class CourseImporterTest(TestCase):
-    """unittests for the course module"""
+    """unittests for the course module
+    """
     def test_course_importer(self):
         courses = CourseImporter()
         self.assertFalse(len(courses.course_list) == 0)

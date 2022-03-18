@@ -399,7 +399,7 @@ class ZimbraHandler(ImporterSession):
         Parameters
         ----------
         mail_dict: SendMailDict
-            a dictionary containing recipients, subject, content-type and the actual content
+        a dictionary containing recipients, subject, content-type and the actual content
 
         Returns
         -------

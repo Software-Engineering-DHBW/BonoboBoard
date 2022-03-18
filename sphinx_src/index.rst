@@ -11,7 +11,7 @@ Welcome to Bonoboboard's documentation!
    :template: custom-module-template.rst
    :recursive:
 
-   modules
+   modules.dhbw
    core
    apps
 

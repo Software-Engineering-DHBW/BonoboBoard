@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""Provide unittests for the dhbw module"""
+"""Provide unittests for the dhbw module
+"""
 
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from unittest import makeSuite, TestSuite,  TextTestRunner
@@ -24,7 +25,8 @@ parser.add_argument("-t", "--tests", action="extend",
 args = parser.parse_args()
 
 def suite():
-    """Gather all tests defined in the tests module inside the dhbw module"""
+    """Gather all tests defined in the tests module inside the dhbw module
+    """
     test_suite = TestSuite()
     _args = args.tests
 
@@ -51,7 +53,8 @@ def suite():
     return test_suite
 
 def main():
-    """Run the provided tests"""
+    """Run the provided tests
+    """
     dhbw_suite = suite()
     runner = TextTestRunner(verbosity=2)
     test_result = runner.run(dhbw_suite)
