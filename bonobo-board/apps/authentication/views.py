@@ -37,17 +37,19 @@ def login_view(request):
             password = form.cleaned_data.get("password")
             course = form.cleaned_data.get("course")
             
-            user = authenticate_user(request, username, password, course)
             if not is_valid_course(course_list, course):
-                msg = 'Unbekannter Kurs!'
-            elif user is not None:
+                msg = 'Unbekannter Kurs'
+                return render(request, "accounts/login.html", {"form": form, "msg": msg, "course_list": course_list})
+            
+            user = authenticate_user(request, username, password, course)
+         
+            if user is not None:
                 login(request, user)
                 return redirect("/")
             else:
                 msg = 'Deine angegebenen DHBW Daten können nicht zum Login verwedent werden.'
         else:
             msg = 'Ungültige Eingabedaten'
-
  
     return render(request, "accounts/login.html", {"form": form, "msg": msg, "course_list": course_list})
 
@@ -80,7 +82,7 @@ def authenticate_user(request, username, password, course):
 
 
 def is_valid_course(course_list, course):
-    return course in course_list
+    return (course in course_list)
 
 
 def get_new_event_loop():

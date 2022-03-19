@@ -25,6 +25,7 @@ class LoginForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "placeholder": "Kurs Name",
-                "class": "form-control"
+                "class": "form-control",
+                'autocomplete': 'off'
             }
         ), required=True)

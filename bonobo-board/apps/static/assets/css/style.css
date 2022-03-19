@@ -179,6 +179,31 @@ strong {
   background-color: DodgerBlue !important;
   color: #ffffff;
 }
+/* ==========  Loader style  =========== */
+.loader {
+  border: 5px solid #888;
+  border-radius: 50%;
+  border-top: 5px solid #53c213;
+  border-bottom: 5px solid #53c213;
+  margin-left: auto;
+  margin-right: auto;
+  width: 60px;
+  height: 60px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 1.5s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* ==========  card css start  =========== */
 .anim-rotate {
   -webkit-animation: anim-rotate 1s linear infinite;
@@ -2115,7 +2140,7 @@ p.text-muted {
   margin-bottom: 0;
 }
 .pcoded-navbar .scroll-div.navbar-content {
-  height: calc(100vh - 70px);
+  height: calc(100vh - 120px);
 }
 .pcoded-navbar .header-logo {
   position: relative;

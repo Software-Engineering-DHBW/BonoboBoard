@@ -21,7 +21,7 @@
 
                 <span class="mb-0 text-muted">
                     {% if msg %}
-                    <span style="color: #ff0000">{{ msg | safe }}</span>
+                    <span id="error_msg" style="color: #ff0000">{{ msg | safe }}</span>
                     {% else %}
                     Gib deine DHBW Login-Daten ein.
                     {% endif %}
@@ -45,8 +45,8 @@
                     <div class="input-group mb-5">
                         {{ form.course }}
                     </div>
-                    <div class="input-group mb-5" id="loading">
-                        <p> Bidde warten...</p>
+                    <div class="input-group mb-5" id="loading" style="visibility: hidden;">
+                        <div class="loader"></div>
                     </div>
                     <button type="submit" name="login" id="login" class="btn btn-primary shadow-2 mb-4">Login</button>
 
@@ -60,14 +60,19 @@
 {% endblock content %}
 {% block javascripts %}
 <script>
+    error_msg = document.getElementById("error_msg")
+    setTimeout(()=> { 
+        error_msg.textContent="Gib deine DHBW Login-Daten ein."
+        error_msg.style.color="#000"
+    }, 5000)
+
     element = document.getElementsByName("{{ form.course.name }}")
     courseFiled = element[0]
 
     loading = document.getElementById("loading")
-    loading.style.display = "none";
     button = document.getElementById("login")
     button.addEventListener("click", function() {
-        loading.style.display = "unset";
+        loading.style.visibility = "visible";
         button.disabled = true
         button.parentElement.submit()
     });

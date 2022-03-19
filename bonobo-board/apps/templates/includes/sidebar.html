@@ -39,49 +39,19 @@
                     <a href="{{ url }}" class="nav-link "><span class="pcoded-micon"><i
                                 class="feather icon-mail"></i></span><span class="pcoded-mtext">Emails</span></a>
                 </li>
-                <li class="nav-item pcoded-menu-caption">
-                    <label>UI Element</label>
-                </li>
-                <li data-username="basic components Button Alert Badges breadcrumb Paggination progress Tooltip popovers Carousel Cards Collapse Tabs pills Modal Grid System Typography Extra Shadows Embeds"
-                    class="nav-item pcoded-hasmenu">
-                    <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i
-                                class="feather icon-box"></i></span><span class="pcoded-mtext">Components</span></a>
-                    <ul class="pcoded-submenu">
-                        <li class=""><a href="/ui-button.html" class="">Button</a></li>
-                        <li class=""><a href="/ui-badges.html" class="">Badges</a></li>
-                        <li class=""><a href="/ui-breadcrumb-pagination.html" class="">Breadcrumb & paggination</a></li>
-                        <li class=""><a href="/ui-collapse.html" class="">Collapse</a></li>
-                        <li class=""><a href="/ui-tabs.html" class="">Tabs & pills</a></li>
-                        <li class=""><a href="/ui-typography.html" class="">Typography</a></li>
-                        <li class=""><a href="/ui-icons.html" class="">Feather<span
-                                    class="pcoded-badge label label-danger">NEW</span></a></li>
-                    </ul>
-                </li>
-                <li class="nav-item pcoded-menu-caption">
-                    <label>Forms & table</label>
-                </li>
-                <li data-username="form elements advance componant validation masking wizard picker select"
-                    class="nav-item {% if 'ui-forms' in segment %} active {% endif %}">
-                    <a href="/ui-forms.html" class="nav-link "><span class="pcoded-micon"><i
-                                class="feather icon-file-text"></i></span><span class="pcoded-mtext">Form
-                            elements</span></a>
-                </li>
-                <li data-username="Table bootstrap datatable footable"
-                    class="nav-item {% if 'ui-tables' in segment %} active {% endif %}">
-                    <a href="/ui-tables.html" class="nav-link "><span class="pcoded-micon"><i
-                                class="feather icon-server"></i></span><span class="pcoded-mtext">Table</span></a>
-                </li>
-                <li class="nav-item pcoded-menu-caption">
-                    <label>Manage</label>
-                </li>
-                <li data-username="Disabled Menu" class="nav-item">
-                    <a href="{% url 'logout' %}" class="nav-link">
-                        <span class="pcoded-micon"><i class="feather icon-power"></i></span><span
-                            class="pcoded-mtext">Logout</span>
-                    </a>
-                </li>
 
             </ul>
+
+
         </div>
+        <ul class="nav pcoded-inner-navbar">
+
+            <li data-username="Disabled Menu" class="nav-item">
+                <a href="{% url 'logout' %}" class="nav-link" style="position: absolute; display: inline-block;">
+                    <span class="pcoded-micon"><i class="feather icon-power"></i></span><span
+                        class="pcoded-mtext">Logout</span>
+                </a>
+            </li>
+        </ul>
     </div>
 </nav>

@@ -38,14 +38,16 @@ class ContactForm(forms.Form):
          widget=forms.TextInput(
             attrs={
                 "placeholder": "Empfänger",
-                "class": "form-control"
+                "class": "form-control",
+                'autocomplete': 'off'
             }
         ),required=True)
     cc = MultiEmailField(
         widget=forms.TextInput(
             attrs={
                 "placeholder": "Cc",
-                "class": "form-control"
+                "class": "form-control",
+                'autocomplete': 'off'
             }
         ),
         required=False)
@@ -53,7 +55,8 @@ class ContactForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "placeholder": "Bcc",
-                "class": "form-control"
+                "class": "form-control",
+                'autocomplete': 'off'
             }
         ),
         required=False)

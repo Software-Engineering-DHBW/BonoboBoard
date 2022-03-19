@@ -18,19 +18,24 @@ from .forms import ContactForm
 
 BonoboUser = get_user_model()
 
+
 @csrf_protect
 @login_required(login_url="/login/")
 def index(request):
-    content_dump = get_dualis_results(BonoboUser.objects.get(email=request.user))
-    return render(request, 'home/index.html', {"content_dump": content_dump})
+    dualis_data = get_dualis_results(
+        BonoboUser.objects.get(email=request.user))
+    return render(request, 'home/index.html', {"dualis_data": dualis_data})
+
 
 @login_required(login_url="/login/")
 def leistungsuebersicht(request):
     return render(request, 'home/leistungsuebersicht.html')
 
+
 @login_required(login_url="/login/")
 def email(request):
-    write_log("email intit")
+    current_user = BonoboUser.objects.get(email=request.user)
+    msg = ["error", ""]
     if request.method == 'POST':
         form = ContactForm(request.POST)
 
@@ -43,23 +48,32 @@ def email(request):
                 "cttype": "text/plain",
                 "content": form.cleaned_data.get("nachricht"),
             }
-            write_log(str(mail_dict))
 
-            current_user = BonoboUser.objects.get(email=request.user)
             current_user.user_objects["zimbra"].send_mail(mail_dict)
-            return render(request, 'home/email.html', {'form': form})
+            msg = ["info", "Email erfolgreich gesendet!"]
+            form = ContactForm() # clear the from
+            return render(request, 'home/email.html', {'form': form, 'msg': msg})
         else:
-            write_log("form not valid")
+            msg[1] = "Fehlerhafte Eingabe"
 
     else:
         form = ContactForm()
 
-    return render(request, 'home/email.html', {'form': form})
+    # current_user.user_objects["zimbra"].get_contacts()
+    # contacts = current_user.user_objects["zimbra"].contacts
+    # user_contacts = []
+    # for contact in contacts:
+        # user_contacts.append(contact["email"])
+
+    # , 'user_contacts': user_contacts
+    return render(request, 'home/email.html', {'form': form, 'msg': msg})
+
 
 @login_required(login_url="/login/")
 def vorlesungsplan(request):
     lectures = get_lecture_results(request.user)
     return render(request, 'home/vorlesungsplan.html', {"lectures": lectures})
+
 
 def pages(request):
     context = {}
@@ -90,6 +104,7 @@ def get_dualis_results(current_user):
     if current_user.user_objects["dualis"] == None:
         return
     return current_user.user_objects["dualis"].scraped_data
+
 
 def get_lecture_results(current_user):
     #lecture_importer = LectureImporter.read_lectures_from_database(uid)
