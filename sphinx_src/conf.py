@@ -16,13 +16,11 @@ _HERE = os.path.dirname(__file__)
 _ROOT_DIR = os.path.abspath(os.path.join(_HERE, '..'))
 _PACKAGE_DIR = os.path.abspath(os.path.join(_HERE, '../bonobo-board'))
 _MODULES_DIR = os.path.abspath(os.path.join(_HERE, '../bonobo-board/modules'))
-_DHBW_DIR = os.path.abspath(os.path.join(
-    _HERE, '../bonobo-board/modules/dhbw'))
 
 sys.path.insert(0, _ROOT_DIR)
 sys.path.insert(0, _PACKAGE_DIR)
 sys.path.insert(0, _MODULES_DIR)
-#sys.path.insert(0, _DHBW_DIR)
+
 
 # sys.path.insert(0, os.path.abspath('../bonobo-board'))
 
@@ -50,7 +48,7 @@ extensions = [
 ]
 autosummary_generate = True  # Turn on sphinx.ext.autosummary
 
-autodoc_mock_imports = ["django", "core.settings", "icalendar", "sqlalchemy", "datetime", "decouple", "unipath"]
+autodoc_mock_imports = ["django", "icalendar", "core.settings", "sqlalchemy", "datetime", "decouple", "unipath", "argparse", "unittest", "dhbw.tests"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

@@ -5,7 +5,7 @@
 """
 
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
-from unittest import makeSuite, TestSuite,  TextTestRunner
+from unittest import makeSuite, TestSuite, TextTestRunner
 
 from dhbw.tests.lecture_test import LectureImporterTest, CourseImporterTest
 from dhbw.tests.moodle_test import TestMoodleImporter

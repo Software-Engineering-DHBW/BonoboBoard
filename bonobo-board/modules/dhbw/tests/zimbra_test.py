@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""unittests for the zimbra module
+"""Unittests for the zimbra module.
 """
 
 from os import environ
@@ -10,10 +10,10 @@ from dhbw.zimbra import ZimbraHandler
 zimbra_handler = ZimbraHandler()
 
 class TestZimbraHandler(TestCase):
-    """unittests for the zimbra class
+    """Unittests for the zimbra class.
     """
     def test_login(self):
-        """test login functionality
+        """Test login functionality.
         """
         usr_name = environ.get("STUDENTMAIL")
         passwd = environ.get("STUDENTPASS")
@@ -23,20 +23,20 @@ class TestZimbraHandler(TestCase):
         self.assertIsNotNone(zimbra_handler.accountname)
 
     def test_scrape(self):
-        """test scraping functionality
+        """Test scraping functionality.
         """
         zimbra_handler.scrape()
         self.assertIsNotNone(zimbra_handler.scraped_data)
         self.assertIsNotNone(zimbra_handler.realname)
 
     def test_get_contacts(self):
-        """test get contacts functionality
+        """Test get contacts functionality.
         """
         zimbra_handler.get_contacts()
         self.assertIsNotNone(zimbra_handler.contacts)
 
     def test_new_contact(self):
-        """test creating a new contact
+        """Test creating a new contact.
         """
         contact = {
             "email": "unittest@bonoboboard.de",
@@ -56,7 +56,7 @@ class TestZimbraHandler(TestCase):
         self.assertIn(contact, zimbra_handler.contacts)
 
     def test_remove_contact(self):
-        """test removing an existing contact
+        """Test removing an existing contact (created by test_new_contact).
         """
         contact_id = ""
         for elem in zimbra_handler.contacts:
@@ -82,7 +82,7 @@ class TestZimbraHandler(TestCase):
         self.assertFalse(contact_found)
 
     def test_send_mail(self):
-        """test send mail functionality
+        """Test send mail functionality by sending a mail.
         """
         mymail = environ.get("STUDENTMAIL")
         mail_dict = {
@@ -96,14 +96,14 @@ class TestZimbraHandler(TestCase):
         zimbra_handler.send_mail(mail_dict)
 
     def test_logout(self):
-        """test logout functionality
+        """Test logout functionality.
         """
         zimbra_handler.logout()
         self.assertEqual("", zimbra_handler.auth_token)
 
     @classmethod
     def cls_suite(cls):
-        """create suite for ordered execution of unittests
+        """Create suite for ordered execution of unittests.
         """
         cls_suite = TestSuite()
         cls_suite.addTest(cls("test_login"))

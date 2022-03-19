@@ -12,19 +12,19 @@ from .util import (
 
 
 def trim_str(content, empty_string=""):
-    """
+    """ Trim given string with leading/training whitespaces/tabs.
 
     Parameters
     ----------
-    content: str
-        string with leading/trailing whitespaces/tabs
-    empty_string: str
-        string value in case that the value of content is None
+    content : str
+        String with leading/trailing whitespaces/tabs.
+    empty_string : str
+        String value in case that the value of content is None.
 
     Returns
     -------
     content: str
-        string with removed leading/trailing whitespaces/tabs
+        String with removed leading/trailing whitespaces/tabs.
     """
     if not content:
         content = empty_string
@@ -35,12 +35,21 @@ def trim_str(content, empty_string=""):
 
 def repl_comma_with_dot(content):
     """Replaces every comma with a dot.
+
+    Parameters
+    ----------
+    content: str
+        String where commas are replaced by dots
     """
     return re.sub(r",", ".", content)
 
 
 def fit_credits(credits_string):
     """Fits the string containing the credits to an integer.
+
+    Parameters
+    ----------
+    credits_string: str
     """
     _credits = 0
     if credits_string:
@@ -51,6 +60,10 @@ def fit_credits(credits_string):
 
 def fit_grade(grade_string):
     """Fits the string containing the grade to a float.
+    
+    Parameters
+    ----------
+    grade_string: str
     """
     grade = 0.0
     if grade_string:
@@ -62,6 +75,10 @@ def fit_grade(grade_string):
 
 def fit_state(state_string):
     """Provides mapping for state values to shortcut literals.
+
+    Parameters
+    ----------
+    state_string
     """
     if state_string == "bestanden" or state_string == "Bestanden":
         state_string = "p"
@@ -73,7 +90,17 @@ def fit_state(state_string):
 
 
 def add_module_to_dualis_dict(m_id, m_name, m_href, m_credits, m_grade, m_state):
-    """Create the DualisModuleDict with provided values."""
+    """Create the DualisModuleDict with provided values.
+
+    Parameters
+    ----------
+    m_id
+    m_name
+    m_href
+    m_credits
+    m_grade
+    m_state
+    """
     dualis_module = {
         "id": m_id,
         "name": m_name,

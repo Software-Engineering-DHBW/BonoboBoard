@@ -10,10 +10,10 @@ from dhbw.dualis import DualisImporter
 d_imp = DualisImporter()
 
 class TestDualisImporter(TestCase):
-    """unittests for the dualis class
+    """Unittests for the dualis class.
     """
     def test_login(self):
-        """Test dualis login functionality
+        """Test dualis login functionality.
         """
         usr_name = environ.get("STUDENTMAIL")
         passwd = environ.get("STUDENTPASS")
@@ -22,20 +22,20 @@ class TestDualisImporter(TestCase):
         self.assertIsNotNone(d_imp.headers["Cookie"])
 
     def test_scrape(self):
-        """Test scraping functionality
+        """Test scraping functionality.
         """
         d_imp.scrape()
         self.assertIsNotNone(d_imp.scraped_data)
 
     def test_logout(self):
-        """Test logout functionality
+        """Test logout functionality.
         """
         d_imp.logout()
         self.assertEqual("", d_imp.auth_token)
 
     @classmethod
     def cls_suite(cls):
-        """Create suite for ordered execution of unittests
+        """Create suite for ordered execution of unittests.
         """
         cls_suite = TestSuite()
         cls_suite.addTest(cls("test_login"))

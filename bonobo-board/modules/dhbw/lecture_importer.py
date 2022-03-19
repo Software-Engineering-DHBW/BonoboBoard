@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""provide functionality to interact with the students timetable
+"""Provide functionality to interact with the students timetable.
 """
 
 from datetime import datetime, timedelta
@@ -13,7 +13,7 @@ from .util import Importer, reqget
 
 
 class CourseImporter(Importer):
-    """class to achieve the list of all courses of the DHBW Mannheim
+    """Class to achieve the list of all courses of the DHBW Mannheim.
 
     """
 
@@ -26,7 +26,7 @@ class CourseImporter(Importer):
         self.scrape()
 
     def scrape(self):
-        """method to scrape the list of all courses
+        """Method to scrape the list of all courses.
 
         list is stored in course_list
 
@@ -47,7 +47,7 @@ class CourseImporter(Importer):
 
 
 class LectureImporter(Importer):
-    """class to achieve the course-specific timetable
+    """Class to achieve the course-specific timetable.
 
     """
 
@@ -60,7 +60,7 @@ class LectureImporter(Importer):
         self.lectures = self.scrape(uid)
 
     def scrape(self, uid):
-        """method to scrape the courses-icalendar and parse it to a pandas.DataFrame
+        """Method to scrape the courses-icalendar and parse it to a pandas.DataFrame.
 
         Parameters
         ----------
@@ -91,7 +91,7 @@ class LectureImporter(Importer):
         return df
 
     def limit_days_in_list(self, days_past, days_future):
-        """method to limit/crop the lectures-DataFrame gathered in LectureImporter.scrape() by limiting the days
+        """Method to limit/crop the lectures-DataFrame gathered in LectureImporter.scrape() by limiting the days.
 
         Parameters
         ----------
@@ -110,28 +110,55 @@ class LectureImporter(Importer):
         df = self.lectures
         return df[(df["start"] > d_past) & (df["start"] < d_future)]
 
-# TODO remove (its cool that we can do it, but I dont see a reason for this to exist) @NK
-# def all_courses_lectures():
-#     courses = CourseImporter()
-#     all_lectures = pd.DataFrame(columns=["lecture", "location", "start", "end", "c_uid"])  # foreign key c_uid
-#     print(len(courses.uid_list))
-#     course_data = list(zip(courses.uid_list, courses.course_list))
-#     all_courses = pd.DataFrame(course_data, columns=["c_uid", "name"])
-#     i = 0
-#     for course in courses.uid_list:
-#         i += 1
-#         if i > 0 and i % 10 == 0:
-#             print(i)
-#         lectures = LectureImporter(course)
-#         df = lectures.limit_days_in_list(14, 14).copy()
-#         df['c_uid'] = course
-#         all_lectures = pd.concat([all_lectures, df], ignore_index=True)
-#
-#     return [all_courses, all_lectures]
+# TODO ?!
+# ?: remove (its cool that we can do it, but I dont see a reason for this to exist) @NK
+# NK: Its cool that we can do it, but its also mandatory (load all courses for database with cronjob) @Anonymous
+def all_courses_lectures(limit_days_past=14, limit_days_future=14):
+    """Gather lectures for all availabile courses.
+
+    Parameters
+    ----------
+    limit_days_past : int
+        Only save lectures of the last x days.
+    limit_days_future : int
+        Only save lectures of the future x days.
+    Returns
+    -------
+    list
+        Containing 2 lists (all_courses (uid), all_lectures (array with all lectures for every course).
+    """
+    courses = CourseImporter()
+    all_lectures = pd.DataFrame(columns=["lecture", "location", "start", "end", "c_uid"])  # foreign key c_uid
+    print(len(courses.uid_list))
+    course_data = list(zip(courses.uid_list, courses.course_list))
+    all_courses = pd.DataFrame(course_data, columns=["c_uid", "name"])
+    i = 0
+    for course in courses.uid_list:
+        i += 1
+        if i > 0 and i % 10 == 0:
+            print(i)
+        lectures = LectureImporter(course)
+        df = lectures.limit_days_in_list(limit_days_past, limit_days_future).copy()
+        df['c_uid'] = course
+        all_lectures = pd.concat([all_lectures, df], ignore_index=True)
+
+    return [all_courses, all_lectures]
 
 # -------------- HELPERS --------------------
 
-def get_unique_lectures(df_lectures):
+def _get_unique_lectures(df_lectures):
+    """Function to get unique lectures of given lecture-plan.
+
+    Parameters
+    ----------
+    df_lectures : pandas.DataFrame
+
+    Returns
+    -------
+    data : list
+        List of unique lectures
+
+    """
     unique = df_lectures["lecture"].unique()
     data = []
     for entry in unique:
@@ -140,7 +167,17 @@ def get_unique_lectures(df_lectures):
 
 
 def create_empty_user_links_df(df_lectures):
-    unique_lectures = get_unique_lectures(df_lectures)
+    """
+
+    Parameters
+    ----------
+    df_lectures
+
+    Returns
+    -------
+
+    """
+    unique_lectures = _get_unique_lectures(df_lectures)
     df_links = pd.DataFrame()
     df_links["lecture"] = unique_lectures
     df_links["link"] = ""
@@ -148,6 +185,17 @@ def create_empty_user_links_df(df_lectures):
 
 
 def link_lectures_and_links(df_lectures, df_links):
+    """
+
+    Parameters
+    ----------
+    df_lectures
+    df_links
+
+    Returns
+    -------
+
+    """
     df = df_lectures.copy()
     df["link"] = "NO LINK"
     for unique_lecture in df_lectures["lecture"].unique():
@@ -159,6 +207,12 @@ def link_lectures_and_links(df_lectures, df_links):
 # ----------------- COURSE DATABASE --------------------
 # WRITE
 def write_courses_to_database():
+    """
+
+    Returns
+    -------
+
+    """
     courses = CourseImporter()
     engine_string = "sqlite:///courses.db"
     engine = sqlalchemy.create_engine(engine_string)
@@ -171,6 +225,12 @@ def write_courses_to_database():
 
 # READ
 def read_courses_from_database():
+    """
+
+    Returns
+    -------
+
+    """
     engine_string = "sqlite:///courses.db"
     engine = sqlalchemy.create_engine(engine_string)
     df = pd.read_sql("SELECT * FROM \'courses\';", engine)
@@ -179,6 +239,9 @@ def read_courses_from_database():
 # ----------------- LECTURE DATABASE --------------------
 # WRITE
 def write_all_courses_lectures_to_database():
+    """
+
+    """
     courses = CourseImporter()
     print("Length Course-List:", len(courses.uid_list))
     for course in courses.uid_list:
@@ -188,6 +251,17 @@ def write_all_courses_lectures_to_database():
 
 
 def write_lectures_to_database(df, course_uid):
+    """
+
+    Parameters
+    ----------
+    df
+    course_uid
+
+    Returns
+    -------
+
+    """
     engine_string = "sqlite:///lectures.db"
     engine = sqlalchemy.create_engine(engine_string)
     df.to_sql(str(course_uid), engine, if_exists='replace', index=False)
@@ -196,6 +270,16 @@ def write_lectures_to_database(df, course_uid):
 
 # READ
 def read_lectures_from_database(course_uid):
+    """
+
+    Parameters
+    ----------
+    course_uid
+
+    Returns
+    -------
+
+    """
     engine_string = "sqlite:///lectures.db"
     engine = sqlalchemy.create_engine(engine_string)
     return pd.read_sql("SELECT * FROM \'" + str(course_uid) + "\';", engine)
@@ -203,6 +287,17 @@ def read_lectures_from_database(course_uid):
 
 # ----------------- LECTURE LINK DATABASE --------------------
 def write_lecture_links_to_database(df, user_uid):    #df-columns: lecture, link
+    """
+
+    Parameters
+    ----------
+    df
+    user_uid
+
+    Returns
+    -------
+
+    """
     engine_string = "sqlite:///users.db"
     table_name = str(user_uid) + "_link"
     engine = sqlalchemy.create_engine(engine_string)
@@ -211,6 +306,16 @@ def write_lecture_links_to_database(df, user_uid):    #df-columns: lecture, link
 
 
 def read_lecture_links_from_database(user_uid):
+    """
+
+    Parameters
+    ----------
+    user_uid
+
+    Returns
+    -------
+
+    """
     engine_string = "sqlite:///users.db"
     table_name = str(user_uid) + "_link"
     engine = sqlalchemy.create_engine(engine_string)
