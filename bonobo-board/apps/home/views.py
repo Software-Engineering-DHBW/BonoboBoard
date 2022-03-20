@@ -71,7 +71,8 @@ def email(request):
 
 @login_required(login_url="/login/")
 def vorlesungsplan(request):
-    lectures = get_lecture_results(request.user)
+    current_user = BonoboUser.objects.get(email=request.user)
+    lectures = get_lecture_results(current_user)
     return render(request, 'home/vorlesungsplan.html', {"lectures": lectures})
 
 

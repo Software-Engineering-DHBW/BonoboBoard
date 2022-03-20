@@ -187,6 +187,7 @@ strong {
   border-bottom: 5px solid #53c213;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 25px;
   width: 60px;
   height: 60px;
   -webkit-animation: spin 2s linear infinite; /* Safari */
