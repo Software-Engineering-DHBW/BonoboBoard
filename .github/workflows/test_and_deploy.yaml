@@ -51,10 +51,14 @@ jobs:
           cp -a ./server-deployment/. ./bonobo-board/
           echo "SECRET_KEY=${{secrets.DJANGOSECRET}}" >> ./bonobo-board/.env
         
+      #- name: Test-build docker
+      #  working-directory: ./bonobo-board
+      #  run: docker-compose build
+      
       - name: Test-build docker
         working-directory: ./bonobo-board
-        run: docker-compose build
-
+        run: ./build_image a
+      
       - name: Create deploy archive
         run: |
           mkdir ../build
