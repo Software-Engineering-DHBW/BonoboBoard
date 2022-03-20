@@ -57,7 +57,9 @@ jobs:
       
       - name: Test-build docker
         working-directory: ./bonobo-board
-        run: ./build_image a
+        run: |
+          chmod +x build_image
+          ./build_image a
       
       - name: Create deploy archive
         run: |

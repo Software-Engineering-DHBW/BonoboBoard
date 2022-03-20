@@ -22,18 +22,50 @@ BonoboUser = get_user_model()
 @csrf_protect
 @login_required(login_url="/login/")
 def index(request):
+    """on index page is opened, get dualis data of user and return home/index.html with data
+
+    Parameters
+    ----------
+    request: HttpRequest
+        request of the page
+    Returns
+    -------
+    HttpResponse
+    """
     dualis_data = get_dualis_results(
         BonoboUser.objects.get(email=request.user))
+    write_log(BonoboUser.objects.get(email=request.user))
     return render(request, 'home/index.html', {"dualis_data": dualis_data})
 
 
 @login_required(login_url="/login/")
 def leistungsuebersicht(request):
+    """on leistungsuebersicht page is opened, return home/leistungsuebersicht.html
+
+    Parameters
+    ----------
+    request: HttpRequest
+        request of the page
+    Returns
+    -------
+    HttpResponse
+    """
     return render(request, 'home/leistungsuebersicht.html')
 
 
 @login_required(login_url="/login/")
 def email(request):
+    """on email page is opened, return home/email.html
+    on send email click, check input and send mail by ZimbraHandler
+
+    Parameters
+    ----------
+    request: HttpRequest
+        request of the page
+    Returns
+    -------
+    HttpResponse
+    """
     current_user = BonoboUser.objects.get(email=request.user)
     msg = ["error", ""]
     if request.method == 'POST':
@@ -71,12 +103,32 @@ def email(request):
 
 @login_required(login_url="/login/")
 def vorlesungsplan(request):
+    """on vorlesungsplan page is opened, load user data and return vorlesungsplan.html
+
+    Parameters
+    ----------
+    request: HttpRequest
+        request of the page
+    Returns
+    -------
+    HttpResponse
+    """
     current_user = BonoboUser.objects.get(email=request.user)
     lectures = get_lecture_results(current_user)
     return render(request, 'home/vorlesungsplan.html', {"lectures": lectures})
 
 
 def pages(request):
+    """on unknown page is opened, return error.html accordingly
+
+    Parameters
+    ----------
+    request: HttpRequest
+        request of the page
+    Returns
+    -------
+    HttpResponse
+    """
     context = {}
     # All resource paths end in .html.
     # Pick out the html file name from the url. And load that template.
@@ -102,12 +154,32 @@ def pages(request):
 
 
 def get_dualis_results(current_user):
+    """get dualis data of user
+
+    Parameters
+    ----------
+    current_user: BonoboUser
+        
+    Returns
+    -------
+    Dict
+    """
     if current_user.user_objects["dualis"] == None:
         return
     return current_user.user_objects["dualis"].scraped_data
 
 
 def get_lecture_results(current_user):
+    """get lectures of user
+
+    Parameters
+    ----------
+    current_user: BonoboUser
+        
+    Returns
+    -------
+    pd.DataFrame
+    """
     #lecture_importer = LectureImporter.read_lectures_from_database(uid)
     lecture_importer = current_user.user_objects["lecture"]
     lectures_df = lecture_importer.limit_days_in_list(14, 14)
@@ -119,6 +191,17 @@ def get_lecture_results(current_user):
 
 
 def write_log(msg):
+    """interlly used for logging
+    print message to log.txt
+
+    Parameters
+    ----------
+    msg: str
+        Message to print
+    Returns
+    -------
+    None
+    """
     f = open("log.txt", "a")
     f.write(str(msg)+"\n")
     f.close()
