@@ -34,6 +34,7 @@ def index(request):
     """
     dualis_data = get_dualis_results(
         BonoboUser.objects.get(email=request.user))
+    write_log(BonoboUser.objects.get(email=request.user))
     return render(request, 'home/index.html', {"dualis_data": dualis_data})
 
 
