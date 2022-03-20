@@ -4,6 +4,7 @@
 """
 
 from datetime import datetime, timedelta
+import calendar
 import pandas as pd
 import sqlalchemy
 from bs4 import BeautifulSoup
@@ -96,6 +97,7 @@ class LectureImporter(Importer):
                           component.get('DTEND').dt
                           ]
                 df.loc[len(df)] = vevent
+        df = df.sort_values("start")
         self.lectures = df
         return df
 
@@ -119,6 +121,25 @@ class LectureImporter(Importer):
         df = self.lectures
         return df[(df["start"] > d_past) & (df["start"] < d_future)]
 
+    def limit_weeks_in_list(self, weeks_past, weeks_future):
+        """method to limit/crop the lectures-DataFrame gathered in LectureImporter.scrape() by limiting the weeks
+
+        Parameters
+        ----------
+        weeks_past : int
+            include the last x weeks in the list
+        weeks_future : int
+            include the future x weeks in the list
+
+        Returns
+        -------
+        pandas.Dataframe
+            cropped lectures-DataFrame
+        """
+        w_past = datetime.today() - timedelta(days=datetime.today().weekday(), weeks=weeks_past)
+        w_future = datetime.today() + timedelta(days=-datetime.today().weekday(), weeks=weeks_future+1)
+        df = self.lectures
+        return df[(df["start"] > w_past.replace(hour=0, minute=0, second=0)) & (df["start"] < w_future.replace(hour=0, minute=0, second=0))]
 
 # TODO remove (its cool that we can do it, but I dont see a reason for this to exist) @NK
 # def all_courses_lectures():
