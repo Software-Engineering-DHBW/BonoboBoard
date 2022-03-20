@@ -3,78 +3,131 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
-from http.client import HTTPResponse
+import json
 from django import template
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
-from .forms import LoginForm, ContactForm
-from modules.dhbw.dualis import DualisImporter
-from modules.dhbw.lecture_importer import LectureImporter
-import json
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 
-is_user_logged_in = False
-dualis_entries = []
+from apps.authentication.models import BonoboUser
+from .forms import ContactForm
+
+BonoboUser = get_user_model()
+
 
 @csrf_protect
+@login_required(login_url="/login/")
 def index(request):
-    global is_user_logged_in
-    global dualis_entries
+    """on index page is opened, get dualis data of user and return home/index.html with data
 
-    if is_user_logged_in: 
-        return render(request, 'home/index.html', {'is_user_logged_in': is_user_logged_in, 'content': dualis_entries})
-
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-
-        if form.is_valid():
-            email = form.cleaned_data.get("email")
-            password = form.cleaned_data.get("passwort")
-
-            fetch_user_data(email, password)
-
-            is_user_logged_in = True
-            return render(request, 'home/index.html', {'is_user_logged_in': is_user_logged_in, 'content': dualis_entries})
-           
-    else:
-        form = LoginForm()
-
-    return render(request, 'home/index.html', {'form': form})
+    Parameters
+    ----------
+    request: HttpRequest
+        request of the page
+    Returns
+    -------
+    HttpResponse
+    """
+    dualis_data = get_dualis_results(
+        BonoboUser.objects.get(email=request.user))
+    return render(request, 'home/index.html', {"dualis_data": dualis_data})
 
 
+@login_required(login_url="/login/")
 def leistungsuebersicht(request):
-    if not is_user_logged_in:
-        return HttpResponseRedirect('/')
+    """on leistungsuebersicht page is opened, return home/leistungsuebersicht.html
 
-    return render(request, 'home/leistungsuebersicht.html', {"content": dualis_entries})
+    Parameters
+    ----------
+    request: HttpRequest
+        request of the page
+    Returns
+    -------
+    HttpResponse
+    """
+    return render(request, 'home/leistungsuebersicht.html')
 
 
+@login_required(login_url="/login/")
 def email(request):
-    if not is_user_logged_in:
-        return HttpResponseRedirect('/')
+    """on email page is opened, return home/email.html
+    on send email click, check input and send mail by ZimbraHandler
 
+    Parameters
+    ----------
+    request: HttpRequest
+        request of the page
+    Returns
+    -------
+    HttpResponse
+    """
+    current_user = BonoboUser.objects.get(email=request.user)
+    msg = ["error", ""]
     if request.method == 'POST':
         form = ContactForm(request.POST)
 
         if form.is_valid():
-            return render(request, 'home/email.html', {'form': form})
+            mail_dict = {
+                "recipients": form.cleaned_data.get("empfänger"),
+                "rec_cc": form.cleaned_data.get("cc"),
+                "rec_bcc": form.cleaned_data.get("bcc"),
+                "subject": form.cleaned_data.get("betreff"),
+                "cttype": "text/plain",
+                "content": form.cleaned_data.get("nachricht"),
+            }
+
+            current_user.user_objects["zimbra"].send_mail(mail_dict)
+            msg = ["info", "Email erfolgreich gesendet!"]
+            form = ContactForm() # clear the from
+            return render(request, 'home/email.html', {'form': form, 'msg': msg})
+        else:
+            msg[1] = "Fehlerhafte Eingabe"
+
     else:
         form = ContactForm()
 
-    return render(request, 'home/email.html', {'form': form})
+    # current_user.user_objects["zimbra"].get_contacts()
+    # contacts = current_user.user_objects["zimbra"].contacts
+    # user_contacts = []
+    # for contact in contacts:
+        # user_contacts.append(contact["email"])
 
+    # , 'user_contacts': user_contacts
+    return render(request, 'home/email.html', {'form': form, 'msg': msg})
+
+
+@login_required(login_url="/login/")
 def vorlesungsplan(request):
+    """on vorlesungsplan page is opened, load user data and return vorlesungsplan.html
 
-    if not is_user_logged_in:
-        return HttpResponseRedirect('/')
-
-    lectures = get_lecture_results(7761001)
+    Parameters
+    ----------
+    request: HttpRequest
+        request of the page
+    Returns
+    -------
+    HttpResponse
+    """
+    current_user = BonoboUser.objects.get(email=request.user)
+    lectures = get_lecture_results(current_user)
     return render(request, 'home/vorlesungsplan.html', {"lectures": lectures})
 
 
 def pages(request):
+    """on unknown page is opened, return error.html accordingly
+
+    Parameters
+    ----------
+    request: HttpRequest
+        request of the page
+    Returns
+    -------
+    HttpResponse
+    """
     context = {}
     # All resource paths end in .html.
     # Pick out the html file name from the url. And load that template.
@@ -99,21 +152,35 @@ def pages(request):
         return HttpResponse(html_template.render(context, request))
 
 
-def fetch_user_data(email, password):
-    global dualis_entries
+def get_dualis_results(current_user):
+    """get dualis data of user
 
-    dualis_entries = get_dualis_results(email, password)
+    Parameters
+    ----------
+    current_user: BonoboUser
+        
+    Returns
+    -------
+    Dict
+    """
+    if current_user.user_objects["dualis"] == None:
+        return
+    return current_user.user_objects["dualis"].scraped_data
 
-def get_dualis_results(email, password):
-    dualis_importer = DualisImporter()
-    dualis_importer.login(email, password)
-    dualis_importer.scrape()
-    dualis_importer.logout()
-    return dualis_importer.scraped_data
 
-def get_lecture_results(uid):
+def get_lecture_results(current_user):
+    """get lectures of user
+
+    Parameters
+    ----------
+    current_user: BonoboUser
+        
+    Returns
+    -------
+    pd.DataFrame
+    """
     #lecture_importer = LectureImporter.read_lectures_from_database(uid)
-    lecture_importer = LectureImporter(uid)
+    lecture_importer = current_user.user_objects["lecture"]
     lectures_df = lecture_importer.limit_days_in_list(14, 14)
 
     json_records = lectures_df.reset_index().to_json(orient='records')
@@ -121,3 +188,19 @@ def get_lecture_results(uid):
 
     return lectures
 
+
+def write_log(msg):
+    """interlly used for logging
+    print message to log.txt
+
+    Parameters
+    ----------
+    msg: str
+        Message to print
+    Returns
+    -------
+    None
+    """
+    f = open("log.txt", "a")
+    f.write(str(msg)+"\n")
+    f.close()

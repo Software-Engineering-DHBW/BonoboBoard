@@ -8,6 +8,7 @@ import pandas as pd
 import sqlalchemy
 from bs4 import BeautifulSoup
 import icalendar
+import asyncio
 
 from .util import Importer, reqget
 
@@ -35,7 +36,8 @@ class CourseImporter(Importer):
         None
         """
         response = reqget(url=CourseImporter.url, headers=self.headers)
-        result = BeautifulSoup(response.content, "lxml").find(id="class_select")
+        result = BeautifulSoup(
+            response.content, "lxml").find(id="class_select")
 
         # optgroup stores the list of courses
         all_optgroup = result.find_all('optgroup')
@@ -44,6 +46,10 @@ class CourseImporter(Importer):
                 if course.get("value"):
                     self.course_list.append(course['label'])
                     self.uid_list.append(course['value'])
+
+    def get_course_uid(self, course_str):
+        index = self.course_list.index(course_str)
+        return self.uid_list[index]
 
 
 class LectureImporter(Importer):
@@ -54,13 +60,15 @@ class LectureImporter(Importer):
     # No HTTPS possible in this case?
     url = "http://vorlesungsplan.dhbw-mannheim.de/ical.php?uid="
 
-    def __init__(self, uid):
+    def __init__(self):
         super().__init__()
-        self.uid = uid
-        self.lectures = self.scrape(uid)
+        self.lectures = None
 
-    def scrape(self, uid):
-        """Method to scrape the courses-icalendar and parse it to a pandas.DataFrame.
+    async def login(self):
+        return self
+
+    async def scrape(self, uid):
+        """method to scrape the courses-icalendar and parse it to a pandas.DataFrame
 
         Parameters
         ----------
@@ -88,6 +96,7 @@ class LectureImporter(Importer):
                           component.get('DTEND').dt
                           ]
                 df.loc[len(df)] = vevent
+        self.lectures = df
         return df
 
     def limit_days_in_list(self, days_past, days_future):
@@ -110,7 +119,7 @@ class LectureImporter(Importer):
         df = self.lectures
         return df[(df["start"] > d_past) & (df["start"] < d_future)]
 
-# TODO ?!
+
 # ?: remove (its cool that we can do it, but I dont see a reason for this to exist) @NK
 # NK: Its cool that we can do it, but its also mandatory (load all courses for database with cronjob) @Anonymous
 def all_courses_lectures(limit_days_past=14, limit_days_future=14):
@@ -143,6 +152,7 @@ def all_courses_lectures(limit_days_past=14, limit_days_future=14):
         all_lectures = pd.concat([all_lectures, df], ignore_index=True)
 
     return [all_courses, all_lectures]
+
 
 # -------------- HELPERS --------------------
 
@@ -199,7 +209,8 @@ def link_lectures_and_links(df_lectures, df_links):
     df = df_lectures.copy()
     df["link"] = "NO LINK"
     for unique_lecture in df_lectures["lecture"].unique():
-        link_for_unique = df_links[df_links["lecture"] == unique_lecture]["link"].values[0]
+        link_for_unique = df_links[df_links["lecture"]
+                                   == unique_lecture]["link"].values[0]
         df.loc[df["lecture"] == unique_lecture, "link"] = link_for_unique
     return df
 
@@ -223,6 +234,7 @@ def write_courses_to_database():
     df.to_sql("courses", engine, if_exists='replace', index=False)
     return
 
+
 # READ
 def read_courses_from_database():
     """
@@ -235,6 +247,7 @@ def read_courses_from_database():
     engine = sqlalchemy.create_engine(engine_string)
     df = pd.read_sql("SELECT * FROM \'courses\';", engine)
     return df['course'].tolist(), df['uid'].tolist()
+
 
 # ----------------- LECTURE DATABASE --------------------
 # WRITE
@@ -286,7 +299,8 @@ def read_lectures_from_database(course_uid):
 
 
 # ----------------- LECTURE LINK DATABASE --------------------
-def write_lecture_links_to_database(df, user_uid):    #df-columns: lecture, link
+
+def write_lecture_links_to_database(df, user_uid):  # df-columns: lecture, link
     """
 
     Parameters
@@ -298,6 +312,7 @@ def write_lecture_links_to_database(df, user_uid):    #df-columns: lecture, link
     -------
 
     """
+
     engine_string = "sqlite:///users.db"
     table_name = str(user_uid) + "_link"
     engine = sqlalchemy.create_engine(engine_string)

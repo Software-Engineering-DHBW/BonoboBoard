@@ -2,7 +2,7 @@
 
 """unittests for the dualis module
 """
-
+import asyncio
 from os import environ
 from unittest import TestCase, TestSuite
 from dhbw.dualis import DualisImporter
@@ -17,14 +17,14 @@ class TestDualisImporter(TestCase):
         """
         usr_name = environ.get("STUDENTMAIL")
         passwd = environ.get("STUDENTPASS")
-        d_imp.login(usr_name, passwd)
+        asyncio.run(d_imp.login(usr_name, passwd))
         self.assertIsNotNone(d_imp.auth_token)
         self.assertIsNotNone(d_imp.headers["Cookie"])
 
     def test_scrape(self):
         """Test scraping functionality.
         """
-        d_imp.scrape()
+        asyncio.run(d_imp.scrape())
         self.assertIsNotNone(d_imp.scraped_data)
 
     def test_logout(self):

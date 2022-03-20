@@ -2,7 +2,7 @@
 
 """unittests for the lecture module
 """
-
+import asyncio
 from unittest import TestCase
 
 from dhbw.lecture_importer import LectureImporter
@@ -14,19 +14,22 @@ class LectureImporterTest(TestCase):
     def test_false_uid(self):
         """Test for check of gathering lectures with wrong uid.
         """
-        lec = LectureImporter(776101)
+        lec = LectureImporter()
+        asyncio.run(lec.scrape(776101))
         self.assertEqual(lec.lectures.empty, True)
 
     def test_true_uid(self):
         """Test for check of gathering lectures with right uid.
         """
-        lec = LectureImporter(7761001)
+        lec = LectureImporter()
+        asyncio.run(lec.scrape(7761001))
         self.assertEqual(lec.lectures.empty, False)
 
     def test_limit_days_in_list(self):
         """Test for limiting days in lecture-list.
         """
-        lec = LectureImporter(7761001)
+        lec = LectureImporter()
+        asyncio.run(lec.scrape(7761001))
         lec.lectures = lec.limit_days_in_list(7, 7)
         self.assertEqual(lec.lectures.empty, False)
 
