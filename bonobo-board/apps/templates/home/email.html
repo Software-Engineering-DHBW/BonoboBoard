@@ -28,16 +28,18 @@
                 <div class="col-6">
                     <div class="card">
                         <div class="card-header">
-                            <h5>Email</h5>
+                            <h5>Email <span id="error_msg_field" style="color: #ff0000; padding-left: 40px;"> {{ msg |
+                                    safe }}</span></h5>
                         </div>
                         <div class="card-block">
+
                             <form method="POST">
                                 {% csrf_token %}
                                 <div class="form-group">
                                     {{ form }}
                                 </div>
-                                <button type="button" class="btn btn-primary" title="Send Email"
-                                        data-toggle="tooltip">Send
+                                <button type="submit" class="btn btn-primary" title="Send Email"
+                                    data-toggle="tooltip">Send
                                     Email
                                 </button>
                             </form>
@@ -53,4 +55,33 @@
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+{% block javascripts %}
+<script>
+    error_msg_field = document.getElementById("error_msg_field")
+    rawMsg = "{{ msg }}"
+    rawMsg = rawMsg.replace(/&#x27;/g, '"')
+    const msg = JSON.parse(rawMsg);
+    console.log(msg[0])
+    if (msg[0] == "error") {
+        error_msg_field.style.color = "#ff0000"
+    } else {
+        error_msg_field.style.color = "#53c213"
+    }
+    error_msg_field.textContent = msg[1]
+
+    setTimeout(() => {
+        error_msg_field.textContent = ""
+    }, 5000)
+    /* element = document.getElementsByName("{{ form.empfänger.name }}")
+    recipients = element[0]
+
+    let rawUserContacts = "{{ user_contacts }}"
+    try{
+        rawUserContacts = rawUserContacts.replace(/&#x27;/g, '"')
+        rawUserContacts = rawUserContacts.replace(/&quot;/g, '"')
+    }catch(e){}
+    const userContacts = JSON.parse(rawUserContacts);
+
+    autocomplete(recipients, userContacts) */
+</script>
+{% endblock javascripts %}

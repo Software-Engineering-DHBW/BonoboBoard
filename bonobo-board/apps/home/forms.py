@@ -3,50 +3,63 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from django import forms
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+import re
+from .widgets import MultiEmailWidget
 
+#src: https://github.com/fle/django-multi-email-field/blob/7dcc5f4e0aee1c935abdbb94aa4edff8521938d7/multi_email_field/forms.py
+class MultiEmailField(forms.Field):
+    message = 'Enter valid email addresses.'
+    code = 'invalid'
+    widget = MultiEmailWidget
 
-class LoginForm(forms.Form):
+    def to_python(self, value):
+        "Normalize data to a list of strings."
+        # Return None if no input was given.
+        if not value:
+            return []
+        return [v.strip() for v in re.split(';|,', value) if v != ""]
 
-    email = forms.EmailField(
-        widget=forms.TextInput(
-            attrs={
-                "placeholder": "Email",
-                "class": "form-control"
-            }
-        ))
+    def validate(self, value):
+        """ Check if value consists only of valid emails. """
 
-    passwort = forms.CharField(
-        widget=forms.PasswordInput(
-            attrs={
-                "placeholder": "Passwort",
-                "class": "form-control"
-            }
-        ))
+        # Use the parent's handling of required fields, etc.
+        super(MultiEmailField, self).validate(value)
+        try:
+            for email in value:
+                validate_email(email)
+        except ValidationError:
+            raise ValidationError(self.message, code=self.code)
 
 
 class ContactForm(forms.Form):
-    empfänger = forms.EmailField(
-        widget=forms.TextInput(
+    empfänger = MultiEmailField(
+         widget=forms.TextInput(
             attrs={
-                "placeholder": "Email Empfänger",
-                "class": "form-control"
+                "placeholder": "Empfänger",
+                "class": "form-control",
+                'autocomplete': 'off'
             }
-        ),
-        required=True)
-    cc = forms.EmailField(
+        ),required=True)
+    cc = MultiEmailField(
         widget=forms.TextInput(
             attrs={
                 "placeholder": "Cc",
-                "class": "form-control"
+                "class": "form-control",
+                'autocomplete': 'off'
             }
-        ))
-    bcc = forms.EmailField(
+        ),
+        required=False)
+    bcc = MultiEmailField(
         widget=forms.TextInput(
             attrs={
                 "placeholder": "Bcc",
-                "class": "form-control"
+                "class": "form-control",
+                'autocomplete': 'off'
             }
-        ))
+        ),
+        required=False)
     betreff = forms.CharField(
         widget=forms.TextInput(
             attrs={

@@ -20,14 +20,11 @@ def _entity_list(in_list, out_list, in_type):
     else:
         temp = "b"
 
-    i = 0
     for account in in_list:
         temp_dict = {}
         temp_dict["t"] = temp
         temp_dict["a"] = account
-        temp_dict["add"] = i
         out_list.insert(0, temp_dict)
-        i+=1
 
     return out_list
 
@@ -103,7 +100,7 @@ class ZimbraHandler(ImporterSession):
         self.realname = ""
         self.signatures = []
 
-    def login(self, username, password):
+    async def login(self, username, password):
         """authenticate the user against zimbra
 
         Parameters
@@ -115,7 +112,7 @@ class ZimbraHandler(ImporterSession):
 
         Returns
         -------
-        None
+        ZimbraHandler
         """
         url = ZimbraHandler.url
 
@@ -150,7 +147,11 @@ class ZimbraHandler(ImporterSession):
         # drop content-type header
         self.drop_header("Content-Type")
 
-    def scrape(self):
+        self.email = username
+
+        return self
+
+    async def scrape(self):
         """scrape the wanted data from the website
 
         Returns

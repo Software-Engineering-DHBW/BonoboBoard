@@ -110,7 +110,8 @@ class DualisImporter(ImporterSession):
         self.headers["Host"] = url_get_fqdn(DualisImporter.url)
         self.params = {}
 
-    def login(self, username, password):
+
+    async def login(self, username, password):
         """aquire the authentication token
 
         Parameters
@@ -122,7 +123,7 @@ class DualisImporter(ImporterSession):
 
         Returns
         -------
-        None
+        DualisImporter
         """
 
         url = DualisImporter.url
@@ -159,6 +160,10 @@ class DualisImporter(ImporterSession):
         self.auth_token = re.sub(r"[\s]|(;.*)", "", r_login.headers["Set-Cookie"])
         self.headers["Cookie"] = self.auth_token
 
+        self.email = username
+        
+        return self
+
     def _fill_grades_into_dict(self, response_text):
         """extract needed data and fills the dictionary
 
@@ -178,15 +183,15 @@ class DualisImporter(ImporterSession):
         i = 0
         temp = grades_tables[1].find_all("th")
         while i < len(temp):
-            if temp[i].string == "Gesamt-GPA":
-                self.scraped_data["gpa_total"] = fit_grade(temp[i + 1].string)
+            if temp[i].string == 'Gesamt-GPA':
+                self.scraped_data['gpa_total'] = fit_grade(temp[i + 1].string)
                 i += 2
             else:
-                self.scraped_data["gpa_main_subject"] = fit_grade(temp[i + 1].string)
+                self.scraped_data['gpa_main_subject'] = fit_grade(temp[i + 1].string)
                 break
 
         # fill modules field
-        self.scraped_data["modules"] = []
+        self.scraped_data['modules'] = []
         i = 0
         temp = grades_tables[0].find_all("td")
         while i < len(temp):
@@ -203,7 +208,7 @@ class DualisImporter(ImporterSession):
                 else:
                     name = trim_str(temp[i + 1].string)
 
-                self.scraped_data["modules"].append(
+                self.scraped_data['modules'].append(
                     add_module_to_dualis_dict(
                         m_id=temp[i].string,
                         m_name=name,
@@ -218,7 +223,7 @@ class DualisImporter(ImporterSession):
             else:
                 i += 1
 
-    def scrape(self):
+    async def scrape(self):
         """scrape the wanted data from the website
 
         Returns

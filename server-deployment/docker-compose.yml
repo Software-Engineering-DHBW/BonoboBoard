@@ -4,7 +4,7 @@ services:
     container_name: appseed_app
     restart: always
     env_file: .env
-    build: .
+    images: "bonobo_board:latest"
     volumes:
       - ./apps:/bonobo-board/apps
       - ./modules:/bonobo-board/modules

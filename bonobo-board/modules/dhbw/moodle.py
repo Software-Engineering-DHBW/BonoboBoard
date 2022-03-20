@@ -92,7 +92,7 @@ class MoodleImporter(ImporterSession):
         self.headers["Host"] = url_get_fqdn(MoodleImporter.url)
         self.logout_url = ""
 
-    def login(self, username, password):
+    async def login(self, username, password):
         """aquire the authentication token
 
         Parameters
@@ -104,7 +104,7 @@ class MoodleImporter(ImporterSession):
 
         Returns
         -------
-        None
+        MoodleImporter
         """
         if "@" in username:
             username = username.split("@")[0]
@@ -150,6 +150,10 @@ class MoodleImporter(ImporterSession):
         self.drop_header("Content-Type")
         self.drop_header("Origin")
 
+        self.email = username
+
+        return self
+
     def find_all_bbb_rooms(self, course_dict):
         """method to find all bbc rooms for a given course
 
@@ -177,7 +181,7 @@ class MoodleImporter(ImporterSession):
                 )
         return course_dict
 
-    def scrape(self):
+    async def scrape(self):
         """scrape the wanted data from the website
 
         Returns

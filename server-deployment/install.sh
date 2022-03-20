@@ -18,7 +18,11 @@ function exit_on_error {
 }
 
 echo "Stopping the old Docker Containers"
+# throws no error if the containers do not exist
 sudo docker-compose stop appseed-app nginx
+exit_on_error
+echo "Building the Docker Images"
+sudo ./build_image -a
 exit_on_error
 echo "Starting the Docker Containers ..."
 sudo docker-compose up -d appseed-app

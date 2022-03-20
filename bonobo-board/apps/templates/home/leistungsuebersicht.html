@@ -33,26 +33,9 @@
                             </div>
                             <div class="card-block">
                                 <div class="row">
-                                    {% if content %}
-                                    <div class="col">
-                                        <table class="table">
-                                            <thead>
-                                            <tr>
-                                                <th>Subject</th>
-                                                <th>Credits</th>
-                                                <th>Grade</th>
-                                            </tr>
-                                            </thead>
-                                            {% for entry in content.modules %}
-                                            <tr>
-                                                <td>{{entry.name}}</td>
-                                                <td>{{entry.credits}}</td>
-                                                <td>{{entry.grade}}</td>
-                                            </tr>
-                                            {% endfor %}
-                                        </table>
+                                    <div id="all_grades" class="col">
+
                                     </div>
-                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -64,10 +47,8 @@
                             </div>
                             <div class="card-block">
                                 <div class="row">
-                                    <div class="col-sm-12">
-                                        {% if content %}
-                                        <p><b>GPA-Total:</b> {{content.gpa_total}}</p>
-                                        {% endif %}
+                                    <div id="gpa" class="col-sm-12">
+
                                     </div>
                                 </div>
                             </div>
@@ -77,4 +58,29 @@
                     {% endblock content %}
 
                     <!-- Specific Page JS goes HERE  -->
-                    {% block javascripts %}{% endblock javascripts %}
+                    {% block javascripts %}
+                    <script>
+                        //encode dualis data from local storage
+                        let rawData = localStorage.getItem('dualis')
+                        rawData = rawData.replace(/&quot;/g, '"')
+                        rawData = rawData.replace(/&#x27;/g, '"')
+                        const dualis_data = JSON.parse(rawData);
+                        //fill tabel with all grades
+                        var grades = document.getElementById("all_grades")
+                        let content = ''
+                        content += ' <table class="table"><thead><tr><th>Veranstaltung</th><th>Credits</th><th>Note</th></tr></thead> <tbody>'
+
+                        for (let index in dualis_data["modules"]) {
+                            const entry = dualis_data["modules"][index]
+                            content += '<tr><td>' + entry["name"] + '</td>'
+                            content += '<td>' + entry["credits"] + '</td>'
+                            content += '<td>' + entry["grade"] + '</td></tr>'
+                        }
+
+                        content += '  </tbody> </table>'
+                        grades.innerHTML += content
+                        //show gpa
+                        var gpaNode = document.getElementById("gpa")
+                        gpaNode.innerHTML += '<p><b>GPA-Total:</b> ' + dualis_data["gpa_total"] + '</p>'
+                    </script>
+                    {% endblock javascripts %}
