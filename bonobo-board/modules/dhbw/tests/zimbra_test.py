@@ -2,7 +2,7 @@
 
 """unittests for the zimbra module
 """
-
+import asyncio
 from os import environ
 from unittest import TestCase, TestSuite
 from dhbw.zimbra import ZimbraHandler
@@ -15,14 +15,14 @@ class TestZimbraHandler(TestCase):
         """test login functionality"""
         usr_name = environ.get("STUDENTMAIL")
         passwd = environ.get("STUDENTPASS")
-        zimbra_handler.login(usr_name, passwd)
+        asyncio.run(zimbra_handler.login(usr_name, passwd))
         self.assertIsNotNone(zimbra_handler.auth_token)
         self.assertIsNotNone(zimbra_handler.headers["Cookie"])
         self.assertIsNotNone(zimbra_handler.accountname)
 
     def test_scrape(self):
         """test scraping functionality"""
-        zimbra_handler.scrape()
+        asyncio.run(zimbra_handler.scrape())
         self.assertIsNotNone(zimbra_handler.scraped_data)
         self.assertIsNotNone(zimbra_handler.realname)
 

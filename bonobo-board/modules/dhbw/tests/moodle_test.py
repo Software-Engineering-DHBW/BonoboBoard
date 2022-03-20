@@ -2,7 +2,7 @@
 
 """unittests for the moodle module
 """
-
+import asyncio
 from os import environ
 from unittest import TestCase, TestSuite
 from dhbw.moodle import MoodleImporter
@@ -15,13 +15,13 @@ class TestMoodleImporter(TestCase):
         """test login functionality"""
         usr_name = environ.get("STUDENTMAIL")
         passwd = environ.get("STUDENTPASS")
-        m_imp.login(usr_name, passwd)
+        asyncio.run(m_imp.login(usr_name, passwd))
         self.assertIsNotNone(m_imp.auth_token)
         self.assertIsNotNone(m_imp.headers["Cookie"])
 
     def test_scrape(self):
         """test scraping functionality"""
-        m_imp.scrape()
+        asyncio.run(m_imp.scrape())
         self.assertIsNotNone(m_imp.scraped_data["courses"])
 
     def test_logout(self):
