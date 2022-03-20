@@ -62,11 +62,10 @@ class LectureImporter(Importer):
 
     def __init__(self):
         super().__init__()
-        
+        self.lectures = None
 
     async def login(self):
-        return self 
-
+        return self
 
     async def scrape(self, uid):
         """method to scrape the courses-icalendar and parse it to a pandas.DataFrame
@@ -97,6 +96,7 @@ class LectureImporter(Importer):
                           component.get('DTEND').dt
                           ]
                 df.loc[len(df)] = vevent
+        self.lectures = df
         return df
 
     def limit_days_in_list(self, days_past, days_future):
@@ -118,6 +118,7 @@ class LectureImporter(Importer):
         d_future = datetime.today() + timedelta(days=days_future)
         df = self.lectures
         return df[(df["start"] > d_past) & (df["start"] < d_future)]
+
 
 # TODO remove (its cool that we can do it, but I dont see a reason for this to exist) @NK
 # def all_courses_lectures():
@@ -180,12 +181,14 @@ def write_courses_to_database():
     df.to_sql("courses", engine, if_exists='replace', index=False)
     return
 
+
 # READ
 def read_courses_from_database():
     engine_string = "sqlite:///courses.db"
     engine = sqlalchemy.create_engine(engine_string)
     df = pd.read_sql("SELECT * FROM \'courses\';", engine)
     return df['course'].tolist(), df['uid'].tolist()
+
 
 # ----------------- LECTURE DATABASE --------------------
 # WRITE
