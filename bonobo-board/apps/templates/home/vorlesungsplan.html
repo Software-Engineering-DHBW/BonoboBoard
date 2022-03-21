@@ -27,9 +27,19 @@ body {
 
 .calendar {
   margin: 0 auto;
+  max-width: 1280px;
   min-width: 500px;
 
   box-shadow: 0px 30px 50px rgba(0, 0, 0, 0.2) ,0px 3px 7px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+/* Scrollbar*/
+.wrap {
+  overflow-x: hidden;
+  overflow-y: scroll;
+    max-width: 1280px;
+  height: 500px;
   border-radius: 8px;
 }
 
@@ -41,6 +51,7 @@ thead {
   font-weight: bold;
   color: rgba(0, 0, 0, 0.9);
   padding: 1rem;
+  z-index: 2;
   background: white;
   border-bottom: 2px solid #ddd;
 }
@@ -114,7 +125,7 @@ tr td {
 
 tbody tr td {
   vertical-align: top;
-  height: 30px;
+  height: 40px;
   padding: 0.25rem 0.25rem 0 0.25rem;
   width: auto;
 }
@@ -130,7 +141,6 @@ tbody tr td {
   transition: all 0.2s;
   cursor: pointer;
   position: absolute;
-  z-index: 1;
   width: 96%;
   height: 84%;
 }
@@ -213,38 +223,65 @@ tr td:nth-child(2), tr td:nth-child(3), .past {
             <div class="page-wrapper">
 
                 <!-- [ Main Content ] start -->
-                <div class="card">
-                    <div class="calendar">
+                <div class="calendar">
 
-                        <header>
-                            <button class="secondary" style="align-self: flex-start; flex: 0 0 1">Today</button>
-                            <div class="calendar__title"
-                                 style="display: flex; justify-content: center; align-items: center">
-                                <!-- Date selection -->
-                                <div class="icon secondary chevron_left">‹</div>
-                                <h1 class="" id="week_of_year" style="flex: 1;"></h1>
-                                <div class="icon secondary chevron_left">›</div>
-                                <!-- Date selection end -->
-                            </div>
-                            <div style="align-self: flex-start; flex: 0 0 1"></div>
-                        </header>
+                    <header>
+                        <button class="secondary" style="align-self: flex-start; flex: 0 0 1">Today</button>
+                        <div class="calendar__title"
+                             style="display: flex; justify-content: center; align-items: center">
+                            <!-- Date selection -->
+                            <div class="icon secondary chevron_left">‹</div>
+                            <h1 class="" style="flex: 1;"><span></span><strong>Käsekuchen</h1>
+                            <div class="icon secondary chevron_left">›</div>
+                            <!-- Date selection end -->
+                        </div>
+                        <div style="align-self: flex-start; flex: 0 0 1"></div>
+                    </header>
 
-                        <div class="outer">
-                            <!-- Table for weekday description -->
-                            <table>
-                                <thead>
-                                <tr id="date_header">
+                    <div class="outer">
+                        <!-- Table for weekday description -->
+                        <table>
+                            <thead>
+                            <tr>
+                                <th class="headcol"></th>
+                                <th>Mon, 18</th>
+                                <th>Tue, 19</th>
+                                <th class="today">Wed, 20</th>
+                                <th>Thu, 21</th>
+                                <th>Fri, 22</th>
+                                <th class="secondary">Sat, 23</th>
+                            </tr>
+                            </thead>
+                        </table>
 
-                                </tr>
-                                </thead>
-                            </table>
+                        <div class="wrap" id="lecture_plan">
 
-                            <div id="lecture_plan">
-
-                            </div>
                         </div>
                     </div>
                 </div>
+
+
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Fach</th>
+                            <th>Ort</th>
+                            <th>Start</th>
+                            <th>Ende</th>
+                        </tr>
+                        </thead>
+                        {% for entry in lectures %}
+                        <tr>
+                            <td>{{entry.lecture}}</td>
+                            <td>{{entry.location}}</td>
+                            <td>{{entry.start}}</td>
+                            <td>{{entry.end}}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+
                 <!-- [ Main Content ] end -->
             </div>
         </div>
@@ -256,151 +293,31 @@ tr td:nth-child(2), tr td:nth-child(3), .past {
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 <script>
-
-
-    rawLectureData = "{{lectures}}"
-    rawLectureData = rawLectureData.replace(/&quot;/g, '"')
-    rawLectureData = rawLectureData.replace(/&#x27;/g, '"')
-    const lectureData = JSON.parse(rawLectureData);
-
-    class Lecture {
-        constructor(name, room, start, end, duration) {
-            this.name = name;
-            this.room = room;
-            this.start = start
-            this.end = end
-            this.duration = duration
-        }
-    }
-
     var lecture_plan = document.getElementById("lecture_plan")
     let content = ''
     content += '<table>'
-
-    let lut = empty_lut([64, 6])
-
-    for(let lecture in lectureData) {
-        start_ts = lectureData[lecture].start
-        end_ts = lectureData[lecture].end
-
-        timeslot_start = (getHour(start_ts) - 7) * 4
-        timeslot_start += Math.floor(getMinute(start_ts)/15)
-        timeslot_end = (getHour(end_ts) - 7) * 4
-        timeslot_end += Math.floor(getMinute(end_ts)/15)
-
-        duration = timeslot_end - timeslot_start
-
-        weekday = getWeekday(start_ts)
-
-        start_m = getMinute(start_ts) >= 10 ? getMinute(start_ts) : ('0' + getMinute(start_ts))
-        end_m = getMinute(end_ts) >= 10 ? getMinute(end_ts) : ('0' + getMinute(end_ts))
-
-        if(timeslot_start >= 0 && timeslot_start < 64 && weekday >= 0 && weekday < 6){
-            lut[timeslot_start][weekday] = new Lecture(lectureData[lecture].lecture, lectureData[lecture].location, (getHour(start_ts) + ':' + start_m), (getHour(end_ts) + ':' + end_m), duration)
-        }
-    }
-
     content += '<tr><td class="headcol"></td>'
         for (let day = 0; day < 6; day++) {
             content += '<td></td>'
         }
-
-    let index = 0
-    for (let time = 7; time < 22; time = time + 0.25) {
-        let hour_label = time % 1 == 0 ? (time + ':00') : ''
-        content += '<tr><td class="headcol">' + hour_label + '</td>'
+    for (let index = 7; index < 22; index++) {
+        content += '<tr><td class="headcol">' + index + ':00</td>'
         for (let day = 0; day < 6; day++) {
-            if(lut[index][day] != 0){
-                content += '<td><div class="event" style="height:'
-                 + (lut[index][day].duration * 100) + '%;"></label>'
-                 + lut[index][day].start + '-'
-                 + lut[index][day].end + '<br>'
-                 + lut[index][day].name + '<br>'
-                 + '<b>' +  lut[index][day].room + '</b></div></td>'
+            if (index == 9 && day == 2){
+                content += '<td><div class="event" style="height: 430%;"></label>8:30–9:30 Yoga</div></td>'
             }
-            else {
-                content += '<td></td>'
+            else{
+                content += '<td>hallo</td>'
             }
         }
         content += '</tr>'
-        index++
+        content += '<tr><td class="headcol"></td>'
+        for (let day = 0; day < 6; day++) {
+            content += '<td>hallo</td>'
+        }
+        content += '</tr>'
     }
-
     content += '</table>'
     lecture_plan.innerHTML += content
-
-    function getWeekday(ts){
-        var a = new Date(ts);
-        return a.getDay() - 1;
-    }
-
-    function getHour(ts){
-        var a = new Date(ts);
-        return a.getHours() - 1;
-    }
-
-    function getMinute(ts){
-        var a = new Date(ts);
-        return a.getMinutes();
-    }
-
-    function empty_lut(dimensions) {
-        var array = [];
-
-        for (var i = 0; i < dimensions[0]; ++i) {
-            array.push(dimensions.length == 1 ? 0 : empty_lut(dimensions.slice(1)));
-        }
-
-        return array;
-    }
-
-    //------------------------------------------------------------------------------------------------------------------
-    //Set week of year in Header
-
-    var week_of_year = document.getElementById("week_of_year")
-    week_of_year.innerHTML = '<strong>Kalenderwoche ' + getWeekNumber(Date.now()) + '</strong>'
-
-    function getWeekNumber(d) {
-        currentdate = new Date();
-        currentdate.setDate(currentdate.getDate() - 1);
-        var oneJan = new Date(currentdate.getFullYear(),0,1);
-        var numberOfDays = Math.floor((currentdate - oneJan) / (24 * 60 * 60 * 1000));
-        return Math.ceil((currentdate.getDay() + 1 + numberOfDays) / 7);
-    }
-
-    //------------------------------------------------------------------------------------------------------------------
-    //Set dates in table header
-
-    function dates(current) {
-        var week= new Array();
-        // Starting Monday not Sunday
-        if(current.getDay() != 0){
-            current.setDate((current.getDate() - current.getDay() +1));
-        }
-        else {
-            current.setDate((current.getDate() - 6));
-        }
-        for (var i = 0; i < 7; i++) {
-            week.push(
-                new Date(current)
-            );
-            current.setDate(current.getDate() +1);
-        }
-        return week;
-    }
-
-    let dayNames = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa']
-    var date_header = document.getElementById("date_header")
-    date_header_content = ''
-    date_header_content += '<th class="headcol"></th>'
-
-    for (let day = 0; day < 6; day++) {
-        date_header_content += '<th' + ((new Date()).getDay() == day + 1 ? ' class="today"' : '') + '>' + dayNames[day] + ', ' + dates(new Date())[day].getDate() + '.' + (dates(new Date())[day].getMonth() + 1) + '</th>'
-    }
-    //date_header_content += '<th class="today">Mi, ' + + '</th>'
-
-    date_header.innerHTML = date_header_content
-
-
 </script>
 {% endblock javascripts %}
