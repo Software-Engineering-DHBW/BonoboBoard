@@ -8,8 +8,8 @@ Copyright (c) 2019 - present AppSeed.us
 # from django.apps import apps
 from django.db import models
 # from django.utils.crypto import salted_hmac
-# from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin
 
 # class BonoboUserManager(models.Manager):
 
@@ -135,12 +135,67 @@ class BonoboUser(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
+    dualis_scraped_data = models.CharField(
+        verbose_name='dualis scraped data',
+        max_length=255,
+        unique=False,
+        default=""
+    )
+    zimbra_token = models.CharField(
+        verbose_name='zimbra auth token',
+        max_length=255,
+        unique=False,
+        default=""
+    )
+    zimbra_accountname = models.CharField(
+        verbose_name='zimbra account name',
+        max_length=255,
+        unique=False,
+        default=""
+    )
+    zimbra_name = models.CharField(
+        verbose_name='zimbra real name',
+        max_length=255,
+        unique=False,
+        default=""
+    )
+    zimbra_contacts = models.CharField(
+        verbose_name='zimbra contact list',
+        max_length=255,
+        unique=False,
+        default=""
+    )
+    zimbra_headers = models.CharField(
+        verbose_name='zimbra headers',
+        max_length=255,
+        unique=False,
+        default=""
+    )
+    moodle_token = models.CharField(
+        verbose_name='moodle token',
+        max_length=255,
+        unique=False,
+        default=""
+    )
+    moodle_scraped_data = models.CharField(
+        verbose_name='moodle scraped data',
+        max_length=255,
+        unique=False,
+        default=""
+    )
+    lectures = models.CharField(
+        verbose_name='scraped lectures',
+        max_length=255,
+        unique=False,
+        default=""
+    )
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
     objects = BonoboUserManager()
 
     USERNAME_FIELD = 'email'
+
     REQUIRED_FIELDS = []
 
     user_objects = {
