@@ -6,6 +6,7 @@ Copyright (c) 2019 - present AppSeed.us
 import json
 import pickle
 
+import pandas as pd
 from django import template
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
@@ -16,6 +17,9 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 
 from apps.authentication.models import BonoboUser
+
+from dhbw.lecture_importer import LectureImporter
+from dhbw.zimbra import ZimbraHandler
 from .forms import ContactForm
 
 BonoboUser = get_user_model()
@@ -35,11 +39,8 @@ def index(request):
     HttpResponse
     """
 
-    # dualis_data = pickle.loads(request.session["dualis_data"])
-    # BonoboUser = get_user_model()
-    # dualis_data = get_dualis_results(
-    #     BonoboUser.objects.get(email=request.user))
-    return render(request, 'home/index.html', {"dualis_data": request.session["dualis_result"]})
+    bonobo_user = BonoboUser.objects.get(email=request.user)
+    return render(request, 'home/index.html', {"dualis_data": bonobo_user.dualis_scraped_data})
 
 
 @login_required(login_url="/login/")
@@ -71,6 +72,14 @@ def email(request):
     HttpResponse
     """
     current_user = BonoboUser.objects.get(email=request.user)
+
+    zimbra = ZimbraHandler()
+    zimbra.auth_token = current_user.zimbra_token
+    zimbra.accountname = current_user.zimbra_accountname
+    zimbra.realname = current_user.zimbra_name
+    zimbra.contacts = current_user.zimbra_contacts
+    zimbra.scraped_data = current_user.zimbra_scraped_data
+
     msg = ["error", ""]
     if request.method == 'POST':
         form = ContactForm(request.POST)
@@ -85,7 +94,7 @@ def email(request):
                 "content": form.cleaned_data.get("nachricht"),
             }
 
-            current_user.user_objects["zimbra"].send_mail(mail_dict)
+            zimbra.send_mail(mail_dict)
             msg = ["info", "Email erfolgreich gesendet!"]
             form = ContactForm() # clear the from
             return render(request, 'home/email.html', {'form': form, 'msg': msg})
@@ -169,9 +178,9 @@ def get_dualis_results(current_user):
     -------
     Dict
     """
-    if current_user.user_objects["dualis"] == None:
-        return
-    return pickle.loads(current_user.user_objects["test"]).scraped_data
+    # if current_user.user_objects["dualis"] == None:
+    #     return
+    # return current_user.user_objects["dualis"].scraped_data
 
 
 def get_lecture_results(current_user):
@@ -186,9 +195,15 @@ def get_lecture_results(current_user):
     pd.DataFrame
     """
     #lecture_importer = LectureImporter.read_lectures_from_database(uid)
-    lecture_importer = current_user.user_objects["lecture"]
+    lecture_importer = LectureImporter()
+    lecture_importer.lectures = pd.read_json(current_user.lectures)
+    lecture_importer.lectures["start"] = pd.to_datetime(lecture_importer.lectures["start"], unit="ms")
+    lecture_importer.lectures["end"] = pd.to_datetime(lecture_importer.lectures["end"], unit="ms")
+    write_log("Actual lectures")
+    write_log(lecture_importer.lectures)
     lectures_df = lecture_importer.limit_weeks_in_list(0, 0)
-
+    write_log("After trimming")
+    write_log(lectures_df)
     json_records = lectures_df.reset_index().to_json(orient='records')
     lectures = json.loads(json_records)
 
