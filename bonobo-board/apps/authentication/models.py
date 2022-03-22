@@ -165,8 +165,8 @@ class BonoboUser(AbstractBaseUser):
         unique=False,
         default=""
     )
-    zimbra_scraped_data = models.CharField(
-        verbose_name='zimbra scraped data',
+    zimbra_headers = models.CharField(
+        verbose_name='zimbra headers',
         max_length=255,
         unique=False,
         default=""

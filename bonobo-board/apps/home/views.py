@@ -2,7 +2,7 @@
 """
 Copyright (c) 2019 - present AppSeed.us
 """
-
+import ast
 import json
 import pickle
 
@@ -78,7 +78,7 @@ def email(request):
     zimbra.accountname = current_user.zimbra_accountname
     zimbra.realname = current_user.zimbra_name
     zimbra.contacts = current_user.zimbra_contacts
-    zimbra.scraped_data = current_user.zimbra_scraped_data
+    zimbra.headers = ast.literal_eval(current_user.zimbra_headers)
 
     msg = ["error", ""]
     if request.method == 'POST':

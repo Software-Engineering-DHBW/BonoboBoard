@@ -87,7 +87,7 @@ def authenticate_user(request, username, password, course):
     bonobo_user.zimbra_accountname = bonobo_user.user_objects["zimbra"].accountname  # Mail sxxxx@student-mannheim.de
     bonobo_user.zimbra_name = bonobo_user.user_objects["zimbra"].realname
     bonobo_user.zimbra_contacts = bonobo_user.user_objects["zimbra"].contacts
-    bonobo_user.zimbra_scraped_data = bonobo_user.user_objects["zimbra"].scraped_data
+    bonobo_user.zimbra_headers = bonobo_user.user_objects["zimbra"].headers
 
     bonobo_user.moodle_token = bonobo_user.user_objects["moodle"].auth_token
     # request.session["moodle_scraped_data"] = bonobo_user.user_objects["moodle"].scraped_data
