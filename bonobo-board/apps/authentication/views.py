@@ -3,6 +3,8 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 import asyncio
+import pickle
+import sys
 from os import sysconf_names
 from unittest import result
 from asgiref.sync import async_to_sync, sync_to_async
@@ -77,7 +79,15 @@ def authenticate_user(request, username, password, course):
     bonobo_user.user_objects["lecture"] = lecture_result
 
     asyncio.run(load_user_data(bonobo_user, course))
-
+    # sys.setrecursionlimit(10000)
+    # bonobo_user.user_objects["test"] = pickle.dumps(bonobo_user.user_objects["dualis"].scraped_data)
+    request.session["dualis_result"] = bonobo_user.user_objects["dualis"].scraped_data
+    request.session["zimbra_token"] = bonobo_user.user_objects["zimbra"]
+    request.session["zimbra_accountname"] = bonobo_user.user_objects["zimbra"]  # Mail sxxxx@dd.com
+    request.session["zimbra_name"] = bonobo_user.user_objects["zimbra"]
+    request.session["zimbra_contacts"] = bonobo_user.user_objects["zimbra"]
+    request.session["moodle_token"] = bonobo_user.user_objects["moodle"]
+    request.session["moodle_content"] = bonobo_user.user_objects["moodle"]
     return bonobo_user
 
 

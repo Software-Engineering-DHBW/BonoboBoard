@@ -4,6 +4,8 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 import json
+import pickle
+
 from django import template
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
@@ -32,9 +34,11 @@ def index(request):
     -------
     HttpResponse
     """
-    dualis_data = get_dualis_results(
-        BonoboUser.objects.get(email=request.user))
-    return render(request, 'home/index.html', {"dualis_data": dualis_data})
+    # dualis_data = pickle.loads(request.session["dualis_data"])
+    # BonoboUser = get_user_model()
+    # dualis_data = get_dualis_results(
+    #     BonoboUser.objects.get(email=request.user))
+    return render(request, 'home/index.html', {"dualis_data": request.session["dualis_result"]})
 
 
 @login_required(login_url="/login/")
@@ -165,7 +169,7 @@ def get_dualis_results(current_user):
     """
     if current_user.user_objects["dualis"] == None:
         return
-    return current_user.user_objects["dualis"].scraped_data
+    return pickle.loads(current_user.user_objects["test"]).scraped_data
 
 
 def get_lecture_results(current_user):
@@ -190,7 +194,7 @@ def get_lecture_results(current_user):
 
 
 def write_log(msg):
-    """interlly used for logging
+    """internally used for logging
     print message to log.txt
 
     Parameters
