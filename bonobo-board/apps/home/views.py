@@ -34,6 +34,7 @@ def index(request):
     -------
     HttpResponse
     """
+
     # dualis_data = pickle.loads(request.session["dualis_data"])
     # BonoboUser = get_user_model()
     # dualis_data = get_dualis_results(
@@ -118,6 +119,7 @@ def vorlesungsplan(request):
     """
     current_user = BonoboUser.objects.get(email=request.user)
     lectures = get_lecture_results(current_user)
+
     return render(request, 'home/vorlesungsplan.html', {"lectures": lectures})
 
 
@@ -185,7 +187,7 @@ def get_lecture_results(current_user):
     """
     #lecture_importer = LectureImporter.read_lectures_from_database(uid)
     lecture_importer = current_user.user_objects["lecture"]
-    lectures_df = lecture_importer.limit_days_in_list(14, 14)
+    lectures_df = lecture_importer.limit_weeks_in_list(0, 0)
 
     json_records = lectures_df.reset_index().to_json(orient='records')
     lectures = json.loads(json_records)
