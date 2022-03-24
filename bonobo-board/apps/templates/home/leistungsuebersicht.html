@@ -54,33 +54,38 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                    {% endblock content %}
+{% endblock content %}
 
-                    <!-- Specific Page JS goes HERE  -->
-                    {% block javascripts %}
-                    <script>
-                        //encode dualis data from local storage
-                        let rawData = localStorage.getItem('dualis')
-                        rawData = rawData.replace(/&quot;/g, '"')
-                        rawData = rawData.replace(/&#x27;/g, '"')
-                        const dualis_data = JSON.parse(rawData);
-                        //fill tabel with all grades
-                        var grades = document.getElementById("all_grades")
-                        let content = ''
-                        content += ' <table class="table"><thead><tr><th>Veranstaltung</th><th>Credits</th><th>Note</th></tr></thead> <tbody>'
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script>
+    //encode dualis data from local storage
+    let rawData = localStorage.getItem('dualis')
+    rawData = rawData.replace(/&quot;/g, '"')
+    rawData = rawData.replace(/&#x27;/g, '"')
+    const dualis_data = JSON.parse(rawData);
+    //fill tabel with all grades
+    var grades = document.getElementById("all_grades")
+    let content = ''
+    content += ' <table class="table"><thead><tr><th>Veranstaltung</th><th>Credits</th><th>Note</th></tr></thead> <tbody>'
 
-                        for (let index in dualis_data["modules"]) {
-                            const entry = dualis_data["modules"][index]
-                            content += '<tr><td>' + entry["name"] + '</td>'
-                            content += '<td>' + entry["credits"] + '</td>'
-                            content += '<td>' + entry["grade"] + '</td></tr>'
-                        }
+    for (let index in dualis_data["modules"]) {
+        const entry = dualis_data["modules"][index]
+        content += '<tr><td>' + entry["name"] + '</td>'
+        content += '<td>' + entry["credits"] + '</td>'
+        content += '<td>' + entry["grade"] + '</td></tr>'
+    }
 
-                        content += '  </tbody> </table>'
-                        grades.innerHTML += content
-                        //show gpa
-                        var gpaNode = document.getElementById("gpa")
-                        gpaNode.innerHTML += '<p><b>GPA-Total:</b> ' + dualis_data["gpa_total"] + '</p>'
-                    </script>
-                    {% endblock javascripts %}
+    content += '  </tbody> </table>'
+    grades.innerHTML += content
+    //show gpa
+    var gpaNode = document.getElementById("gpa")
+    gpaNode.innerHTML += '<p><b>GPA-Total:</b> ' + dualis_data["gpa_total"] + '</p>'
+</script>
+{% endblock javascripts %}

@@ -3,6 +3,9 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 import asyncio
+import json
+import pickle
+import sys
 from os import sysconf_names
 from unittest import result
 from asgiref.sync import async_to_sync, sync_to_async
@@ -36,13 +39,13 @@ def login_view(request):
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
             course = form.cleaned_data.get("course")
-            
+
             if not is_valid_course(course_list, course):
                 msg = 'Unbekannter Kurs'
                 return render(request, "accounts/login.html", {"form": form, "msg": msg, "course_list": course_list})
-            
+
             user = authenticate_user(request, username, password, course)
-         
+
             if user is not None:
                 login(request, user)
                 return redirect("/")
@@ -50,12 +53,11 @@ def login_view(request):
                 msg = 'Deine angegebenen DHBW Daten können nicht zum Login verwedent werden.'
         else:
             msg = 'Ungültige Eingabedaten'
- 
+
     return render(request, "accounts/login.html", {"form": form, "msg": msg, "course_list": course_list})
 
 
 def authenticate_user(request, username, password, course):
-
     loop = get_new_event_loop()
     dualis_result, moodle_result, zimbra_result, lecture_result = loop.run_until_complete(
         verify_login_credentials(username, password))
@@ -78,6 +80,21 @@ def authenticate_user(request, username, password, course):
 
     asyncio.run(load_user_data(bonobo_user, course))
 
+    # request.session["dualis_scraped_data"] = bonobo_user.user_objects["dualis"].scraped_data
+    bonobo_user.dualis_scraped_data = bonobo_user.user_objects["dualis"].scraped_data
+
+    bonobo_user.zimbra_token = bonobo_user.user_objects["zimbra"].auth_token
+    bonobo_user.zimbra_accountname = bonobo_user.user_objects["zimbra"].accountname  # Mail sxxxx@student-mannheim.de
+    bonobo_user.zimbra_name = bonobo_user.user_objects["zimbra"].realname
+    bonobo_user.zimbra_contacts = bonobo_user.user_objects["zimbra"].contacts
+    bonobo_user.zimbra_headers = bonobo_user.user_objects["zimbra"].headers
+
+    bonobo_user.moodle_token = bonobo_user.user_objects["moodle"].auth_token
+    # request.session["moodle_scraped_data"] = bonobo_user.user_objects["moodle"].scraped_data
+    bonobo_user.moodle_scraped_data = bonobo_user.user_objects["moodle"].scraped_data
+
+    bonobo_user.lectures = bonobo_user.user_objects["lecture"].lectures.to_json()
+    bonobo_user.save()
     return bonobo_user
 
 
@@ -119,5 +136,5 @@ async def load_user_data(bonobo_user, course):
 
 def write_log(msg):
     f = open("log.txt", "a")
-    f.write(str(msg)+"\n")
+    f.write(str(msg) + "\n")
     f.close()

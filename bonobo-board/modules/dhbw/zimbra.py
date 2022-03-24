@@ -147,11 +147,10 @@ class ZimbraHandler(ImporterSession):
         # drop content-type header
         self.drop_header("Content-Type")
 
-        self.email = username
-
         return self
 
     async def scrape(self):
+        # TODO documentation?
         """scrape the wanted data from the website
 
         Returns
@@ -348,7 +347,7 @@ class ZimbraHandler(ImporterSession):
         entities_list = _entity_list(rec_cc, entities_list, "cc")
         entities_list = _entity_list(recipients, entities_list, "recipient")
 
-        return  entities_list
+        return entities_list
 
     def _generate_mail(self, mail_dict):
         """build the mail in the needed format for zimbra"""
