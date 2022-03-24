@@ -2044,6 +2044,14 @@ p.text-muted {
   color: #53c213;
 }
 
+/* INSERTION FROM NK FOR MOBILE DISPLAY */
+@media only screen and (max-width: 991px) {
+  .pcoded-header {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
 /* header css end */
 /* menu[ vartical ] css start */
 .mobile-menu {
