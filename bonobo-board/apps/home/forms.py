@@ -16,7 +16,7 @@ class MultiEmailField(forms.Field):
     widget = MultiEmailWidget
 
     def to_python(self, value):
-        "Normalize data to a list of strings."
+        """Normalize data to a list of strings."""
         # Return None if no input was given.
         if not value:
             return []
