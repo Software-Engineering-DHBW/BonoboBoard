@@ -7,174 +7,190 @@
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}
 <style>
-  body {
-    flex-direction: column;
-    display: flex;
-    margin: 0;
-    background: #fafafa;
-    box-sizing: border-box;
-    height: 100vh;
-  }
+* {
+  margin: 0;
+  border: 0;
+}
 
-  .outer {
-    position: relative;
-  }
+body {
+  flex-direction: column;
+  display: flex;
+  margin: 0;
+  background: #fafafa;
+  box-sizing: border-box;
+  height: 100vh;
+}
 
-  .calendar {
-    margin: 0 auto;
-    min-width: 500px;
-    box-shadow: 0px 30px 50px rgba(0, 0, 0, 0.2), 0px 3px 7px rgba(0, 0, 0, 0.1);
-  }
+.outer {
+  position:relative;
+}
 
-  thead {
-    text-align: center;
-    width: 100%;
-    font-size: 1rem;
-    font-weight: bold;
-    color: rgba(0, 0, 0, 0.9);
-    padding: 1rem;
-    background: white;
-    border-bottom: 2px solid #ddd;
-  }
+.calendar {
+  margin: 0 auto;
+  min-width: 500px;
 
-  th {
-    text-align: center;
-    width: 100%;
-    font-size: 1rem;
-    font-weight: bold;
-    color: rgba(0, 0, 0, 0.9);
-    padding: 1rem;
-  }
+  box-shadow: 0px 30px 50px rgba(0, 0, 0, 0.2) ,0px 3px 7px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
 
-  header {
-    background: #fff;
-    padding: 1rem;
-    color: rgba(0, 0, 0, 0.7);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 8px 8px 0px 0px;
-  }
+thead {
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.9);
+  padding: 1rem;
+  background: white;
+  border-bottom: 2px solid #ddd;
+}
 
-  header h1 {
-    font-size: 1.25rem;
-    text-align: center;
-    font-weight: normal;
-  }
+th {
+  text-align: center;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.9);
+  padding: 1rem;
+}
 
-  table {
-    background: #fff;
-    width: 100%;
-    height: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-  }
+header {
+  background: #fff;
+  padding: 1rem;
+  color: rgba(0, 0, 0, 0.7);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8px 8px 0px 0px;
+}
 
-  .headcol {
-    width: 60px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.5);
-    padding: 0.25rem 0;
-    text-align: center;
-    border: 0;
-    position: relative;
-    top: -12px;
-    border-bottom: 1px solid transparent;
-  }
+header h1 {
+ font-size: 1.25rem;
+ text-align: center;
+ font-weight: normal;
+}
 
-  td {
-    text-align: center;
-    position: relative;
-  }
+table {
+  background: #fff;
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
 
-  tr:nth-child(odd) td:not(.headcol) {
-    border-bottom: 1px solid #e8e8e8;
-  }
+.headcol {
+  width: 60px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.5);
+  padding: 0.25rem 0;
+  text-align: center;
+  border: 0;
+  position: relative;
+  top: -12px;
+  border-bottom: 1px solid transparent;
+}
 
-  tr:nth-child(even) td:not(.headcol) {
-    border-bottom: 1px solid white;
-  }
+td {
+  text-align: center;
+  position: relative;
+}
+tr:nth-child(odd) td:not(.headcol) {
+  border-bottom: 1px solid #e8e8e8;
+}
 
-  tr td {
-    border-right: 1px solid #eee;
-    white-space: none;
-    word-wrap: nowrap;
-  }
+tr:nth-child(even) td:not(.headcol) {
+  border-bottom: 1px solid #eee;
+}
 
-  tbody tr td {
-    vertical-align: top;
-    height: 20px;
-    padding: 0.25rem 0.25rem 0 0.25rem;
-    width: auto;
-  }
+tr td {
+  border-right: 1px solid #eee;
+  white-space: none;
+  word-wrap: nowrap;
+}
 
-  .event {
-    background: #9BCA7F;
-    color: white;
-    border-radius: 2px;
-    text-align: left;
-    font-size: 0.875rem;
-    padding: 0.5rem;
-    overflow-x: hidden;
-    transition: all 0.2s;
-    cursor: pointer;
-    position: absolute;
-    z-index: 1;
-    width: 96%;
-    height: 84%;
-  }
+tbody tr td {
+  vertical-align: top;
+  height: 30px;
+  padding: 0.25rem 0.25rem 0 0.25rem;
+  width: auto;
+}
 
-  .event:hover {
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
-    background: #7CB45B;
-  }
+.event {
+  background: #7CB45B ;
+  color: white;
+  border-radius: 2px;
+  text-align: left;
+  font-size: 0.875rem;
+  padding: 0.5rem;
+  overflow-x: hidden;
+  transition: all 0.2s;
+  cursor: pointer;
+  position: absolute;
+  z-index: 1;
+  width: 96%;
+  height: 84%;
+}
 
-  button.secondary {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    background: white;
-    padding: 0.5rem 0.75rem;
-    font-size: 14px;
-    border-radius: 2px;
-    color: rgba(0, 0, 0, 0.5);
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    font-weight: 500;
-  }
+.event:hover {
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+  background: #9BCA7F;
+}
 
-  button.secondary:hover {
-    background: #fafafa;
-  }
+button.secondary {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: white;
+  padding: 0.5rem 0.75rem;
+  font-size: 14px;
+  border-radius: 2px;
+  color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-weight: 500;
+}
 
-  button.secondary:active {
-    box-shadow: none;
-  }
+button.secondary:hover {
+  background: #fafafa;
+}
+button.secondary:active {
+  box-shadow: none;
+}
+button.secondary:focus {
+  outline: 0;
+}
 
-  button.secondary:focus {
-    outline: 0;
-  }
+/* TODO
+tr td:nth-child(2), tr td:nth-child(3), .past {
+  background: #ffffff;
+}
+*/
 
-  /** < > signs to change week */
-  .icon {
-    font-size: 1.5rem;
-    margin: 0 1rem;
-    text-align: center;
-    cursor: pointer;
-    vertical-align: middle;
-    position: relative;
-    top: -2px;
-  }
+.now {
+  box-shadow: 0px -1px 0px 0px red;
+}
 
-  .icon:hover {
-    color: #53c213;
-  }
+/** < > signs to change week */
+.icon {
+  font-size: 1.5rem;
+  margin: 0 1rem;
+  text-align: center;
+  cursor: pointer;
+  vertical-align: middle;
+  position: relative;
+  top: -2px;
+}
 
-  .today {
-    color: #53c213;
-  }
+.icon:hover {
+  color: red;
+}
+
+.today {
+  color: #53c213;
+}
+
 </style>
 {% endblock stylesheets %}
 
