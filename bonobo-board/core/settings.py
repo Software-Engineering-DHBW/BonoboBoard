@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_tables2',
-    'apps.home'  # Enable the inner home (home)
+    'apps.home',  # Enable the inner home (home)
+    'apps.authentication'
 ]
 
 MIDDLEWARE = [
@@ -63,7 +64,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'core.urls'
 LOGIN_REDIRECT_URL = "home"  # Route defined in home/urls.py
-LOGOUT_REDIRECT_URL = "home"  # Route defined in home/urls.py
+LOGOUT_REDIRECT_URL = "login"  # Route defined in home/urls.py
 TEMPLATE_DIR = os.path.join(CORE_DIR, "apps/templates")  # ROOT dir for templates
 
 TEMPLATES = [
@@ -83,6 +84,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
+AUTH_USER_MODEL = "authentication.BonoboUser"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -93,24 +95,6 @@ DATABASES = {
         'NAME': 'db.sqlite3',
     }
 }
-
-# Password validation
-# https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/

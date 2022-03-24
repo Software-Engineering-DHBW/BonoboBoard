@@ -9,39 +9,10 @@
 
 {% block content %}
 
-{% if form %}
 <div class="pcoded-content">
     <div class="pcoded-inner-content">
         <div class="page-header-title">
-            <h3 class="m-b-10">Login</h3>
-        </div>
-        <div class="main-body">
-            <div class="page-wrapper">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-block">
-                                <form method="POST">
-                                    {% csrf_token %}
-                                    <div class="form-group">
-                                    {{ form }}
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endif %}
-{% if is_user_logged_in %}
-<div class="pcoded-content">
-    <div class="pcoded-inner-content">
-        <div class="page-header-title">
-            <h3 class="m-b-10">Dashboard</h3>
+            <h3 class="m-b-10">Dashboard </h3>
         </div>
         <nav aria-label="breadcrumb">
             <nav aria-label="breadcrumb">
@@ -60,6 +31,9 @@
                             <div class="card-header">
                                 <h5>Vorlesungsplan</h5>
                             </div>
+                            <div class="card-block">
+                                <div id="lecture_plan" class="col-sm-12"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-sm">
@@ -76,11 +50,7 @@
                                 <h5>Leistungsübersicht</h5>
                             </div>
                             <div class="card-block">
-                                <div class="col-sm-12">
-                                    {% if content %}
-                                    <p><b>GPA-Total:</b> {{content.gpa_total}}</p>
-                                    {% endif %}
-                                </div>
+                                <div id="gpa" class="col-sm-12"></div>
                             </div>
                         </div>
                     </div>
@@ -89,9 +59,45 @@
         </div>
     </div>
 </div>
-{% endif %}
 
 {% endblock content %}
-
 <!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+{% block javascripts %}
+
+<script>
+    //save dualis data to local storage
+    const dualisDump = "{{ dualis_data }}";
+    if (dualisDump !== "") {
+        localStorage.setItem('dualis', dualisDump);
+    }
+    //encode dualis data from local storage
+    let rawDualisData = localStorage.getItem('dualis')
+    rawDualisData = rawDualisData.replace(/&quot;/g, '"')
+    rawDualisData = rawDualisData.replace(/&#x27;/g, '"')
+    const dualisData = JSON.parse(rawDualisData);
+
+    //show gpa
+    var gpa = document.getElementById("gpa")
+    console.log(gpa)
+    if (gpa !== null && dualisData["gpa_total"] !== undefined) {
+        gpa.innerHTML += '<p><b>GPA-Total:</b> ' + dualisData["gpa_total"] + '</p>'
+    }
+
+    //encode lecture data
+    rawLectureData = "{{lectures}}"
+    rawLectureData = rawLectureData.replace(/&quot;/g, '"')
+    rawLectureData = rawLectureData.replace(/&#x27;/g, '"')
+    const lectureData = JSON.parse(rawLectureData);
+
+    //show lecture plan
+    let lecturePlan = document.getElementById("lecture_plan")
+    let content = ''
+    content += ' <table class="table"><thead><tr><th>Veranstaltung</th><th>Uhrzeit</th><th>Raum</th></tr></thead> <tbody>'
+
+    content = getTodaysClass(lectureData, content)
+
+    content += '  </tbody> </table>'
+    lecturePlan.innerHTML += content
+
+</script>
+{% endblock javascripts %}

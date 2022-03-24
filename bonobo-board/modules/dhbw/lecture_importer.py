@@ -4,10 +4,12 @@
 """
 
 from datetime import datetime, timedelta
+import calendar
 import pandas as pd
 import sqlalchemy
 from bs4 import BeautifulSoup
 import icalendar
+import asyncio
 
 from .util import Importer, reqget
 
@@ -35,7 +37,8 @@ class CourseImporter(Importer):
         None
         """
         response = reqget(url=CourseImporter.url, headers=self.headers)
-        result = BeautifulSoup(response.content, "lxml").find(id="class_select")
+        result = BeautifulSoup(
+            response.content, "lxml").find(id="class_select")
 
         # optgroup stores the list of courses
         all_optgroup = result.find_all('optgroup')
@@ -44,6 +47,10 @@ class CourseImporter(Importer):
                 if course.get("value"):
                     self.course_list.append(course['label'])
                     self.uid_list.append(course['value'])
+
+    def get_course_uid(self, course_str):
+        index = self.course_list.index(course_str)
+        return self.uid_list[index]
 
 
 class LectureImporter(Importer):
@@ -54,12 +61,14 @@ class LectureImporter(Importer):
     # No HTTPS possible in this case?
     url = "http://vorlesungsplan.dhbw-mannheim.de/ical.php?uid="
 
-    def __init__(self, uid):
+    def __init__(self):
         super().__init__()
-        self.uid = uid
-        self.lectures = self.scrape(uid)
+        self.lectures = None
 
-    def scrape(self, uid):
+    async def login(self):
+        return self
+
+    async def scrape(self, uid):
         """method to scrape the courses-icalendar and parse it to a pandas.DataFrame
 
         Parameters
@@ -88,6 +97,8 @@ class LectureImporter(Importer):
                           component.get('DTEND').dt
                           ]
                 df.loc[len(df)] = vevent
+        df = df.sort_values("start")
+        self.lectures = df
         return df
 
     def limit_days_in_list(self, days_past, days_future):
@@ -110,6 +121,26 @@ class LectureImporter(Importer):
         df = self.lectures
         return df[(df["start"] > d_past) & (df["start"] < d_future)]
 
+    def limit_weeks_in_list(self, weeks_past, weeks_future):
+        """method to limit/crop the lectures-DataFrame gathered in LectureImporter.scrape() by limiting the weeks
+
+        Parameters
+        ----------
+        weeks_past : int
+            include the last x weeks in the list
+        weeks_future : int
+            include the future x weeks in the list
+
+        Returns
+        -------
+        pandas.Dataframe
+            cropped lectures-DataFrame
+        """
+        w_past = datetime.today() - timedelta(days=datetime.today().weekday(), weeks=weeks_past)
+        w_future = datetime.today() + timedelta(days=-datetime.today().weekday(), weeks=weeks_future+1)
+        df = self.lectures
+        return df[(df["start"] > w_past.replace(hour=0, minute=0, second=0)) & (df["start"] < w_future.replace(hour=0, minute=0, second=0))]
+
 # TODO remove (its cool that we can do it, but I dont see a reason for this to exist) @NK
 # def all_courses_lectures():
 #     courses = CourseImporter()
@@ -131,6 +162,7 @@ class LectureImporter(Importer):
 
 # -------------- HELPERS --------------------
 
+
 def get_unique_lectures(df_lectures):
     unique = df_lectures["lecture"].unique()
     data = []
@@ -151,7 +183,8 @@ def link_lectures_and_links(df_lectures, df_links):
     df = df_lectures.copy()
     df["link"] = "NO LINK"
     for unique_lecture in df_lectures["lecture"].unique():
-        link_for_unique = df_links[df_links["lecture"] == unique_lecture]["link"].values[0]
+        link_for_unique = df_links[df_links["lecture"]
+                                   == unique_lecture]["link"].values[0]
         df.loc[df["lecture"] == unique_lecture, "link"] = link_for_unique
     return df
 
@@ -169,12 +202,14 @@ def write_courses_to_database():
     df.to_sql("courses", engine, if_exists='replace', index=False)
     return
 
+
 # READ
 def read_courses_from_database():
     engine_string = "sqlite:///courses.db"
     engine = sqlalchemy.create_engine(engine_string)
     df = pd.read_sql("SELECT * FROM \'courses\';", engine)
     return df['course'].tolist(), df['uid'].tolist()
+
 
 # ----------------- LECTURE DATABASE --------------------
 # WRITE
@@ -202,7 +237,7 @@ def read_lectures_from_database(course_uid):
 
 
 # ----------------- LECTURE LINK DATABASE --------------------
-def write_lecture_links_to_database(df, user_uid):    #df-columns: lecture, link
+def write_lecture_links_to_database(df, user_uid):  # df-columns: lecture, link
     engine_string = "sqlite:///users.db"
     table_name = str(user_uid) + "_link"
     engine = sqlalchemy.create_engine(engine_string)
