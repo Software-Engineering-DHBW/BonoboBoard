@@ -28,7 +28,7 @@ BonoboUser = get_user_model()
 @csrf_protect
 @login_required(login_url="/login/")
 def index(request):
-    """on index page is opened, get dualis data of user and return home/index.html with data
+    """on index page is opened, get dualis data and lecture data of user and return home/index.html with data
 
     Parameters
     ----------
@@ -40,7 +40,8 @@ def index(request):
     """
 
     bonobo_user = BonoboUser.objects.get(email=request.user)
-    return render(request, 'home/index.html', {"dualis_data": bonobo_user.dualis_scraped_data})
+    lectures = get_lecture_results(bonobo_user)
+    return render(request, 'home/index.html', {"dualis_data": bonobo_user.dualis_scraped_data, "lectures": lectures})
 
 
 @login_required(login_url="/login/")
@@ -96,7 +97,7 @@ def email(request):
 
             zimbra.send_mail(mail_dict)
             msg = ["info", "Email erfolgreich gesendet!"]
-            form = ContactForm() # clear the from
+            form = ContactForm()  # clear the from
             return render(request, 'home/email.html', {'form': form, 'msg': msg})
         else:
             msg[1] = "Fehlerhafte Eingabe"
@@ -173,7 +174,7 @@ def get_dualis_results(current_user):
     Parameters
     ----------
     current_user: BonoboUser
-        
+
     Returns
     -------
     Dict
@@ -189,7 +190,7 @@ def get_lecture_results(current_user):
     Parameters
     ----------
     current_user: BonoboUser
-        
+
     Returns
     -------
     pd.DataFrame
@@ -197,8 +198,10 @@ def get_lecture_results(current_user):
     #lecture_importer = LectureImporter.read_lectures_from_database(uid)
     lecture_importer = LectureImporter()
     lecture_importer.lectures = pd.read_json(current_user.lectures)
-    lecture_importer.lectures["start"] = pd.to_datetime(lecture_importer.lectures["start"], unit="ms")
-    lecture_importer.lectures["end"] = pd.to_datetime(lecture_importer.lectures["end"], unit="ms")
+    lecture_importer.lectures["start"] = pd.to_datetime(
+        lecture_importer.lectures["start"], unit="ms")
+    lecture_importer.lectures["end"] = pd.to_datetime(
+        lecture_importer.lectures["end"], unit="ms")
     write_log("Actual lectures")
     write_log(lecture_importer.lectures)
     lectures_df = lecture_importer.limit_weeks_in_list(0, 0)

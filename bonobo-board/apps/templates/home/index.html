@@ -31,6 +31,9 @@
                             <div class="card-header">
                                 <h5>Vorlesungsplan</h5>
                             </div>
+                            <div class="card-block">
+                                <div id="lecture_plan" class="col-sm-12"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-sm">
@@ -47,9 +50,7 @@
                                 <h5>Leistungsübersicht</h5>
                             </div>
                             <div class="card-block">
-                                <div id="gpa" class="col-sm-12">
-
-                                </div>
+                                <div id="gpa" class="col-sm-12"></div>
                             </div>
                         </div>
                     </div>
@@ -82,6 +83,21 @@
         gpa.innerHTML += '<p><b>GPA-Total:</b> ' + dualisData["gpa_total"] + '</p>'
     }
 
+    //encode lecture data
+    rawLectureData = "{{lectures}}"
+    rawLectureData = rawLectureData.replace(/&quot;/g, '"')
+    rawLectureData = rawLectureData.replace(/&#x27;/g, '"')
+    const lectureData = JSON.parse(rawLectureData);
+
+    //show lecture plan
+    let lecturePlan = document.getElementById("lecture_plan")
+    let content = ''
+    content += ' <table class="table"><thead><tr><th>Veranstaltung</th><th>Uhrzeit</th><th>Raum</th></tr></thead> <tbody>'
+
+    content = getTodaysClass(lectureData, content)
+
+    content += '  </tbody> </table>'
+    lecturePlan.innerHTML += content
 
 </script>
 {% endblock javascripts %}
