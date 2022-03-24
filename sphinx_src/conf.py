@@ -44,13 +44,12 @@ extensions = [
     'sphinx.ext.autosummary',  # Create neat summary tables
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
-    #'numpydoc',
     'sphinx.ext.doctest',
     'sphinx.ext.inheritance_diagram'
 ]
 autosummary_generate = True  # Turn on sphinx.ext.autosummary
 
-autodoc_mock_imports = ["django", "forms", "icalendar", "core.settings", "sqlalchemy", "datetime", "decouple", "unipath", "argparse", "unittest", "dhbw.tests"]
+autodoc_mock_imports = ["django", "apps.home.widgets", "icalendar", "core.settings", "sqlalchemy", "datetime", "decouple", "unipath", "argparse", "unittest"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

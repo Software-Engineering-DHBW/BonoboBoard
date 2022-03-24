@@ -8,7 +8,8 @@ from django.core.exceptions import ValidationError
 import re
 from .widgets import MultiEmailWidget
 
-#src: https://github.com/fle/django-multi-email-field/blob/7dcc5f4e0aee1c935abdbb94aa4edff8521938d7/multi_email_field/forms.py
+# src:
+# https://github.com/fle/django-multi-email-field/blob/7dcc5f4e0aee1c935abdbb94aa4edff8521938d7/multi_email_field/forms.py
 class MultiEmailField(forms.Field):
     message = 'Enter valid email addresses.'
     code = 'invalid'

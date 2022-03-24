@@ -1,8 +1,13 @@
+"""
+Widgets.py
+"""
+
 from django.forms.widgets import Textarea
 from django.core.exceptions import ValidationError
 from django.core import validators
 
-#src: https://github.com/fle/django-multi-email-field/blob/7dcc5f4e0aee1c935abdbb94aa4edff8521938d7/multi_email_field/widgets.py
+# src:
+# https://github.com/fle/django-multi-email-field/blob/7dcc5f4e0aee1c935abdbb94aa4edff8521938d7/multi_email_field/widgets.py
 
 MULTI_EMAIL_FIELD_EMPTY_VALUES = validators.EMPTY_VALUES + ('[]', )
 

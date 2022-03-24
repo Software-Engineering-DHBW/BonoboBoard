@@ -4,7 +4,6 @@ Copyright (c) 2019 - present AppSeed.us
 """
 import ast
 import json
-import pickle
 
 import pandas as pd
 from django import template
