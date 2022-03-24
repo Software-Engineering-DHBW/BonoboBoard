@@ -17,6 +17,14 @@ from .util import Importer, reqget
 class CourseImporter(Importer):
     """Class to achieve the list of all courses of the DHBW Mannheim.
 
+    Attributes
+    ----------
+    url : str
+        Universal given link for the dhbw-course-calendars.
+    course_list : List[str]
+        List containing all courses (e.g. "TINF19 IT2") after scraping
+    uid_list : uid_list[str]
+        List containing all course-uid's after scraping
     """
 
     url = "https://vorlesungsplan.dhbw-mannheim.de/ical.php"
@@ -28,9 +36,7 @@ class CourseImporter(Importer):
         self.scrape()
 
     def scrape(self):
-        """Method to scrape the list of all courses.
-
-        list is stored in course_list
+        """Method to scrape the list of all courses. List is stored in course_list and uid_list.
 
         Returns
         -------
@@ -49,12 +55,29 @@ class CourseImporter(Importer):
                     self.uid_list.append(course['value'])
 
     def get_course_uid(self, course_str):
+        """Get a course uid by providing a course name.
+
+        Parameters
+        ----------
+        course_str : List[str]
+
+        Returns
+        -------
+        str
+        """
         index = self.course_list.index(course_str)
         return self.uid_list[index]
 
 
 class LectureImporter(Importer):
     """Class to achieve the course-specific timetable.
+
+    Attributes
+    ----------
+    url: str
+        Universal given link for the dhbw-course-calendars.
+    lectures: pd.DataFrame
+        List containing all lectures of a specified course after scraping
 
     """
 
@@ -66,10 +89,16 @@ class LectureImporter(Importer):
         self.lectures = None
 
     async def login(self):
+        """Async login method for frontend
+
+        Returns
+        -------
+        LectureImporter
+        """
         return self
 
     async def scrape(self, uid):
-        """method to scrape the courses-icalendar and parse it to a pandas.DataFrame
+        """Method to scrape the courses-icalendar and parse it to a pandas.DataFrame.
 
         Parameters
         ----------
@@ -133,18 +162,20 @@ class LectureImporter(Importer):
 
         Returns
         -------
-        pandas.Dataframe
+        pd.Dataframe
             cropped lectures-DataFrame
         """
         w_past = datetime.today() - timedelta(days=datetime.today().weekday(), weeks=weeks_past)
-        w_future = datetime.today() + timedelta(days=-datetime.today().weekday(), weeks=weeks_future+1)
+        w_future = datetime.today() + timedelta(days=-datetime.today().weekday(), weeks=weeks_future + 1)
         df = self.lectures
-        return df[(df["start"] > w_past.replace(hour=0, minute=0, second=0)) & (df["start"] < w_future.replace(hour=0, minute=0, second=0))]
+        return df[(df["start"] > w_past.replace(hour=0, minute=0, second=0)) & (
+                df["start"] < w_future.replace(hour=0, minute=0, second=0))]
+
 
 # ?: remove (its cool that we can do it, but I dont see a reason for this to exist) @NK
 # NK: Its cool that we can do it, but its also mandatory (load all courses for database with cronjob) @Anonymous
 def all_courses_lectures(limit_days_past=14, limit_days_future=14):
-    """Gather lectures for all availabile courses.
+    """Gather lectures for all available courses.
 
     Parameters
     ----------
@@ -198,15 +229,15 @@ def _get_unique_lectures(df_lectures):
 
 
 def create_empty_user_links_df(df_lectures):
-    """
+    """Function to create an empty link table.
 
     Parameters
     ----------
-    df_lectures
+    df_lectures : pd.DataFrame
 
     Returns
     -------
-
+    pd.DataFrame
     """
     unique_lectures = _get_unique_lectures(df_lectures)
     df_links = pd.DataFrame()
@@ -216,16 +247,16 @@ def create_empty_user_links_df(df_lectures):
 
 
 def link_lectures_and_links(df_lectures, df_links):
-    """
+    """Function to link lectures and link DataFrames.
 
     Parameters
     ----------
-    df_lectures
-    df_links
+    df_lectures : pd.DataFrame
+    df_links : pd.DataFrame
 
     Returns
     -------
-
+    pd.DataFrame
     """
     df = df_lectures.copy()
     df["link"] = "NO LINK"
@@ -239,11 +270,11 @@ def link_lectures_and_links(df_lectures, df_links):
 # ----------------- COURSE DATABASE --------------------
 # WRITE
 def write_courses_to_database():
-    """
+    """ Write all courses to database.
 
     Returns
     -------
-
+    None
     """
     courses = CourseImporter()
     engine_string = "sqlite:///courses.db"
@@ -258,11 +289,12 @@ def write_courses_to_database():
 
 # READ
 def read_courses_from_database():
-    """
+    """ Read all courses from database.
 
     Returns
     -------
-
+    List[str], List[str]
+        Course and uid list.
     """
     engine_string = "sqlite:///courses.db"
     engine = sqlalchemy.create_engine(engine_string)
@@ -273,8 +305,11 @@ def read_courses_from_database():
 # ----------------- LECTURE DATABASE --------------------
 # WRITE
 def write_all_courses_lectures_to_database():
-    """
+    """ Scraping lectures of all courses. Warning: May take while.
 
+    Returns
+    -------
+    None
     """
     courses = CourseImporter()
     print("Length Course-List:", len(courses.uid_list))
@@ -284,13 +319,13 @@ def write_all_courses_lectures_to_database():
         write_lectures_to_database(df, course)
 
 
-def write_lectures_to_database(df, course_uid):
-    """
+def write_lectures_to_database(lectures_df, course_uid):
+    """ Write the lectures of one course to the database.
 
     Parameters
     ----------
-    df
-    course_uid
+    lectures_df : pd.DataFrame
+    course_uid : str
 
     Returns
     -------
@@ -298,21 +333,22 @@ def write_lectures_to_database(df, course_uid):
     """
     engine_string = "sqlite:///lectures.db"
     engine = sqlalchemy.create_engine(engine_string)
-    df.to_sql(str(course_uid), engine, if_exists='replace', index=False)
+    lectures_df.to_sql(str(course_uid), engine, if_exists='replace', index=False)
     return
 
 
 # READ
 def read_lectures_from_database(course_uid):
-    """
+    """ Read lectures of specified course from database.
 
     Parameters
     ----------
-    course_uid
+    course_uid : str
 
     Returns
     -------
-
+    pd.DataFrame
+        Contains lectures.
     """
     engine_string = "sqlite:///lectures.db"
     engine = sqlalchemy.create_engine(engine_string)
@@ -322,16 +358,16 @@ def read_lectures_from_database(course_uid):
 # ----------------- LECTURE LINK DATABASE --------------------
 
 def write_lecture_links_to_database(df, user_uid):  # df-columns: lecture, link
-    """
+    """ Write lecture-link DataFrame to database.
 
     Parameters
     ----------
-    df
-    user_uid
+    df : pd.DataFrame(columns=["lecture", "link"]
+    user_uid : str
 
     Returns
     -------
-
+    None
     """
 
     engine_string = "sqlite:///users.db"
@@ -342,15 +378,15 @@ def write_lecture_links_to_database(df, user_uid):  # df-columns: lecture, link
 
 
 def read_lecture_links_from_database(user_uid):
-    """
+    """ Read lecture-link DataFrame from database.
 
     Parameters
     ----------
-    user_uid
+    user_uid : str
 
     Returns
     -------
-
+    pd.DataFrame
     """
     engine_string = "sqlite:///users.db"
     table_name = str(user_uid) + "_link"

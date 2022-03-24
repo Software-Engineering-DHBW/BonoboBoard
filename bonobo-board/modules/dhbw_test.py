@@ -19,10 +19,11 @@ parser = ArgumentParser(
     prog="dhbw_test"
 )
 parser.add_argument("-t", "--tests", action="extend",
-    choices=["course", "dualis", "lecture", "moodle", "zimbra"],
-    help="Choose sets of tests to run", nargs="+", type=str
-)
+                    choices=["course", "dualis", "lecture", "moodle", "zimbra"],
+                    help="Choose sets of tests to run", nargs="+", type=str
+                    )
 args = parser.parse_args()
+
 
 def suite():
     """Gather all tests defined in the tests module inside the dhbw module
@@ -48,9 +49,10 @@ def suite():
                 test_suite.addTest(TestMoodleImporter.cls_suite())
             else:
                 test_suite.addTest(TestZimbraHandler.cls_suite())
-            i+=1
+            i += 1
 
     return test_suite
+
 
 def main():
     """Run the provided tests

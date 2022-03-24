@@ -39,7 +39,7 @@ def repl_comma_with_dot(content):
     Parameters
     ----------
     content: str
-        String where commas are replaced by dots
+        String where commas should be replaced by dots.
     """
     return re.sub(r",", ".", content)
 
@@ -50,6 +50,7 @@ def fit_credits(credits_string):
     Parameters
     ----------
     credits_string: str
+
     """
     _credits = 0
     if credits_string:
@@ -64,6 +65,7 @@ def fit_grade(grade_string):
     Parameters
     ----------
     grade_string: str
+
     """
     grade = 0.0
     if grade_string:
@@ -78,7 +80,8 @@ def fit_state(state_string):
 
     Parameters
     ----------
-    state_string
+    state_string: str
+
     """
     if state_string == "bestanden" or state_string == "Bestanden":
         state_string = "p"
@@ -94,12 +97,18 @@ def add_module_to_dualis_dict(m_id, m_name, m_href, m_credits, m_grade, m_state)
 
     Parameters
     ----------
-    m_id
-    m_name
-    m_href
-    m_credits
-    m_grade
-    m_state
+    m_id: str
+
+    m_name: str
+
+    m_href: str
+
+    m_credits: str
+
+    m_grade: str
+
+    m_state: str
+
     """
     dualis_module = {
         "id": m_id,
@@ -141,10 +150,8 @@ class DualisImporter(ImporterSession):
         self.headers["Host"] = url_get_fqdn(DualisImporter.url)
         self.params = {}
 
-
-
     async def login(self, username, password):
-        """aquire the authentication token
+        """ Async function to acquire the dualis authentication token.
 
         Parameters
         ----------
@@ -193,7 +200,7 @@ class DualisImporter(ImporterSession):
         self.headers["Cookie"] = self.auth_token
 
         self.email = username
-        
+
         return self
 
     def _fill_grades_into_dict(self, response_text):
@@ -254,7 +261,6 @@ class DualisImporter(ImporterSession):
 
             else:
                 i += 1
-
 
     async def scrape(self):
         """Scrape the wanted data from the dualis-website.

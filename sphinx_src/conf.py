@@ -49,7 +49,7 @@ extensions = [
 ]
 autosummary_generate = True  # Turn on sphinx.ext.autosummary
 
-autodoc_mock_imports = ["django", "apps.home.widgets", "icalendar", "core.settings", "sqlalchemy", "datetime", "decouple", "unipath", "argparse", "unittest"]
+autodoc_mock_imports = ["django", "icalendar", "core.settings", "apps.home.widgets", "sqlalchemy", "datetime", "decouple", "unipath", "argparse", "unittest"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
