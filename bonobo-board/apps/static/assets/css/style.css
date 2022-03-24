@@ -162,6 +162,7 @@ strong {
   border-top: none;
   max-height: 300px;
   overflow-y: auto;
+  top: calc(2.55rem + 2px);
  
 }
 .autocomplete-items div {
