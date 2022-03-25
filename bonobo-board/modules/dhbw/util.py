@@ -8,15 +8,16 @@ import re
 import requests
 from requests.exceptions import RequestException
 
+
 ###              ###
 # HELPER FUNCTIONS #
 ###              ###
 
 def reqpost(
-        *, url = "", headers = None,
-        params = None, payload = None,
-        allow_redirects = False, return_code = 200):
-    """wrapper for a post request with return code check
+        *, url="", headers=None,
+        params=None, payload=None,
+        allow_redirects=False, return_code=200):
+    """Wrapper for a post request with return code check.
 
     Parameters
     ----------
@@ -52,18 +53,19 @@ def reqpost(
         allow_redirects=allow_redirects
     )
 
-    err_msg = f"return code: [{ res.status_code }]\nexpected return code: [{ return_code }]"
+    err_msg = f"return code: [{res.status_code}]\nexpected return code: [{return_code}]"
 
     # compare return code with expected return code
     if not res.status_code == return_code:
         raise RequestException(err_msg)
     return res
 
+
 def reqget(
-        *, url = "", headers = None,
-        params = None, allow_redirects = False,
-        return_code = 200):
-    """wrapper for a get request with return code check
+        *, url="", headers=None,
+        params=None, allow_redirects=False,
+        return_code=200):
+    """Wrapper for a get request with return code check.
 
     Parameters
     ----------
@@ -96,15 +98,16 @@ def reqget(
         allow_redirects=allow_redirects
     )
 
-    err_msg = f"return code: [{ res.status_code }]\nexpected return code: [{ return_code }]"
+    err_msg = f"return code: [{res.status_code}]\nexpected return code: [{return_code}]"
 
     # compare return code with expected return code
     if not res.status_code == return_code:
         raise RequestException(err_msg)
     return res
 
+
 def url_get_fqdn(url):
-    """return fqdn of an url
+    """Return fqdn of an url.
 
     Parameters
     ----------
@@ -117,6 +120,7 @@ def url_get_fqdn(url):
         the fqdn of the given url
     """
     return re.sub(r"(^http[s]?://)|(/.*$)", "", url)
+
 
 def url_get_path(url):
     """return path to file of an url
@@ -133,6 +137,7 @@ def url_get_path(url):
     """
     return re.sub(r"(^.*/)|(\?.*$)", "", url)
 
+
 def url_get_args(url):
     """return array of arguments of an url
 
@@ -148,6 +153,7 @@ def url_get_args(url):
         as follows: "arg=value"
     """
     return re.sub(r"^.*\?", "", url).split("&")
+
 
 ###                 ###
 # ABSTRACT BASE CLASS #
@@ -195,8 +201,9 @@ class Importer(ABC):
         """
         self.headers.pop(header)
 
+
 class ImporterSession(Importer, metaclass=ABCMeta):
-    """base class for every importer with session handling
+    """Base class for every importer with session handling.
 
     Attributes
     ----------
@@ -204,7 +211,7 @@ class ImporterSession(Importer, metaclass=ABCMeta):
         the string representing the authentication cookie for the created session
     """
 
-    __slots__ = ("auth_token","email",)
+    __slots__ = ("auth_token", "email",)
 
     def __init__(self):
         super().__init__()
