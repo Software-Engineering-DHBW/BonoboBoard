@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_tables2',
     'apps.home',  # Enable the inner home (home)
-    'apps.authentication'
+    'apps.authentication',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

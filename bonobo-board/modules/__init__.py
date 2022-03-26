@@ -1,4 +1,3 @@
 # -*- encoding: utf-8 -*-
-"""
-modules
+"""Python modules for the BonoboBoard
 """

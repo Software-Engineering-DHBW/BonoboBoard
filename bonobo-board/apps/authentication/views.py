@@ -3,16 +3,9 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 import asyncio
-import json
-import pickle
-import sys
-from os import sysconf_names
-from unittest import result
-from asgiref.sync import async_to_sync, sync_to_async
 
 # Create your views here.
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.contrib.auth import login, get_user_model, authenticate
 
 from .forms import LoginForm
@@ -24,7 +17,6 @@ from dhbw.moodle import MoodleImporter
 from dhbw.zimbra import ZimbraHandler
 
 BonoboUser = get_user_model()
-
 
 def login_view(request):
     if request.user.is_authenticated:

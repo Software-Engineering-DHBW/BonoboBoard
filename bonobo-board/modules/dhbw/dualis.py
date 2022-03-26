@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""
+"""Provide functionality to scrape student grades from dualis.
 """
 
 import re
@@ -12,19 +12,19 @@ from .util import (
 
 
 def trim_str(content, empty_string=""):
-    """
+    """ Trim given string with leading/training whitespaces/tabs.
 
     Parameters
     ----------
-    content: str
-        string with leading/trailing whitespaces/tabs
-    empty_string: str
-        string value in case that the value of content is None
+    content : str
+        String with leading/trailing whitespaces/tabs.
+    empty_string : str
+        String value in case that the value of content is None.
 
     Returns
     -------
     content: str
-        string with removed leading/trailing whitespaces/tabs
+        String with removed leading/trailing whitespaces/tabs.
     """
     if not content:
         content = empty_string
@@ -34,12 +34,24 @@ def trim_str(content, empty_string=""):
 
 
 def repl_comma_with_dot(content):
-    """replaces every comma with a dot"""
+    """Replaces every comma with a dot.
+
+    Parameters
+    ----------
+    content: str
+        String where commas should be replaced by dots.
+    """
     return re.sub(r",", ".", content)
 
 
 def fit_credits(credits_string):
-    """fits the string containing the credits to int"""
+    """Fits the string containing the credits to an integer.
+
+    Parameters
+    ----------
+    credits_string: str
+
+    """
     _credits = 0
     if credits_string:
         credits_string = repl_comma_with_dot(trim_str(credits_string))
@@ -48,7 +60,13 @@ def fit_credits(credits_string):
 
 
 def fit_grade(grade_string):
-    """fits the string containing the grade to float"""
+    """Fits the string containing the grade to a float.
+    
+    Parameters
+    ----------
+    grade_string: str
+
+    """
     grade = 0.0
     if grade_string:
         grade_string = repl_comma_with_dot(trim_str(grade_string))
@@ -58,7 +76,13 @@ def fit_grade(grade_string):
 
 
 def fit_state(state_string):
-    """a mapping for state values to shortcut literals"""
+    """Provides mapping for state values to shortcut literals.
+
+    Parameters
+    ----------
+    state_string: str
+
+    """
     if state_string == "bestanden" or state_string == "Bestanden":
         state_string = "p"
     elif state_string == "Offen" or state_string == "offen":
@@ -69,7 +93,23 @@ def fit_state(state_string):
 
 
 def add_module_to_dualis_dict(m_id, m_name, m_href, m_credits, m_grade, m_state):
-    """create with the provided values the DualisModuleDict"""
+    """Create the DualisModuleDict with provided values.
+
+    Parameters
+    ----------
+    m_id: str
+
+    m_name: str
+
+    m_href: str
+
+    m_credits: str
+
+    m_grade: str
+
+    m_state: str
+
+    """
     dualis_module = {
         "id": m_id,
         "name": m_name,
@@ -82,7 +122,7 @@ def add_module_to_dualis_dict(m_id, m_name, m_href, m_credits, m_grade, m_state)
 
 
 class DualisImporter(ImporterSession):
-    """class to import data from dualis
+    """Class to import data from dualis.
 
     Attributes
     ----------
@@ -110,9 +150,8 @@ class DualisImporter(ImporterSession):
         self.headers["Host"] = url_get_fqdn(DualisImporter.url)
         self.params = {}
 
-
     async def login(self, username, password):
-        """aquire the authentication token
+        """ Async function to acquire the dualis authentication token.
 
         Parameters
         ----------
@@ -161,11 +200,11 @@ class DualisImporter(ImporterSession):
         self.headers["Cookie"] = self.auth_token
 
         self.email = username
-        
+
         return self
 
     def _fill_grades_into_dict(self, response_text):
-        """extract needed data and fills the dictionary
+        """Extracts needed data and fills the dictionary.
 
         Parameters
         ----------
@@ -224,7 +263,8 @@ class DualisImporter(ImporterSession):
                 i += 1
 
     async def scrape(self):
-        """scrape the wanted data from the website
+        """Scrape the wanted data from the dualis-website.
+
 
         Returns
         -------
@@ -255,7 +295,7 @@ class DualisImporter(ImporterSession):
         self._fill_grades_into_dict(r_grades.text)
 
     def logout(self):
-        """sends a logout request
+        """Sends a logout request (log the user out of the dualis session).
 
         Returns
         -------
