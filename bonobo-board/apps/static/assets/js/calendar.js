@@ -1,17 +1,21 @@
-let dayNames = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa']
-let monday = 0
-let sunday = 6
+dayNames = getDayNames()
+monday = getMonday()
+sunday = getSunday()
 
-let currentDate = new Date();
+currentDate = new Date();
 
-class Lecture {
-    constructor(name, room, start, end, duration) {
-        this.name = name;
-        this.room = room;
-        this.start = start
-        this.end = end
-        this.duration = duration
-    }
+
+
+function getDayNames() {
+    return ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa']
+}
+
+function getMonday() {
+    return 0
+}
+
+function getSunday() {
+    return 6
 }
 
 function getWeekday(ts) {
@@ -79,7 +83,7 @@ function getTimeSlot(time) {
 function changeMinutePresentation(time) {
     return getMinute(time) >= 10 ? getMinute(time) : ('0' + getMinute(time))
 }
-
+//comment
 function createLut(lectureData) {
     let lut = empty_lut([64, 6])
 
@@ -126,7 +130,10 @@ function createCalendarBody(content) {
         content += '<tr><td class="headcol">' + hour_label + '</td>'
         for (let day = monday; day < sunday; day++) {
             if (lut[index][day] != 0) {
-                content += '<td><div class="event" style="height:'
+                courseName = lut[index][day].name.replaceAll(" ","_")
+                courseName = courseName.replaceAll("/", "!%&")
+                //every single event is populated here
+                content += '<td><div class="event" hx-get="/vorlesungsplan/edit_link/' + courseName + '" hx-target="#dialog" style="height:'
                     + (lut[index][day].duration * 100) + '%;"></label>'
                     + lut[index][day].start + '-'
                     + lut[index][day].end + '<br>'

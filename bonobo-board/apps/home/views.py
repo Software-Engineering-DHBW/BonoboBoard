@@ -3,8 +3,8 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 import ast
+from email import header
 import json
-import pickle
 
 import pandas as pd
 from django import template
@@ -20,7 +20,7 @@ from apps.authentication.models import BonoboUser
 
 from dhbw.lecture_importer import LectureImporter
 from dhbw.zimbra import ZimbraHandler
-from .forms import ContactForm
+from .forms import ContactForm, EditLinkForm
 
 BonoboUser = get_user_model()
 
@@ -41,7 +41,7 @@ def index(request):
 
     bonobo_user = BonoboUser.objects.get(email=request.user)
     lectures = get_lecture_results(bonobo_user)
-    return render(request, 'home/index.html', {"dualis_data": bonobo_user.dualis_scraped_data, "lectures": lectures})
+    return render(request, 'home/index.html', {"dualis_data": bonobo_user.dualis_scraped_data, "lectures": lectures, "link": "alter_bluebutton_link", "event": "Programmieren"})
 
 
 @login_required(login_url="/login/")
@@ -133,6 +133,33 @@ def vorlesungsplan(request):
     return render(request, 'home/vorlesungsplan.html', {"lectures": lectures})
 
 
+@login_required(login_url="/login/")
+def edit_link(request, event, link="Blubb"):
+    """on event is clicked, open a popup window
+
+    Parameters
+    ----------
+    request: HttpRequest
+        request of the page
+    Returns
+    -------
+    HttpResponse
+    """
+    event=event.replace("!%&", "/")
+    event=event.replace("_", " ").strip()
+    if request.method == "POST":
+        form = EditLinkForm(request.POST)
+        if form.is_valid():
+            new_link = form.cleaned_data.get("link")
+       
+         
+            return HttpResponse(status=204, headers={'HX-Trigger': 'linkChanged'}) #Code == no content
+    else:
+        form = EditLinkForm()
+
+    return render(request, 'home/edit_link.html', {'form': form, 'link': link, 'event': event})
+
+
 def pages(request):
     """on unknown page is opened, return error.html accordingly
 
@@ -202,11 +229,7 @@ def get_lecture_results(current_user):
         lecture_importer.lectures["start"], unit="ms")
     lecture_importer.lectures["end"] = pd.to_datetime(
         lecture_importer.lectures["end"], unit="ms")
-    write_log("Actual lectures")
-    write_log(lecture_importer.lectures)
     lectures_df = lecture_importer.limit_weeks_in_list(0, 0)
-    write_log("After trimming")
-    write_log(lectures_df)
     json_records = lectures_df.reset_index().to_json(orient='records')
     lectures = json.loads(json_records)
 

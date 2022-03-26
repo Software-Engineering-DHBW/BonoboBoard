@@ -9,6 +9,8 @@
 
 {% block content %}
 
+
+
 <div class="pcoded-content">
     <div class="pcoded-inner-content">
         <div class="page-header-title">
@@ -42,7 +44,7 @@
                                 <h5>Email</h5>
                             </div>
                             <div class="card-block">
-                                <button type="button" class="btn btn-primary">Send Email</button>
+                                <input type="hidden" name="content" hx-trigger="linkChanged from:body">{{ link }}</label>
                             </div>
                         </div>
                         <div class="card">
@@ -59,6 +61,7 @@
         </div>
     </div>
 </div>
+
 
 {% endblock content %}
 <!-- Specific Page JS goes HERE  -->
@@ -78,7 +81,6 @@
 
     //show gpa
     var gpa = document.getElementById("gpa")
-    console.log(gpa)
     if (gpa !== null && dualisData["gpa_total"] !== undefined) {
         gpa.innerHTML += '<p><b>GPA-Total:</b> ' + dualisData["gpa_total"] + '</p>'
     }
