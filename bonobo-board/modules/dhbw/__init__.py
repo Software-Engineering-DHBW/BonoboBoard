@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""
+"""Python files and tests for BonoboBoard functionalities
 """
 
 #from pathlib import Path

@@ -1,0 +1,295 @@
+\documentclass[a4paper,11pt]{scrartcl}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[scaled]{helvet}
+\usepackage[T1]{fontenc}
+\usepackage[onehalfspacing]{setspace}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{mathptmx}
+\usepackage{courier}
+\usepackage{graphicx}
+\usepackage{ulem}
+\usepackage{bookmark}
+\usepackage{paralist}
+\usepackage{ngerman}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{array}
+\usepackage{lipsum}
+
+
+\graphicspath{ {../img/} }
+\renewcommand\familydefault{\sfdefault}
+
+
+
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\includegraphics[width=\textwidth]{Polygon_gruen}\\ \thepage}
+
+
+\rhead{\includegraphics[width=\textwidth]{LogoHeader}}
+\setlength\headheight{30pt}
+\setlength\footskip{15pt}
+
+\begin{document}
+\renewcommand*{\arraystretch}{1.2}
+\pagenumbering{gobble}
+\begin{titlepage}
+    \begin{center}
+        \vspace*{1cm}\Huge
+        \textbf{Produktdokumentation}\par                
+        \vspace{0.5cm}\LARGE        
+        Software Engineering II\par           
+        \vspace{2cm}
+        \includegraphics[width=0.5\textwidth]{OptimaLogo_long}\par   
+        \vspace{1cm}
+        \textbf{Projekttitel: BonoboBoard}\par        
+        \vfill\Large   
+        Jakob Hutschenreiter (1419081)\\Jiesen Wang (9839152)\\Nick Kramer (3122448)\\Patrick Küsters (9815596)\\Peter Moritz Hinkel (2783930)\par
+        %\vspace{2cm}  
+        %\includegraphics[width=0.5\textwidth]{Bonobo_Logo}\par        
+        \vspace{2cm}
+        DHBW Mannheim\\
+        \today     
+    \end{center}
+\end{titlepage}
+
+\section*{Änderungshistorie}
+\begin{table}[h]
+	\begin{tabular}{@{} p{20mm} p{25mm} p{25mm} p{75mm}}
+		\textbf{Revision} & \textbf{Datum} & \textbf{Autor(en)} & \textbf{Beschreibung}\\
+		1.0 & 18.03.2022 & NK & A: 1, 2\\
+		1.1 & 24.03.2022 & MH & A: 3\\
+        1.2 & 26.03.2022 & JH, NK & C: 2\\
+	\end{tabular}
+\end{table}
+\noindent
+Abkürzungen: Hinzugefügt/Added (A), Änderung/Changed (C), Löschung/Deleted (D)
+\vspace{2cm}
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+
+		%------------------------------------------------------------
+		%-----  -----  ----- Begin actual content -----  -----  -----
+		%------------------------------------------------------------
+\section{Motivation und Grundlagen}\label{Grundlagen}
+Dieses Dokument dient zur Beschreibung der Abläufe, die nötig sind, um das BonoboBoard lokal zu installieren und auszuführen. Auf den Aufbau des Software-Produkts wird hier nicht mehr eingegangen. Bitte ziehen Sie dafür die etwaigen anderen Dokumente heran.\\
+Die nachfolgende Beschreibung wurde auf Basis folgender Abhängigkeiten erstellt:
+\begin{table}[H]
+\begin{tabular}{|p{5cm}|p{5cm}|}
+\hline
+\textbf{Software/Library} & \textbf{Version} \\ \hline
+	Docker & 20.10.12, Build e91ed57 \\ \hline
+	Docker Compose & 2.2.3\\ \hline
+	Docker Desktop & 4.5.1 (74721)\\ \hline
+\end{tabular}
+\end{table}
+\noindent
+Bitte stellen Sie sicher, dass Sie die genannten Voraussetzungen erfüllen, anderweitig kann nicht sichergestellt werden, dass die Installation auf Ihrem System ordnungsgemäß funktioniert.\\
+
+\noindent Wenn Sie das Produkt lediglich nutzen möchten, können Sie die Installationsdokumentation überspringen und direkt zu Abschnitt \ref{Kurzanleitung} wechseln. Kein Nutzer muss das BonoboBoard lokal installieren, die aktuelle Version kann immer unter \url{https://bonoboboard.de/} gefunden und genutzt werden. Falls Sie das Produkt weiterentwickeln möchten oder eine lokale Installation anstreben, ist mit Abschnitt \ref{Installationsdokumentation} fortzufahren. 
+
+\section{Installationsdokumentation}\label{Installationsdokumentation}
+Durch die Nutzung von Containern unter Docker lässt sich die Installation in einigen wenigen Schritten behandeln.
+\subsection{Beziehen des Source-Code}
+Der Source-Code wird auf GitHub gepflegt\footnote{https://github.com/Software-Engineering-DHBW/BonoboBoard}. Da es sich um ein öffentliches Repository handelt, kann der Code ohne weitere Authentifizierung lokal geklont werden. Für eine detaillierte Anleitung des Klon-Prozesses wird auf die offizielle Dokumentation von GitHub verwiesen\footnote{https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository}.\\
+Ist das Klonen abgeschlossen, sollte folgende Struktur auf der ersten Ebene des Projekts zu finden sein:
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{folder_repo_1}
+\caption{Ordnerstruktur des heruntergeladenen Projekts}
+\label{img:folder_1}
+\end{center}
+\end{figure}
+
+\subsection{Installation und Start der Docker Container}
+%TODO maybe Änderung des Ports falls 80 belegt?
+Dieser Abschnitt beschreibt den Ablauf, wie die Docker-Umgebung aufgebaut und gestartet wird.
+Dazu muss in den Ordner \textit{bonobo-board} (siehe dritter Ordner von oben in Abbildung \ref{img:folder_1}) gewechselt werden.
+In diesem befindet sich eine \textit{docker-compose.yml} Datei und zwei weitere Dockerfiles: \textit{Dockerfile.base}, \textit{Dockerfile.django}.
+Sollten diese nicht vorhanden sein, ist entweder nicht der richtige Ordner ausgewählt oder beim Herunterladen der Dateien sind Fehler aufgetreten.
+Hier eine Abbildung des Verzeichnisses zum Vergleich:
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{folder_repo_2}
+\caption{Struktur in \textit{bonobo-board}}
+\label{img:folder_1}
+\end{center}
+\end{figure}
+
+\noindent Nun muss ein Terminal/PowerShell in diesem Ordner gestartet werden.\\
+Im Terminal gibt es nun mehrere Wege die Container zum Laufen zu bekommen.
+Der einfachste Weg stellt das Ausführen der bereitgestellten Skripte dar.
+
+\subsubsection*{Automatische Installation Windows}
+Unter Windows muss das PowerShell-Skript namens \textit{build\_image.ps1} ausgeführt werden.
+Der Befehl hierfür lautet \texttt{.\textbackslash build\_image.ps1 -a}, welcher die beiden benötigten Docker Images erstellt.
+
+\subsubsection*{Automatische Installation Linux}
+Unter \textbf{Ubuntu (Linux)} ist das Bash-Skript \textit{build\_image} auszuführen.
+Der Befehl hierfür ist\\
+\texttt{./build\_image -a}, welcher die Docker Images erstellt.\\
+
+\noindent Nach dem Erstellen der Docker Images reicht ein simples \texttt{docker-compose up} und
+die Container werden erstellt. Alternativ kann der Befehl \texttt{docker-compose up -d} ausgeführt werden,
+wenn die Kommandozeile nach dem Ausführen des Befehls nicht blockiert sein soll.
+In diesem Fall laufen die gestarteten Container im Hintergrund weiter.
+Abbildung \ref{img:docker-compose} zeigt beispielhaft die Ausgabe der Befehle in der Kommandozeile.\\ 
+Bei Fehlermeldungen ist sicherzustellen, dass der docker-daemon läuft (Windows: läuft Docker-Desktop?) oder alle Voraussetzungen (siehe \ref{Grundlagen}) erfüllt sind.
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=0.8\linewidth]{docker-compose}
+\caption{docker-compose in der Kommandozeile}
+\label{img:docker-compose}
+\end{center}
+\end{figure}
+
+\subsection{Darstellung im Webbrowser}
+Da die Container nun gestartet sind, ist zu prüfen ob alles funktioniert und die Website lokal erreichbar ist.
+Dafür ist ein Webbrowser nach Wahl zu öffnen und \url{http://localhost:80/} einzugeben.
+Es sollte sich die Website, wie in Abbildung \ref{img:darstellung} dargestellt, öffnen.
+Damit ist die lokale Installation des BonoboBoard abgeschlossen.
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{webbrowser_localhost}
+\caption{Darstellung im Browser}
+\label{img:darstellung}
+\end{center}
+\end{figure}
+\subsection{Installationsprobleme}
+Haben alle Schritte vorab funktioniert und die Darstellung funktioniert trotzdem nicht, ist sicherzustellen, dass kein anderer Dienst Port 80 belegt.\\
+\\
+Unter \textbf{Windows} kann dies mit Hilfe der Kommandozeile und des Taskmanagers überprüft werden.
+Dazu ist der Befehl \texttt{netstat -ano -t tcp} auszuführen und die Zeile zu lokalisieren,
+in der die lokale Adresse 0.0.0.0:80 durch die remote Adresse 0.0.0.0:0 abgehört wird.
+Die PID am Ende dieser Zeile kann im Task-Manager auf eine Anwendung zurückgeführt werden.
+In Abbildung \ref{img:netstat} ist dies dargestellt. In diesem Fall wird die Website ordnungsgemäß dargestellt.
+Benutzt ein anderer Prozess (außer Docker-Desktop) diesen Port, ist dieser zu terminieren.
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=0.75\textwidth]{netstat_port80}
+\caption{Überprüfung des lokalen Port 80}
+\label{img:netstat}
+\end{center}
+\end{figure}
+
+\noindent Unter \textbf{Ubuntu (Linux)} ist die Abfrage durch \texttt{sudo netstat -peeanut | grep :80} möglich.
+Wird in der Kommandozeile ein Service aufgelistet, wird Port 80 bereits genutzt. Die angegebene PID in der letzten Spalte vor dem Servicenamen (\textit{\textbf{25338}/docker-proxy}) kann dazu genutzt werden, den Prozess mittels \texttt{kill <PID>} zu terminieren.\\
+Als letztes Mittel kann der Port in der \textit{docker-compose.yml} Datei angepasst werden, um das BonoboBoard auf einem von 80 verschiedenen Port zu starten.
+
+\clearpage
+\section{Kurzanleitung}\label{Kurzanleitung}
+Herzlich willkommen beim BonoboBoard! Danke, dass Sie sich für ein Produkt von Optima Connect entschieden haben. 
+
+\bigskip
+\noindent In dieser Kurzanleitung werden wir sie mit den grundlegenden Funktionen Ihres persönlichen DHBW-Dashboards vertraut machen, sodass Sie bereits in Kürze Ihren Workflow mit BonoboBoard optimieren können.
+
+\subsection{Anmeldung}
+Um das BonobobBoard benutzen zu können, gehen sie im Webbrowser Ihrer Wahl auf \url{https://bonoboboard.de} oder - falls Sie eine lokale Installation verwenden - auf \url{http://localhost:80/}. Von dort aus gelangen Sie zum Login (siehe Abb. \ref{img:login}).
+
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{login}
+		\caption{BonoboBoard - Login}
+		\label{img:login}
+	\end{center}
+\end{figure}
+
+\noindent Geben Sie nun dort Ihre DHBW-Mailadresse (\frqq{}S-Adresse\flqq{}) und Ihr Passwort, dass sie für Ihren DHBW-Account verwenden, ein. Keine Sorge - Ihr Passwort wird weder lokal noch auf unserem Server gespeichert. Auch nicht als Hash. Wir verwenden es lediglich, um eine Verbindung, mit den DHBW-Services aufzubauen. Wird diese Verbindung geschlossen, müssen sie sich allerdings neu anmelden.
+
+\bigskip
+\noindent Anschließend geben Sie noch Ihre Kursbezeichnung an. Beispielweise: \frqq{}TINF19 IT2\flqq{}. Achten Sie bitte auf das Leerzeichen zwischen Semester- und Kursbezeichnung. Oder verwenden Sie einfach die Autovervollständigung (siehe Abb. \ref{img:autocomplete}).
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{autocomplete}
+		\caption{BonoboBoard - Kusrauswahl}
+		\label{img:autocomplete}
+	\end{center}
+\end{figure}
+\noindent
+
+\subsection{Home}
+Nach erfolgreichem Login gelangen Sie auf das Dashboard (siehe Abb. \ref{img:dashboard}). Dort können alle Termine für den aktuellen Tag, sowie Ihre aktuelle Gesamtnote einsehen. Außerdem können Sie von hier aus direkt zur E-Mail Funktion (siehe \ref{sec:email}) gelangen.
+
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{Dashboard}
+		\caption{BonoboBoard - Dashboard}
+		\label{img:dashboard}
+	\end{center}
+\end{figure}
+\noindent
+
+
+\subsection{Seitennavigation}
+Das BonoboBoard lässt sich ganz einfach über die Sidebar bedienen (siehe Abb. \ref{img:sidebar}). Von dort aus können alle wichtigen Funktionen des BonoboBoard mit nur einem Klick erreicht werden. Außerdem können Sie sich über den Button \frqq{}Logout\flqq{} am unteren Rand der Sidebar abmelden.
+
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.15\textwidth]{sidebar}
+		\caption{BonoboBoard - Seitennavigation}
+		\label{img:sidebar}
+	\end{center}
+\end{figure}
+
+\noindent Die Sidebar kann mit einem Klick eingeklappt und wieder verankert werden.
+
+\subsection{Vorlesungsplan}
+Der Vorlesungsplan zeigt all Ihre Veranstaltungen der aktuellen Kalenderwoche an. Die Vorlesungstermine werden in einer Zeitleiste von 7:00 bis 21:45 zusammen mit ihren Titel, der Veranstaltungszeit und der Raumnummer (falls vorhanden) angezeigt (siehe Abb. \ref{img:lecture}). 
+
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{lecture_plan}
+		\caption{BonoboBoard - Vorlesungsplan}
+		\label{img:lecture}
+	\end{center}
+\end{figure}
+
+\noindent Über die Beiden Pfeile in der Kopfleiste (siehe Abb. \ref{img:lecture_nav}) gelangen Sie zum Vorlesungsplan der vergangenen oder folgenden Wochen. Wenn sie auf den Button \frqq{}Heute\flqq{} tippen, gelangen sie zur aktuellen Woche zurück.
+
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{lecture_nav}
+		\caption{BonoboBoard - Vorlesungsplan Navigation}
+		\label{img:lecture_nav}
+	\end{center}
+\end{figure}
+
+\noindent Die angezeigten Veranstaltungen werden von der Website \frqq{}\href{https://vorlesungsplan.dhbw-mannheim.de/index.php}{DHBW - Kurskalender}\flqq{} bezogen.
+
+
+\subsection{Leistungsübersicht}
+In der Leistungsübersicht werden Ihre Noten angezeigt, die von Ihrem Dualis Account bezogen werden. Auf der linken Seite sind unter \frqq{}Noten\flqq{} die Einzelnoten der jeweiligen Fächer vermerkt. Rechts finden Sie unter \frqq{}GPA\flqq{} Ihre derzeitige Gesamtnote (siehe Abb. \ref{img:lecture_nav})
+
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{dualis}
+		\caption{BonoboBoard - Lesitungsübersicht}
+		\label{img:dualis}
+	\end{center}
+\end{figure}
+\noindent
+
+\subsection{E-Mail}
+\label{sec:email}
+Das BonoboBoard ermöglicht es Ihnen schnell und einfach eine E-Mail von Ihrem Studierenden-Mailkonto (\frqq{}S-Adresse\flqq{}) zu verschicken. Navigieren sie dazu auf der Sidebar zu \frqq{}Emails\flqq{} oder klicken Sie im Dashboard auf \frqq{}Email schreiben\flqq{}. Dort können sie dann Empfänger, Betreff und Nachrichtentext eingeben und die E-Mail dann verschicken (siehe Abb. \ref{img:mail}).
+ 
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{Mail}
+		\caption{BonoboBoard - Email}
+		\label{img:mail}
+	\end{center}
+\end{figure}
+
+\noindent Die E-Mail wird von Ihrem DHBW-Mailkonto verschickt und wird Ihnen somit auch in Ihrem Online Postfach als gesendete Mail angezeigt.
+
+		%------------------------------------------------------------
+		%-----  -----  ------ End actual content ------  -----  -----
+		%------------------------------------------------------------
+\end{document}

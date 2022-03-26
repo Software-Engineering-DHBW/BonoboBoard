@@ -1,0 +1,40 @@
+{% block title %} Dashboard {% endblock %}
+{% load widget_tweaks %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+{% with WIDGET_ERROR_CLASS='is-invalid' %}
+<form hx-post="{{ request.path }}" hx-headers='{"X-CSRFToken":"{{ csrf_token }}"}' id="modal" class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">Veranstaltung: {{ event }}</h5>
+    </div>
+
+    {% csrf_token %}
+    <div class="modal-body">
+        <div >
+            Aktualisiere deinen Link für diese Veranstaltung.
+        </div>
+
+        <div class="input-group mb-3">
+            {{ form.link }}
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Abbrechen
+        </button>
+        <button type="submit" class="btn btn-primary" onclick="parent.location.reload(true)">Link speichern</button>
+    </div>
+</form>
+{% endwith %}
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script>
+
+
+</script>
+{% endblock javascripts %}

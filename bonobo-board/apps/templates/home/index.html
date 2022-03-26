@@ -8,12 +8,12 @@
 {% block stylesheets %}{% endblock stylesheets %}
 
 {% block content %}
-
 <div class="pcoded-content">
     <div class="pcoded-inner-content">
         <div class="page-header-title">
             <h3 class="m-b-10">Dashboard </h3>
         </div>
+        <!-- Navigation bar start -->
         <nav aria-label="breadcrumb">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -22,10 +22,12 @@
                 </ol>
             </nav>
         </nav>
+        <!-- Navigation bar end -->
         <div class="main-body">
             <div class="page-wrapper">
                 <!-- [ Main Content ] start -->
                 <div class="row">
+                    <!-- Lecture plan overview start -->
                     <div class="col-sm">
                         <div class="card">
                             <div class="card-header">
@@ -36,15 +38,19 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Lecture plan overview end-->
                     <div class="col-sm">
+                        <!-- Email shortcut start -->
                         <div class="card">
                             <div class="card-header">
                                 <h5>Email</h5>
                             </div>
                             <div class="card-block">
-                                <button type="button" class="btn btn-primary">Send Email</button>
+                                <button type="button" class="btn btn-primary">Sende Email</button>
                             </div>
                         </div>
+                        <!-- Email shortcut start -->
+                        <!-- GPA Display start -->
                         <div class="card">
                             <div class="card-header">
                                 <h5>Leistungsübersicht</h5>
@@ -53,17 +59,18 @@
                                 <div id="gpa" class="col-sm-12"></div>
                             </div>
                         </div>
+                        <!-- GPA Display start -->
                     </div>
                 </div>
+                <!-- [ Main Content ] end -->
             </div>
         </div>
     </div>
 </div>
-
 {% endblock content %}
+
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
-
 <script>
     //save dualis data to local storage
     const dualisDump = "{{ dualis_data }}";
@@ -78,7 +85,6 @@
 
     //show gpa
     var gpa = document.getElementById("gpa")
-    console.log(gpa)
     if (gpa !== null && dualisData["gpa_total"] !== undefined) {
         gpa.innerHTML += '<p><b>GPA-Total:</b> ' + dualisData["gpa_total"] + '</p>'
     }
@@ -94,7 +100,7 @@
     let content = ''
     content += ' <table class="table"><thead><tr><th>Veranstaltung</th><th>Uhrzeit</th><th>Raum</th></tr></thead> <tbody>'
 
-    content = getTodaysClass(lectureData, content)
+    content += getTodaysLectures(lectureData)
 
     content += '  </tbody> </table>'
     lecturePlan.innerHTML += content
