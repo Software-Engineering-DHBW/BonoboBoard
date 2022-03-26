@@ -4,13 +4,10 @@
 """
 
 from datetime import datetime, timedelta
-import calendar
 import pandas as pd
 import sqlalchemy
 from bs4 import BeautifulSoup
 import icalendar
-import asyncio
-
 from .util import Importer, reqget
 
 
@@ -357,12 +354,12 @@ def read_lectures_from_database(course_uid):
 
 # ----------------- LECTURE LINK DATABASE --------------------
 
-def write_lecture_links_to_database(df, user_uid):  # df-columns: lecture, link
+def _write_lecture_links_to_database(df, user_uid):  # df-columns: lecture, link
     """ Write lecture-link DataFrame to database.
 
     Parameters
     ----------
-    df : pd.DataFrame(columns=["lecture", "link"]
+    df : pd.DataFrame(columns=["lecture", "link"])
     user_uid : str
 
     Returns
@@ -379,7 +376,7 @@ def write_lecture_links_to_database(df, user_uid):  # df-columns: lecture, link
 
 def read_lecture_links_from_database(user_uid):
     """ Read lecture-link DataFrame from database.
-
+        Creates table, for new users.
     Parameters
     ----------
     user_uid : str
@@ -391,4 +388,32 @@ def read_lecture_links_from_database(user_uid):
     engine_string = "sqlite:///users.db"
     table_name = str(user_uid) + "_link"
     engine = sqlalchemy.create_engine(engine_string)
-    return pd.read_sql("SELECT * FROM \'" + table_name + "\';", engine)
+    try:
+        result =pd.read_sql("SELECT * FROM \'" + table_name + "\';", engine)      
+    except Exception:
+        new_df = pd.DataFrame(columns=["lecture", "link"])
+        _write_lecture_links_to_database(df=new_df, user_uid=user_uid)
+        result = new_df
+    return result
+
+
+def add_lecture_links_to_database(user_uid, event, link):
+    """ Read lecture-link DataFrame from database.
+        Creates table, for new users.
+    Parameters
+    ----------
+    user_uid : str
+
+    Returns
+    -------
+    pd.DataFrame
+    """
+    df = read_lecture_links_from_database(user_uid)
+    if (df['lecture'] == event).any():
+        #df['link'][(df['lecture'] == event).any().index] = link
+        df.loc[df["lecture"] == event, "link"] = link
+    else: 
+        df_to_append = pd.DataFrame({"lecture": [event], "link":[link]})
+        df = df.append(df_to_append)
+
+    _write_lecture_links_to_database(df, user_uid)

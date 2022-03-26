@@ -18,7 +18,7 @@ from django.contrib.auth.decorators import login_required
 
 from apps.authentication.models import BonoboUser
 
-from dhbw.lecture_importer import LectureImporter
+from dhbw.lecture_importer import LectureImporter, read_lecture_links_from_database, add_lecture_links_to_database
 from dhbw.zimbra import ZimbraHandler
 from .forms import ContactForm, EditLinkForm
 
@@ -128,9 +128,9 @@ def vorlesungsplan(request):
     HttpResponse
     """
     current_user = BonoboUser.objects.get(email=request.user)
-    lectures = get_lecture_results(current_user)
+    lectures, lecture_links = get_lecture_results(current_user)
 
-    return render(request, 'home/vorlesungsplan.html', {"lectures": lectures})
+    return render(request, 'home/vorlesungsplan.html', {"lectures": lectures, "lecture_links": lecture_links})
 
 
 @login_required(login_url="/login/")
@@ -141,6 +141,10 @@ def edit_link(request, event, link="Blubb"):
     ----------
     request: HttpRequest
         request of the page
+    event: str
+        name of the event
+    link: str
+        link to the event
     Returns
     -------
     HttpResponse
@@ -151,8 +155,9 @@ def edit_link(request, event, link="Blubb"):
         form = EditLinkForm(request.POST)
         if form.is_valid():
             new_link = form.cleaned_data.get("link")
-       
-         
+            current_user = BonoboUser.objects.get(email=request.user)
+            
+            add_lecture_links_to_database(current_user, event, new_link)
             return HttpResponse(status=204, headers={'HX-Trigger': 'linkChanged'}) #Code == no content
     else:
         form = EditLinkForm()
@@ -220,7 +225,7 @@ def get_lecture_results(current_user):
 
     Returns
     -------
-    pd.DataFrame
+    JSON, pd.DataFrame
     """
     #lecture_importer = LectureImporter.read_lectures_from_database(uid)
     lecture_importer = LectureImporter()
@@ -230,10 +235,13 @@ def get_lecture_results(current_user):
     lecture_importer.lectures["end"] = pd.to_datetime(
         lecture_importer.lectures["end"], unit="ms")
     lectures_df = lecture_importer.limit_weeks_in_list(0, 0)
+
+    lecture_links = read_lecture_links_from_database(current_user)
+
     json_records = lectures_df.reset_index().to_json(orient='records')
     lectures = json.loads(json_records)
 
-    return lectures
+    return lectures, lecture_links
 
 
 def write_log(msg):
