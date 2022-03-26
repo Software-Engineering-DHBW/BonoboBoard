@@ -3,6 +3,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 import ast
+from distutils.fancy_getopt import wrap_text
 from email import header
 import json
 
@@ -140,7 +141,7 @@ def vorlesungsplan(request, offset=0, old_offset=0):
 
 
 @login_required(login_url="/login/")
-def edit_link(request, event, link="Blubb"):
+def edit_link(request, event, link=""):
     """on event is clicked, open a popup window
 
     Parameters
@@ -155,16 +156,26 @@ def edit_link(request, event, link="Blubb"):
     -------
     HttpResponse
     """
-    event=event.replace("!%&", "/")
+    event=event.replace("!&!", "/")
     event=event.replace("_", " ").strip()
+    #replace html tokens with custom ones for making them processable
+    link=link.replace("!&!", "/")
+    link=link.replace("!&&!","?")
+    link=link.replace("!&&&!","#")
+    link=link.replace("!&&&&!","%")
+    link=link.replace("_", " ").strip()
     if request.method == "POST":
         form = EditLinkForm(request.POST)
         if form.is_valid():
             new_link = form.cleaned_data.get("link")
+            write_log(str("new link: "+new_link))
+            new_link = new_link.replace("https://","")
+            new_link = new_link.replace("http://","")
+            write_log(str("clean link: "+new_link))
             current_user = BonoboUser.objects.get(email=request.user)
             
             add_lecture_links_to_database(current_user, event, new_link)
-            return HttpResponse(status=204, headers={'HX-Trigger': 'linkChanged'}) #Code == no content
+            return HttpResponse(status=204) #Code == no content
     else:
         form = EditLinkForm()
 
@@ -244,11 +255,13 @@ def get_lecture_results(current_user, offset=0):
     lecture_importer.lectures["end"] = pd.to_datetime(
         lecture_importer.lectures["end"], unit="ms")
 
-    lecture_links = read_lecture_links_from_database(current_user)
+    lecture_links_df = read_lecture_links_from_database(current_user)
     lectures_df = lecture_importer.limit_weeks_in_list(int(offset))
-    
+
     json_records = lectures_df.reset_index().to_json(orient='records')
+    json_links = lecture_links_df.reset_index().to_json(orient='records')
     lectures = json.loads(json_records)
+    lecture_links = json.loads(json_links)
 
     return lectures, lecture_links
 

@@ -376,12 +376,16 @@ def read_lecture_links_from_database(user_uid):
 
 
 def add_lecture_links_to_database(user_uid, event, link):
-    """ Read lecture-link DataFrame from database.
-        Creates table, for new users.
+    """ Checks, if event is already saved in database.
+        Adds/Updates event in database.
     Parameters
     ----------
     user_uid : str
-
+        user email
+    event : str
+        name of the event
+    link : str
+        link to safe to the event
     Returns
     -------
     pd.DataFrame
