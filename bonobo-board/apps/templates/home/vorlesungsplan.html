@@ -168,55 +168,56 @@ button.secondary:focus {
 .today {
   color: #53c213;
 }
-
 </style>
 {% endblock stylesheets %}
 
 {% block content %}
-
 <div class="pcoded-content">
-  <div class="pcoded-inner-content">
-    <div class="page-header-title">
-      <h3 class="m-b-10">Vorlesungsplan</h3>
-    </div>
-    <nav aria-label="breadcrumb">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/"><i class="feather icon-home"></i></a></li>
-          <li class="breadcrumb-item active" aria-current="page">Vorlesungsplan</li>
-        </ol>
-      </nav>
-    </nav>
-    <div class="main-body">
-      <div class="page-wrapper">
-        <!-- [ Main Content ] start -->
-        <div class="card">
-          <div class="calendar">
-            <header>
-              <button class="secondary" style="align-self: flex-start; flex: 0 0 1">Today</button>
-              <div class="calendar__title" style="display: flex; justify-content: center; align-items: center">
-                <!-- Date selection -->
-                <div class="icon secondary chevron_left">‹</div>
-                <h1 class="" id="week_of_year" style="flex: 1;"></h1>
-                <div class="icon secondary chevron_left">›</div>
-                <!-- Date selection end -->
-              </div>
-              <div style="align-self: flex-start; flex: 0 0 1"></div>
-            </header>
-            <div id="lecture_plan"></div>
-          </div>
+    <div class="pcoded-inner-content">
+        <div class="page-header-title">
+            <h3 class="m-b-10">Vorlesungsplan</h3>
         </div>
-        <!-- [ Main Content ] end -->
-      </div>
+        <!-- Navigation bar start -->
+        <nav aria-label="breadcrumb">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i class="feather icon-home"></i></a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Vorlesungsplan</li>
+                </ol>
+            </nav>
+        </nav>
+        <!-- Navigation bar end -->
+        <div class="main-body">
+            <div class="page-wrapper">
+                <!-- [ Main Content ] start -->
+                <div class="card">
+                    <div class="calendar">
+                        <header>
+                            <button class="secondary" style="align-self: flex-start; flex: 0 0 1">Today</button>
+                            <div style="display: flex; justify-content: center; align-items: center">
+                                <!-- Date selection -->
+                                <div class="icon secondary chevron_left">‹</div>
+                                <h1 class="" id="week_of_year" style="flex: 1;"></h1>
+                                <div class="icon secondary chevron_left">›</div>
+                                <!-- Date selection end -->
+                            </div>
+                            <div style="align-self: flex-start; flex: 0 0 1"></div>
+                        </header>
+                        <!-- Calendar body start -->
+                        <div id="lecture_plan"></div>
+                        <!-- Calendar body end -->
+                    </div>
+                </div>
+                <!-- [ Main Content ] end -->
+            </div>
+        </div>
     </div>
-  </div>
 </div>
-
-
-<!-- Modal used to edit links of event  -->
+<!-- Modal (used to edit links of event) start  -->
 <div id="modal" class="modal fade" tabindex="-1">
-  <div id="dialog" class="modal-dialog" hx-target="this"></div>
+    <div id="dialog" class="modal-dialog" hx-target="this"></div>
 </div>
+<!-- Modal end  -->
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
@@ -250,6 +251,5 @@ button.secondary:focus {
 
   //fill into html
   lecture_plan.innerHTML += content
-
 </script>
 {% endblock javascripts %}

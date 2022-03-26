@@ -8,12 +8,12 @@
 {% block stylesheets %}{% endblock stylesheets %}
 
 {% block content %}
-
 <div class="pcoded-content">
     <div class="pcoded-inner-content">
         <div class="page-header-title">
             <h3 class="m-b-10">Leistungsübersicht</h3>
         </div>
+        <!-- Navigation bar start -->
         <nav aria-label="breadcrumb">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -22,10 +22,12 @@
                 </ol>
             </nav>
         </nav>
+        <!-- Navigation bar end -->
         <div class="main-body">
             <div class="page-wrapper">
                 <!-- [ Main Content ] start -->
                 <div class="row">
+                    <!-- Grades overview start -->
                     <div class="col-8">
                         <div class="card">
                             <div class="card-header">
@@ -33,13 +35,13 @@
                             </div>
                             <div class="card-block">
                                 <div class="row">
-                                    <div id="all_grades" class="col">
-
-                                    </div>
+                                    <div id="all_grades" class="col"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <!-- Grades overview end -->
+                    <!-- GPA Display start -->
                     <div class="col-3">
                         <div class="card">
                             <div class="card-header">
@@ -47,19 +49,18 @@
                             </div>
                             <div class="card-block">
                                 <div class="row">
-                                    <div id="gpa" class="col-sm-12">
-
-                                    </div>
+                                    <div id="gpa" class="col-sm-12"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <!-- GPA Display end -->
                 </div>
+                <!-- [ Main Content ] end -->
             </div>
         </div>
     </div>
 </div>
-
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
@@ -87,5 +88,6 @@
     //show gpa
     var gpaNode = document.getElementById("gpa")
     gpaNode.innerHTML += '<p><b>GPA-Total:</b> ' + dualis_data["gpa_total"] + '</p>'
+
 </script>
 {% endblock javascripts %}
