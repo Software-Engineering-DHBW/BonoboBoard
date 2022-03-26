@@ -19,6 +19,18 @@ from dhbw.zimbra import ZimbraHandler
 BonoboUser = get_user_model()
 
 def login_view(request):
+    """on login view is opened, show window login.html
+    authenticate user
+    scrape data for user
+
+    Parameters
+    ----------
+    request: HttpRequest
+        request of the page
+    Returns
+    -------
+    HttpResponse
+    """
     if request.user.is_authenticated:
         return redirect("/logout/")
 
@@ -50,10 +62,29 @@ def login_view(request):
 
 
 def authenticate_user(request, username, password, course):
+    """on login view is opened, show window login.html
+    authenticate user
+    scrape data for user
+
+    Parameters
+    ----------
+    request: HttpRequest
+        request of the page
+    username: str
+        email of user
+    password: str
+        password of user
+    course: str
+        course given by user
+    Returns
+    -------
+    HttpResponse
+    """
     loop = get_new_event_loop()
     dualis_result, moodle_result, zimbra_result, lecture_result = loop.run_until_complete(
         verify_login_credentials(username, password))
     loop.close()
+    #if user can't be logged in into one or more dhbw services, don't allow login into bonoboboard
     if dualis_result.auth_token is "":
         return None
 
@@ -72,7 +103,7 @@ def authenticate_user(request, username, password, course):
 
     asyncio.run(load_user_data(bonobo_user, course))
 
-    # request.session["dualis_scraped_data"] = bonobo_user.user_objects["dualis"].scraped_data
+    #save scraped data to user in db
     bonobo_user.dualis_scraped_data = bonobo_user.user_objects["dualis"].scraped_data
 
     bonobo_user.zimbra_token = bonobo_user.user_objects["zimbra"].auth_token
@@ -82,7 +113,6 @@ def authenticate_user(request, username, password, course):
     bonobo_user.zimbra_headers = bonobo_user.user_objects["zimbra"].headers
 
     bonobo_user.moodle_token = bonobo_user.user_objects["moodle"].auth_token
-    # request.session["moodle_scraped_data"] = bonobo_user.user_objects["moodle"].scraped_data
     bonobo_user.moodle_scraped_data = bonobo_user.user_objects["moodle"].scraped_data
 
     bonobo_user.lectures = bonobo_user.user_objects["lecture"].lectures.to_json()
@@ -91,15 +121,45 @@ def authenticate_user(request, username, password, course):
 
 
 def is_valid_course(course_list, course):
+    """Check if course is in course_list
+
+    Parameters
+    ----------
+    course_list: List[str]
+        list of all courses
+    course: str
+        given course by user
+    Returns
+    -------
+    Boolean
+    """
     return (course in course_list)
 
 
 def get_new_event_loop():
+    """get eventloop of asnycio
+
+    Returns
+    -------
+    AbstractEventLoop
+    """
     asyncio.set_event_loop(asyncio.new_event_loop())
     return asyncio.get_event_loop()
 
 
 async def verify_login_credentials(username, password):
+    """Log into all dhbw services async
+
+    Parameters
+    ----------
+    username: str
+        email of user
+    password: str
+        password of user
+    Returns
+    -------
+    DualisImporter, MoodleImporter, ZimbraHandler, LectureImporter
+    """
     dualis_result = asyncio.ensure_future(
         DualisImporter().login(username, password))
     moodle_result = asyncio.ensure_future(
@@ -113,6 +173,18 @@ async def verify_login_credentials(username, password):
 
 
 async def load_user_data(bonobo_user, course):
+    """Scrape all userdata from all dhbw services async
+
+    Parameters
+    ----------
+    bonobo_user: BonoboUser
+        user object
+    course: str
+        course given by user
+    Returns
+    -------
+    DualisImporter, MoodleImporter, ZimbraHandler, LectureImporter
+    """
     dualis_future = asyncio.ensure_future(
         bonobo_user.user_objects["dualis"].scrape())
     moodle_future = asyncio.ensure_future(
@@ -127,6 +199,17 @@ async def load_user_data(bonobo_user, course):
 
 
 def write_log(msg):
+    """internally used for logging
+    print message to log.txt
+
+    Parameters
+    ----------
+    msg: str
+        Message to print
+    Returns
+    -------
+    None
+    """
     f = open("log.txt", "a")
     f.write(str(msg) + "\n")
     f.close()
