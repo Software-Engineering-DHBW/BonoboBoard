@@ -168,17 +168,16 @@ button.secondary:focus {
 .today {
   color: #53c213;
 }
-
 </style>
 {% endblock stylesheets %}
 
 {% block content %}
-
 <div class="pcoded-content">
   <div class="pcoded-inner-content">
     <div class="page-header-title">
       <h3 class="m-b-10">Vorlesungsplan</h3>
     </div>
+    <!-- Navigation bar start -->
     <nav aria-label="breadcrumb">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -187,6 +186,7 @@ button.secondary:focus {
         </ol>
       </nav>
     </nav>
+    <!-- Navigation bar end -->
     <div class="main-body">
       <div class="page-wrapper">
         <!-- [ Main Content ] start -->
@@ -203,20 +203,18 @@ button.secondary:focus {
               </div>
               <div style="align-self: flex-start; flex: 0 0 1"></div>
             </header>
+            <!-- Calendar body start -->
             <div id="lecture_plan"></div>
+            <!-- Calendar body end -->
           </div>
         </div>
-        <!-- [ Main Content ] end -->
-      </div>
     </div>
-  </div>
 </div>
-
-
-<!-- Modal used to edit links of event  -->
+<!-- Modal (used to edit links of event) start  -->
 <div id="modal" class="modal fade" tabindex="-1">
-  <div id="dialog" class="modal-dialog" hx-target="this"></div>
+    <div id="dialog" class="modal-dialog" hx-target="this"></div>
 </div>
+<!-- Modal end  -->
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
@@ -253,6 +251,5 @@ button.secondary:focus {
 
   //fill into html
   lecture_plan.innerHTML += content
-
 </script>
 {% endblock javascripts %}
