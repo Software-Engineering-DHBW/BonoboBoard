@@ -1,7 +1,10 @@
-from typing import Any, ClassVar, Dict, List, TypedDict
+from typing import Any, ClassVar, Coroutine, Dict, List, TypedDict
 
 from dhbw.util import ImporterSession
 
+#------------------------------------------------------------------------------#
+# T Y P E D - D A T A - S T R U C T U R E S
+#------------------------------------------------------------------------------#
 
 class NewContact(TypedDict):
     email: str
@@ -22,6 +25,9 @@ class SendMailDict(TypedDict):
     cttype: str
     content: str
 
+#------------------------------------------------------------------------------#
+# H E L P E R - F U N C T I O N S
+#------------------------------------------------------------------------------#
 
 def _entity_list(
         in_list: List[str],
@@ -32,6 +38,9 @@ def _entity_list(
 
 def _fill_contacts_dict_elem(contact: Dict[str, str]) -> ContactsDict: ...
 
+#------------------------------------------------------------------------------#
+# Z I M B R A - H A N D L E R
+#------------------------------------------------------------------------------#
 
 class ZimbraHandler(ImporterSession):
     accountname: str
@@ -42,9 +51,9 @@ class ZimbraHandler(ImporterSession):
 
     def __init__(self) -> None: ...
 
-    def login(self, username: str, password: str) -> None: ...
+    async def login(self, username: str, password: str) -> Coroutine[Any, Any, Any]: ...
 
-    def scrape(self) -> None: ...
+    async def scrape(self) -> Coroutine[Any, Any, Any]: ...
 
     def get_contacts(self) -> None: ...
 

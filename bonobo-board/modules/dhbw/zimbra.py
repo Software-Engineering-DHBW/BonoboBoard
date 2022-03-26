@@ -9,7 +9,11 @@ import json
 from bs4 import BeautifulSoup
 
 from dhbw.util import ImporterSession, reqget, reqpost, url_get_fqdn
+from dhbw.util import ServiceUnavailableException, LoginRequiredException
 
+#------------------------------------------------------------------------------#
+# H E L P E R - F U N C T I O N S
+#------------------------------------------------------------------------------#
 
 def _entity_list(in_list, out_list, in_type):
     """Adds entities to a list while converting an entity string to a dict.
@@ -72,10 +76,9 @@ def _fill_contacts_dict_elem(contact):
 
     return temp
 
-
-###            ###
-# ZIMBRA HANDLER #
-###            ###
+#------------------------------------------------------------------------------#
+# Z I M B R A - H A N D L E R
+#------------------------------------------------------------------------------#
 
 class ZimbraHandler(ImporterSession):
     """Handler for interacting with zimbra.
@@ -159,20 +162,23 @@ class ZimbraHandler(ImporterSession):
         }
 
         # LOGIN - POST REQUEST
-        r_login = reqpost(
-            url=url,
-            headers=self.headers,
-            payload=payload,
-            allow_redirects=False,
-            return_code=302
-        )
+        try:
+            r_login = reqpost(
+                url=url,
+                headers=self.headers,
+                payload=payload,
+                allow_redirects=False,
+                return_code=302
+            )
+        except ServiceUnavailableException as service_err:
+            raise service_err
+        finally:
+            # drop content-type header
+            self.drop_header("Content-Type")
 
         # add authentication cookie to the headers
         self.auth_token = r_login.headers["Set-Cookie"].split(";")[0]
         self.headers["Cookie"] = self.headers["Cookie"] + "; " + self.auth_token
-
-        # drop content-type header
-        self.drop_header("Content-Type")
 
         return self
 
@@ -186,16 +192,24 @@ class ZimbraHandler(ImporterSession):
         """
         url = ZimbraHandler.url
 
-        r_home = reqget(
-            url=url,
-            headers=self.headers,
-        )
+        try:
+            r_home = reqget(
+                url=url,
+                headers=self.headers,
+            )
+        except ServiceUnavailableException as service_err:
+            raise service_err
 
         content_home = BeautifulSoup(r_home.text, "lxml")
 
         # improvement idea -> let it loop reversed, since needed content
         #                     is inside the last / one of the last script tag(s)
-        for tag_script in content_home.find_all("script"):
+        try:
+            tag_script_all = content_home.find_all("script")
+        except AttributeError as attr_err:
+            raise LoginRequiredException() from attr_err
+
+        for tag_script in tag_script_all:
             if "var batchInfoResponse" in str(tag_script.string):
                 temp = re.search(
                     r"var\ batchInfoResponse\ =\ \{\"Header\":.*\"_jsns\":\"urn:zimbraSoap\"\};",
@@ -248,16 +262,26 @@ class ZimbraHandler(ImporterSession):
             }
         }
 
-        r_contacts = reqpost(
-            url=origin + "/service/soap/SearchRequest",
-            headers=self.headers,
-            payload=json.dumps(query)
-        ).json()
+        try:
+            r_contacts = reqpost(
+                url=origin + "/service/soap/SearchRequest",
+                headers=self.headers,
+                payload=json.dumps(query)
+            ).json()
+        except ServiceUnavailableException as service_err:
+            raise service_err
+        finally:
+            self.drop_header("Content-Type")
 
-        for contact in r_contacts["Body"]["SearchResponse"]["cn"]:
-            cn = contact["_attrs"]
-            cn["id"] = contact["id"]
-            temp = _fill_contacts_dict_elem(cn)
+        try:
+            contacts = r_contacts["Body"]["SearchResponse"]["cn"]
+        except AttributeError as attr_err:
+            raise attr_err
+
+        for contact in contacts:
+            cnt = contact["_attrs"]
+            cnt["id"] = contact["id"]
+            temp = _fill_contacts_dict_elem(cnt)
             if temp:
                 self.contacts.append(temp)
 
@@ -311,14 +335,22 @@ class ZimbraHandler(ImporterSession):
             }
         }
 
-        r_contact = reqpost(
-            url=origin + "/service/soap/CreateContactRequest",
-            headers=self.headers,
-            payload=json.dumps(contact),
-        ).json()
+        try:
+            r_contact = reqpost(
+                url=origin + "/service/soap/CreateContactRequest",
+                headers=self.headers,
+                payload=json.dumps(contact),
+            ).json()
+        except ServiceUnavailableException as service_err:
+            raise service_err
+        finally:
+            self.drop_header("Content-Type")
 
-        self.drop_header("Content-Type")
-        contact_dict["id"] = r_contact["Body"]["CreateContactResponse"]["cn"][0]["id"]
+        try:
+            contact_dict["id"] = r_contact["Body"]["CreateContactResponse"]["cn"][0]["id"]
+        except AttributeError as attr_err:
+            raise LoginRequiredException() from attr_err
+
         self.contacts.append(contact_dict)
 
     def remove_contact(self, contact_id):
@@ -359,13 +391,16 @@ class ZimbraHandler(ImporterSession):
             }
         }
 
-        reqpost(
-            url=origin + "/service/soap/ContactActionRequest",
-            headers=self.headers,
-            payload=json.dumps(del_contact)
-        )
-
-        self.drop_header("Content-Type")
+        try:
+            reqpost(
+                url=origin + "/service/soap/ContactActionRequest",
+                headers=self.headers,
+                payload=json.dumps(del_contact)
+            )
+        except ServiceUnavailableException as service_err:
+            raise service_err
+        finally:
+            self.drop_header("Content-Type")
 
         i = 0
         while i < len(self.contacts):
@@ -474,6 +509,9 @@ class ZimbraHandler(ImporterSession):
         # create mail
         mail = self._generate_mail(mail_dict)
 
+        # IMPROVEMENT IDEA:
+        # store mail_dict somewhere, in case that the service is unavailable
+
         url = ZimbraHandler.url
         origin = "https://" + url_get_fqdn(url)
 
@@ -481,14 +519,17 @@ class ZimbraHandler(ImporterSession):
         self.headers["Referer"] = url
         self.headers["Origin"] = origin
 
-        reqpost(
-            url=origin + "/service/soap/SendMsgRequest",
-            headers=self.headers,
-            payload=json.dumps(mail),
-            return_code=200
-        )
-
-        self.drop_header("Content-Type")
+        try:
+            reqpost(
+                url=origin + "/service/soap/SendMsgRequest",
+                headers=self.headers,
+                payload=json.dumps(mail),
+                return_code=200
+            )
+        except ServiceUnavailableException as service_err:
+            raise service_err
+        finally:
+            self.drop_header("Content-Type")
 
     def logout(self):
         """sends a logout request
@@ -499,10 +540,14 @@ class ZimbraHandler(ImporterSession):
         """
         url = ZimbraHandler.url
 
-        reqget(
-            url=url,
-            headers=self.headers,
-            params={"loginOp": "logout"},
-            return_code=200
-        )
+        try:
+            reqget(
+                url=url,
+                headers=self.headers,
+                params={"loginOp": "logout"},
+                return_code=200
+            )
+        except ServiceUnavailableException as service_err:
+            raise service_err
+
         self.auth_token = ""

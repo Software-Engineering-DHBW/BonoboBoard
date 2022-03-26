@@ -11,6 +11,7 @@ from django.contrib.auth import login, get_user_model, authenticate
 from .forms import LoginForm
 from .models import BonoboUser
 
+from dhbw.util import CredentialsException, LoginRequiredException, ServiceUnavailableException
 from dhbw.dualis import DualisImporter
 from dhbw.lecture_importer import CourseImporter, LectureImporter
 from dhbw.moodle import MoodleImporter
@@ -48,13 +49,13 @@ def login_view(request):
                 msg = 'Unbekannter Kurs'
                 return render(request, "accounts/login.html", {"form": form, "msg": msg, "course_list": course_list})
 
-            user = authenticate_user(request, username, password, course)
+            user, err_msg = authenticate_user(request, username, password, course)
 
             if user is not None:
                 login(request, user)
                 return redirect("/")
             else:
-                msg = 'Deine angegebenen DHBW Daten können nicht zum Login verwedent werden.'
+                msg = err_msg
         else:
             msg = 'Ungültige Eingabedaten'
 
@@ -81,17 +82,17 @@ def authenticate_user(request, username, password, course):
     HttpResponse
     """
     loop = get_new_event_loop()
-    dualis_result, moodle_result, zimbra_result, lecture_result = loop.run_until_complete(
+    err_msg, dualis_result, moodle_result, zimbra_result, lecture_result = loop.run_until_complete(
         verify_login_credentials(username, password))
     loop.close()
     #if user can't be logged in into one or more dhbw services, don't allow login into bonoboboard
-    if dualis_result.auth_token is "":
-        return None
+    if err_msg:
+        return None, err_msg
 
     if BonoboUser.objects.filter(email=username).exists():
         bonobo_user = authenticate(request, email=username, password=username)
         if bonobo_user is None:
-            return None
+            return None, "Benutzer AUA!!!"
     else:
         bonobo_user = BonoboUser.objects.create_user(
             email=username, password=username)
@@ -117,7 +118,7 @@ def authenticate_user(request, username, password, course):
 
     bonobo_user.lectures = bonobo_user.user_objects["lecture"].lectures.to_json()
     bonobo_user.save()
-    return bonobo_user
+    return bonobo_user, ""
 
 
 def is_valid_course(course_list, course):
@@ -168,8 +169,18 @@ async def verify_login_credentials(username, password):
         ZimbraHandler().login(username, password))
     lecture_result = asyncio.ensure_future(
         LectureImporter().login())
-    await asyncio.gather(dualis_result, moodle_result, zimbra_result, lecture_result)
-    return dualis_result.result(), moodle_result.result(), zimbra_result.result(), lecture_result.result()
+
+    error_msg = ""
+
+    try:
+        await asyncio.gather(dualis_result, moodle_result, zimbra_result, lecture_result)
+    except ServiceUnavailableException as service_err:
+        error_msg = f"{service_err}"
+        return error_msg, None, None, None, None
+    except CredentialsException as cred_err:
+        error_msg = f"{cred_err}"
+        return error_msg, None, None, None, None
+    return error_msg, dualis_result.result(), moodle_result.result(), zimbra_result.result(), lecture_result.result()
 
 
 async def load_user_data(bonobo_user, course):
@@ -195,7 +206,14 @@ async def load_user_data(bonobo_user, course):
     lecture_future = asyncio.ensure_future(
         bonobo_user.user_objects["lecture"].scrape(course_uid))
 
-    await asyncio.gather(dualis_future, moodle_future, zimbra_future, lecture_future)
+    try:
+        await asyncio.gather(dualis_future, moodle_future, zimbra_future, lecture_future)
+    except LoginRequiredException:
+        # TODO something meaningful x)
+        pass
+    except ServiceUnavailableException:
+        # TODO RENDER 500 ERROR
+        pass
 
 
 def write_log(msg):

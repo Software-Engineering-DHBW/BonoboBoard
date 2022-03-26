@@ -7,11 +7,13 @@ from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 
 from .util import ImporterSession, reqget, reqpost, url_get_fqdn, url_get_args
+from .util import (
+    CredentialsException, LoginRequiredException, ServiceUnavailableException
+)
 
-
-###              ###
-# HELPER FUNCTIONS #
-###              ###
+#------------------------------------------------------------------------------#
+# H E L P E R - F U N C T I O N S
+#------------------------------------------------------------------------------#
 
 def add_to_module_dict(name, url):
     """Function to fill a MoodleModuleDict with values and return it.
@@ -59,10 +61,9 @@ def get_bbb_instance_name(tag_a):
         break
     return temp
 
-
-###                   ###
-# MOODLE IMPORTER CLASS #
-###                   ###
+#------------------------------------------------------------------------------#
+# M O O D L E - I M P O R T E R
+#------------------------------------------------------------------------------#
 
 class MoodleImporter(ImporterSession):
     """Class to import data from moodle.
@@ -115,7 +116,10 @@ class MoodleImporter(ImporterSession):
         url = MoodleImporter.url
 
         # get token from login page
-        r_token = reqget(url=url + "login/index.php", headers=self.headers)
+        try:
+            r_token = reqget(url=url + "login/index.php", headers=self.headers)
+        except ServiceUnavailableException as service_err:
+            raise service_err
 
         # extract the token from response
         self.headers["Cookie"] = r_token.headers["Set-Cookie"].split(";")[0]
@@ -138,20 +142,24 @@ class MoodleImporter(ImporterSession):
         }
 
         # post request for login
-        r_login = reqpost(
-            url=url + "login/index.php",
-            headers=self.headers,
-            payload=payload,
-            return_code=303
-        )
+        try:
+            r_login = reqpost(
+                url=url + "login/index.php",
+                headers=self.headers,
+                payload=payload,
+                return_code=303
+            )
+        except ServiceUnavailableException as service_err:
+            raise service_err
+        except CredentialsException as cred_err:
+            raise cred_err
+        finally:
+            self.drop_header("Content-Type")
+            self.drop_header("Origin")
 
         # add authentication cookie to the headers
         self.auth_token = r_login.headers["Set-Cookie"].split(";")[0]
         self.headers["Cookie"] = self.auth_token
-
-        # drop content-type header
-        self.drop_header("Content-Type")
-        self.drop_header("Origin")
 
         self.email = username
 
@@ -170,10 +178,21 @@ class MoodleImporter(ImporterSession):
         course_dict: MoodleCourseDict
             a typed dictionary
         """
-        r_course = reqget(url=course_dict["href"], headers=self.headers)
+        try:
+            r_course = reqget(
+                url=course_dict["href"],
+                headers=self.headers)
+        except ServiceUnavailableException as service_err:
+            raise service_err
+
         content_course = BeautifulSoup(r_course.text, "lxml")
 
-        for tag_a in content_course.find_all("a"):
+        try:
+            tag_a_list = content_course.find_all("a")
+        except AttributeError as attr_err:
+            raise LoginRequiredException from attr_err
+
+        for tag_a in tag_a_list:
             # in case there is an <a> without href as attribute
             if not tag_a.get("href"):
                 continue
@@ -182,6 +201,7 @@ class MoodleImporter(ImporterSession):
                 course_dict["bbb_rooms"].append(
                     add_to_module_dict(get_bbb_instance_name(tag_a), temp_href)
                 )
+
         return course_dict
 
     async def scrape(self):
@@ -198,26 +218,41 @@ class MoodleImporter(ImporterSession):
         self.headers["Referer"] = url
 
         # get profile data
-        r_profile = reqget(
-            url=url + "user/profile.php",
-            headers=self.headers
-        )
+        try:
+            r_profile = reqget(
+                url=url + "user/profile.php",
+                headers=self.headers
+            )
+        except ServiceUnavailableException as service_err:
+            raise service_err
 
         # parse html content of the response
         content_profile = BeautifulSoup(r_profile.text, "lxml")
 
         # scrape username
-        self.scraped_data["username"] = content_profile.find(id="usermenu").get("title")
+        try:
+            self.scraped_data["username"] = content_profile.find(id="usermenu").get("title")
+        except AttributeError as attr_err:
+            raise LoginRequiredException() from attr_err
 
         # scrape logout url
-        tag_list = content_profile.find(id="usermenu-dropdown").find_all("a")
+        try:
+            tag_list = content_profile.find(id="usermenu-dropdown").find_all("a")
+        except AttributeError as attr_err:
+            raise LoginRequiredException() from attr_err
+
         for elem in tag_list:
             if elem.get("title") == "Logout":
                 self.logout_url = str(elem.get("href"))
 
         # scrape for every joined course
         courses_dict = []
-        tag_list = content_profile.find(id="adaptable-tab-coursedetails").find_all("a")
+
+        try:
+            tag_list = content_profile.find(id="adaptable-tab-coursedetails").find_all("a")
+        except AttributeError as attr_err:
+            raise LoginRequiredException() from attr_err
+
         for elem in tag_list:
             for argument in url_get_args(elem.get("href")):
                 if "course" in argument:
@@ -233,7 +268,12 @@ class MoodleImporter(ImporterSession):
 
         # find every bbb room under the joined courses
         for course_dict in courses_dict:
-            course_dict = self.find_all_bbb_rooms(course_dict)
+            try:
+                course_dict = self.find_all_bbb_rooms(course_dict)
+            except ServiceUnavailableException as service_err:
+                raise service_err
+            except LoginRequiredException as log_req_err:
+                raise log_req_err
 
         self.scraped_data["courses"] = courses_dict
 
@@ -245,10 +285,13 @@ class MoodleImporter(ImporterSession):
         None
         """
         # logout request
-        reqget(
-            url=self.logout_url,
-            headers=self.headers,
-            return_code=303
-        )
+        try:
+            reqget(
+                url=self.logout_url,
+                headers=self.headers,
+                return_code=303
+            )
+        except ServiceUnavailableException as service_err:
+            raise service_err
 
         self.auth_token = ""
