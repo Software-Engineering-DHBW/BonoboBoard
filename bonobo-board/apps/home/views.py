@@ -116,21 +116,27 @@ def email(request):
 
 
 @login_required(login_url="/login/")
-def vorlesungsplan(request):
+def vorlesungsplan(request, offset=0, old_offset=0):
     """on vorlesungsplan page is opened, load user data and return vorlesungsplan.html
 
     Parameters
     ----------
+    offset: int
+        offsets lecture data by a number of weeks
+    old_offset: int
+        offset from previous call
     request: HttpRequest
         request of the page
     Returns
     -------
     HttpResponse
     """
+    offset = int(old_offset) + int(offset)
     current_user = BonoboUser.objects.get(email=request.user)
-    lectures, lecture_links = get_lecture_results(current_user)
 
-    return render(request, 'home/vorlesungsplan.html', {"lectures": lectures, "lecture_links": lecture_links})
+    lectures, lecture_links = get_lecture_results(current_user, offset)
+
+    return render(request, 'home/vorlesungsplan.html', {"lectures": lectures, "lecture_links": lecture_links, "offset": offset})
 
 
 @login_required(login_url="/login/")
@@ -216,11 +222,13 @@ def get_dualis_results(current_user):
     # return current_user.user_objects["dualis"].scraped_data
 
 
-def get_lecture_results(current_user):
+def get_lecture_results(current_user, offset=0):
     """get lectures of user
 
     Parameters
     ----------
+    offset: int
+        offsets returned data by a number of weeks
     current_user: BonoboUser
 
     Returns
@@ -230,14 +238,15 @@ def get_lecture_results(current_user):
     #lecture_importer = LectureImporter.read_lectures_from_database(uid)
     lecture_importer = LectureImporter()
     lecture_importer.lectures = pd.read_json(current_user.lectures)
+
     lecture_importer.lectures["start"] = pd.to_datetime(
         lecture_importer.lectures["start"], unit="ms")
     lecture_importer.lectures["end"] = pd.to_datetime(
         lecture_importer.lectures["end"], unit="ms")
-    lectures_df = lecture_importer.limit_weeks_in_list(0, 0)
 
     lecture_links = read_lecture_links_from_database(current_user)
-
+    lectures_df = lecture_importer.limit_weeks_in_list(int(offset))
+    
     json_records = lectures_df.reset_index().to_json(orient='records')
     lectures = json.loads(json_records)
 

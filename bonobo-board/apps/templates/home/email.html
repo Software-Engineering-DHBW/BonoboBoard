@@ -8,12 +8,12 @@
 {% block stylesheets %}{% endblock stylesheets %}
 
 {% block content %}
-
 <div class="pcoded-content">
     <div class="pcoded-inner-content">
         <div class="page-header-title">
             <h3 class="m-b-10">Email</h3>
         </div>
+        <!-- Navigation bar start -->
         <nav aria-label="breadcrumb">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -22,36 +22,33 @@
                 </ol>
             </nav>
         </nav>
+        <!-- Navigation bar start -->
         <div class="main-body">
             <div class="page-wrapper">
                 <!-- [ Main Content ] start -->
                 <div class="col-6">
                     <div class="card">
                         <div class="card-header">
-                            <h5>Email <span id="error_msg_field" style="color: #ff0000; padding-left: 40px;"> {{ msg |
-                                    safe }}</span></h5>
+                            <h5>Email <span id="error_msg_field" style="color: #ff0000; padding-left: 40px;"> {{ msg | safe }}</span></h5>
                         </div>
                         <div class="card-block">
-
+                            <!-- Form start -->
                             <form method="POST">
                                 {% csrf_token %}
                                 <div class="form-group">
                                     {{ form }}
                                 </div>
-                                <button type="submit" class="btn btn-primary" title="Send Email"
-                                    data-toggle="tooltip">Send
-                                    Email
-                                </button>
+                                <button type="submit" class="btn btn-primary" title="Sende Email" data-toggle="tooltip">Sende Email</button>
                             </form>
-                            <!-- [ Main Content ] end -->
+                            <!-- Form end -->
                         </div>
                     </div>
                 </div>
+                <!-- [ Main Content ] end -->
             </div>
         </div>
     </div>
 </div>
-
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
