@@ -69,7 +69,7 @@ function getWeekNumber(date) {
     date.setDate(date.getDate() - 1);
     var oneJan = new Date(date.getFullYear(), 0, 1);
     var numberOfDays = Math.floor((date - oneJan) / (24 * 60 * 60 * 1000));
-    return Math.ceil((date.getDay() + 1 + numberOfDays) / 7) -1;
+    return Math.ceil((date.getDay() + 1 + numberOfDays) / 7) - 1;
 }
 
 //checks if time is between 7am and 9:45pm and between monday and saturday
@@ -99,6 +99,8 @@ function createLut(lectureData) {
     let lut = createEmptyLut([64, 6])
 
     for (let lecture in lectureData) {
+        eventName = lectureData[lecture].lecture
+
         //get start and end timestamp
         start = lectureData[lecture].start
         end = lectureData[lecture].end
@@ -115,9 +117,16 @@ function createLut(lectureData) {
         start_min = changeMinutePresentation(start)
         end_min = changeMinutePresentation(end)
 
+        let link = ""
+        for (let i = 0; i < lectureLinks.length; i++) {
+            if (lectureLinks[i]["lecture"] == eventName) {
+                link = lectureLinks[i]["link"]
+            }
+        }
+
         //if time is valid, create lecture object and insert into lut
         if (isValidTime(start)) {
-            lecture_object = new Lecture(lectureData[lecture].lecture, lectureData[lecture].location, (getHour(start) + ':' + start_min), (getHour(end) + ':' + end_min), duration)
+            lecture_object = new Lecture(eventName, lectureData[lecture].location, (getHour(start) + ':' + start_min), (getHour(end) + ':' + end_min), duration, link)
             lut[timeslot_start][weekday] = lecture_object
         }
     }
@@ -135,9 +144,9 @@ function createHeaderContent(date) {
     datesOfCurrentWeek = getDatesOfCurrentWeek(date)
     for (let day = monday; day < sunday; day++) {
         content += '<th' + (isToday(day) ? ' class="today"' : '')
-                + '>' + dayNames[day] + ', '  //Mo, Di, Mi etc
-                + datesOfCurrentWeek[day].getDate() + '.'
-                + (datesOfCurrentWeek[day].getMonth() + 1) + '</th>' //plus one --> Jan = 0 in js
+            + '>' + dayNames[day] + ', '  //Mo, Di, Mi etc
+            + datesOfCurrentWeek[day].getDate() + '.'
+            + (datesOfCurrentWeek[day].getMonth() + 1) + '</th>' //plus one --> Jan = 0 in js
     }
     return content
 }
@@ -161,15 +170,35 @@ function createCalendarBody() {
         for (let day = monday; day < sunday; day++) {
             if (lut[index][day] != 0) {
                 //refactor courseName for correct URL handling
-                courseName = lut[index][day].name.replaceAll(" ","_")
-                courseName = courseName.replaceAll("/", "!%&")
+                courseName = lut[index][day].name.replaceAll(" ", "_")
+                courseName = courseName.replaceAll("/", "!&!")
+
                 //every single event is populated here
-                content += '<td><div class="event" hx-get="/vorlesungsplan/edit_link/' + courseName + '" hx-target="#dialog" style="height:'
+                content += '<td><div class="event" hx-get="/vorlesungsplan/edit_link/' + courseName
+                //if link is known, add addidional parameter to link
+                let currentLink = lut[index][day].link
+                if (currentLink != "") {
+                    let tempLink = lut[index][day].link
+                    //replace html tokens with custom ones for making them processable
+                    tempLink = tempLink.replaceAll("/", "!&!")
+                    tempLink = tempLink.replaceAll("?", "!&&!")
+                    tempLink = tempLink.replaceAll("#", "!&&&!")
+                    tempLink = tempLink.replaceAll("%", "!&&&&!")
+                    content += "/" + tempLink
+                }
+
+                content += '" hx-target="#dialog" style="height:'
                     + (lut[index][day].duration * 100) + '%;"></label>' //size of event box
                     + lut[index][day].start + '-'
                     + lut[index][day].end + '<br>'
                     + lut[index][day].name + '<br>'
-                    + '<b>' + lut[index][day].room + '</b></div></td>'
+                if (lut[index][day].room != "") {
+                    content += '<b>' + lut[index][day].room + '<br>'
+                }
+                if (currentLink != "") {
+                    content += '<a href="https://' + currentLink + '">Zum Kursraum</a>'
+                }
+                content += '</div></td>'
             }
             else {
                 //empty cell if no event at that timeslot
@@ -180,6 +209,10 @@ function createCalendarBody() {
         index++
     }
     return content
+}
+
+function onLinkClick(link) {
+    console.log(link)
 }
 
 //creates table of lectures for current day

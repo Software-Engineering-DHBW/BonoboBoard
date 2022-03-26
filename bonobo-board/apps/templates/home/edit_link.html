@@ -8,17 +8,15 @@
 {% with WIDGET_ERROR_CLASS='is-invalid' %}
 <form hx-post="{{ request.path }}" hx-headers='{"X-CSRFToken":"{{ csrf_token }}"}' id="modal" class="modal-content">
     <div class="modal-header">
-        <h5 class="modal-title">Edit Link</h5>
+        <h5 class="modal-title">Veranstaltung: {{ event }}</h5>
     </div>
 
     {% csrf_token %}
     <div class="modal-body">
         <div >
-            Veranstaltung: {{ event }} </br>
+            Aktualisiere deinen Link für diese Veranstaltung.
         </div>
-        <div >
-            Alter Link: {{ link }}
-        </div>
+
         <div class="input-group mb-3">
             {{ form.link }}
         </div>
@@ -27,7 +25,7 @@
         <button type="button" class="btn btn-secondary" data-dismiss="modal">
             Abbrechen
         </button>
-        <button type="submit" class="btn btn-primary">Link speichern</button>
+        <button type="submit" class="btn btn-primary" onclick="parent.location.reload(true)">Link speichern</button>
     </div>
 </form>
 {% endwith %}
@@ -36,8 +34,7 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 <script>
-    const link = "{{ link }}";
-    console.log(link)
+
 
 </script>
 {% endblock javascripts %}

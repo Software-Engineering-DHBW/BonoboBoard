@@ -3,6 +3,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 import ast
+from distutils.fancy_getopt import wrap_text
 from email import header
 import json
 
@@ -18,7 +19,7 @@ from django.contrib.auth.decorators import login_required
 
 from apps.authentication.models import BonoboUser
 
-from dhbw.lecture_importer import LectureImporter
+from dhbw.lecture_importer import LectureImporter, read_lecture_links_from_database, add_lecture_links_to_database
 from dhbw.zimbra import ZimbraHandler
 from .forms import ContactForm, EditLinkForm
 
@@ -133,32 +134,48 @@ def vorlesungsplan(request, offset=0, old_offset=0):
     """
     offset = int(old_offset) + int(offset)
     current_user = BonoboUser.objects.get(email=request.user)
-    lectures = get_lecture_results(current_user, offset)
 
-    return render(request, 'home/vorlesungsplan.html', {"lectures": lectures, "offset": offset})
+    lectures, lecture_links = get_lecture_results(current_user, offset)
+
+    return render(request, 'home/vorlesungsplan.html', {"lectures": lectures, "lecture_links": lecture_links, "offset": offset})
 
 
 @login_required(login_url="/login/")
-def edit_link(request, event, link="Blubb"):
+def edit_link(request, event, link=""):
     """on event is clicked, open a popup window
 
     Parameters
     ----------
     request: HttpRequest
         request of the page
+    event: str
+        name of the event
+    link: str
+        link to the event
     Returns
     -------
     HttpResponse
     """
-    event=event.replace("!%&", "/")
+    event=event.replace("!&!", "/")
     event=event.replace("_", " ").strip()
+    #replace html tokens with custom ones for making them processable
+    link=link.replace("!&!", "/")
+    link=link.replace("!&&!","?")
+    link=link.replace("!&&&!","#")
+    link=link.replace("!&&&&!","%")
+    link=link.replace("_", " ").strip()
     if request.method == "POST":
         form = EditLinkForm(request.POST)
         if form.is_valid():
             new_link = form.cleaned_data.get("link")
-       
-         
-            return HttpResponse(status=204, headers={'HX-Trigger': 'linkChanged'}) #Code == no content
+            write_log(str("new link: "+new_link))
+            new_link = new_link.replace("https://","")
+            new_link = new_link.replace("http://","")
+            write_log(str("clean link: "+new_link))
+            current_user = BonoboUser.objects.get(email=request.user)
+            
+            add_lecture_links_to_database(current_user, event, new_link)
+            return HttpResponse(status=204) #Code == no content
     else:
         form = EditLinkForm()
 
@@ -227,7 +244,7 @@ def get_lecture_results(current_user, offset=0):
 
     Returns
     -------
-    pd.DataFrame
+    JSON, pd.DataFrame
     """
     #lecture_importer = LectureImporter.read_lectures_from_database(uid)
     lecture_importer = LectureImporter()
@@ -238,11 +255,15 @@ def get_lecture_results(current_user, offset=0):
     lecture_importer.lectures["end"] = pd.to_datetime(
         lecture_importer.lectures["end"], unit="ms")
 
+    lecture_links_df = read_lecture_links_from_database(current_user)
     lectures_df = lecture_importer.limit_weeks_in_list(int(offset))
-    json_records = lectures_df.reset_index().to_json(orient='records')
-    lectures = json.loads(json_records)
 
-    return lectures
+    json_records = lectures_df.reset_index().to_json(orient='records')
+    json_links = lecture_links_df.reset_index().to_json(orient='records')
+    lectures = json.loads(json_records)
+    lecture_links = json.loads(json_links)
+
+    return lectures, lecture_links
 
 
 def write_log(msg):
