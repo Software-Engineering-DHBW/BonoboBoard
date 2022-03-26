@@ -62,8 +62,9 @@
 \begin{table}[h]
 	\begin{tabular}{@{} p{20mm} p{25mm} p{25mm} p{75mm}}
 		\textbf{Revision} & \textbf{Datum} & \textbf{Autor(en)} & \textbf{Beschreibung}\\
-		1.0 & 18.03.2022 & NK & A: 1, 2, 3\\
-        1.1 & 26.03.2022 & JH & C: 2\\
+		1.0 & 18.03.2022 & NK & A: 1, 2\\
+		1.1 & 24.03.2022 & MH & A: 3\\
+        1.2 & 26.03.2022 & JH, NK & C: 2\\
 	\end{tabular}
 \end{table}
 \noindent
@@ -86,28 +87,6 @@ Die nachfolgende Beschreibung wurde auf Basis folgender Abhängigkeiten erstellt
 	Docker & 20.10.12, Build e91ed57 \\ \hline
 	Docker Compose & 2.2.3\\ \hline
 	Docker Desktop & 4.5.1 (74721)\\ \hline
-%	PyCharm & 2021.3.2 \\ \hline
-%	VisualStudio Code & 1.64.2 \\ \hline
-%	Python & 3.9 \\ \hline	
-%	Django &  4.0.2\\ \hline
-%	Django Tables & 2.4.1 \\ \hline
-%	dj-database-url & 0.5.0 \\ \hline
-%	Gunicorn & 20.1.0 \\ \hline
-%	Beautiful Soup & 4.8.2 \\ \hline
-%	Requests & 2.27.1 \\ \hline
-%	iCalendar & 4.0.9 \\ \hline
-%	Pandas & 1.4.0 \\ \hline
-%	lxml & 4.5.0 \\ \hline
-%	SQLAlchemy & 1.4.31 \\ \hline
-%	asgiref & 3.4.1 \\ \hline
-%	autopep8 & 1.6.0 \\ \hline
-%	pycodestyle & 2.8.0 \\ \hline
-%	python-decouple & 3.5 \\ \hline
-%	pytz & 2021.3 \\ \hline
-%	sqlparse & 0.4.2 \\ \hline
-%	toml & 0.10.2 \\ \hline
-%	Unipath & 1.1 \\ \hline
-%	whitenoise & 5.3.0 \\ \hline
 \end{tabular}
 \end{table}
 \noindent
@@ -143,18 +122,20 @@ Hier eine Abbildung des Verzeichnisses zum Vergleich:
 \end{center}
 \end{figure}
 
-\noindent Nun muss ein Terminal in diesem Ordner gestartet werden.\\
+\noindent Nun muss ein Terminal/PowerShell in diesem Ordner gestartet werden.\\
 Im Terminal gibt es nun mehrere Wege die Container zum Laufen zu bekommen.
 Der einfachste Weg stellt das Ausführen der bereitgestellten Skripte dar.
 
-\subsubsection{Automatische Installation (via Skript)}
-Unter \textbf{Windows} führt man das Powershell-Skript namens \textit{build\_image.ps1} aus.
-Der Befehl hierfür lautet \texttt{POWERSHELL-BEFEHL}, welcher zwei Docker Images erstellt.\\
-\\
-Unter \textbf{Ubuntu (Linux)} führt man einfach das Bash-Skript namens \textit{build\_image} aus.
-Der Befehl hierfür ist \texttt{./build\_image -a}, welcher zwei Docker Images erstellt.\\
-\\
-Nach dem Erstellen der Docker Images reicht ein simples \texttt{docker-compose up} und
+\subsubsection*{Automatische Installation Windows}
+Unter Windows muss das PowerShell-Skript namens \textit{build\_image.ps1} ausgeführt werden.
+Der Befehl hierfür lautet \texttt{.\textbackslash build\_image.ps1 -a}, welcher die beiden benötigten Docker Images erstellt.
+
+\subsubsection*{Automatische Installation Linux}
+Unter \textbf{Ubuntu (Linux)} ist das Bash-Skript \textit{build\_image} auszuführen.
+Der Befehl hierfür ist\\
+\texttt{./build\_image -a}, welcher die Docker Images erstellt.\\
+
+\noindent Nach dem Erstellen der Docker Images reicht ein simples \texttt{docker-compose up} und
 die Container werden erstellt. Alternativ kann der Befehl \texttt{docker-compose up -d} ausgeführt werden,
 wenn die Kommandozeile nach dem Ausführen des Befehls nicht blockiert sein soll.
 In diesem Fall laufen die gestarteten Container im Hintergrund weiter.
@@ -197,21 +178,16 @@ Benutzt ein anderer Prozess (außer Docker-Desktop) diesen Port, ist dieser zu t
 \end{center}
 \end{figure}
 
-\noindent Unter \textbf{Ubuntu (Linux)} gibt man im Terminal den Befehl\\
-\texttt{sudo netstat -peeanut | grep :80} ein.
-Tauchen nun Services auf, so wird der Port 80 bereits genutzt.
-In diesem Fall kann man sich die PID merken, welche in der letzten Spalte steht vor dem Slash und dem Servicenamen.\\
-Hier einmal beispielhaft die PID hervorgehoben: \textit{\textbf{25338}/docker-proxy}.
-Anschließend gibt man im Terminal \texttt{kill <PID>} ein.
-Somit wurde das Programm gestoppt, welches den Port 80 allokiert hatte.\\
-Alternativ kann man auch einfach in der \textit{docker-compose.yml} Datei den Port anpassen,
-welcher genutzt werden soll.
+\noindent Unter \textbf{Ubuntu (Linux)} ist die Abfrage durch \texttt{sudo netstat -peeanut | grep :80} möglich.
+Wird in der Kommandozeile ein Service aufgelistet, wird Port 80 bereits genutzt. Die angegebene PID in der letzten Spalte vor dem Servicenamen (\textit{\textbf{25338}/docker-proxy}) kann dazu genutzt werden, den Prozess mittels \texttt{kill <PID>} zu terminieren.\\
+Als letztes Mittel kann der Port in der \textit{docker-compose.yml} Datei angepasst werden, um das BonoboBoard auf einem von 80 verschiedenen Port zu starten.
 
+\clearpage
 \section{Kurzanleitung}\label{Kurzanleitung}
 Herzlich willkommen beim BonoboBoard! Danke, dass Sie sich für ein Produkt von Optima Connect entschieden haben. 
 
 \bigskip
-In dieser Kurzanleitung werden wir sie mit den grundlegenden Funktionen Ihres persönlichen DHBW-Dashboards vertraut machen, sodass Sie bereits in Kürze Ihren Workflow mit BonoboBoard optimieren können.
+\noindent In dieser Kurzanleitung werden wir sie mit den grundlegenden Funktionen Ihres persönlichen DHBW-Dashboards vertraut machen, sodass Sie bereits in Kürze Ihren Workflow mit BonoboBoard optimieren können.
 
 \subsection{Anmeldung}
 Um das BonobobBoard benutzen zu können, gehen sie im Webbrowser Ihrer Wahl auf \url{https://bonoboboard.de} oder - falls Sie eine lokale Installation verwenden - auf \url{http://localhost:80/}. Von dort aus gelangen Sie zum Login (siehe Abb. \ref{img:login}).
@@ -223,12 +199,11 @@ Um das BonobobBoard benutzen zu können, gehen sie im Webbrowser Ihrer Wahl auf 
 		\label{img:login}
 	\end{center}
 \end{figure}
-\noindent
 
-Geben Sie nun dort Ihre DHBW-Mailadresse (\frqq{}S-Adresse\flqq{}) und Ihr Passwort, dass sie für Ihren DHBW-Account verwenden, ein. Keine Sorge - Ihr Passwort wird weder lokal noch auf unserem Server gespeichert. Auch nicht als Hash. Wir verwenden es lediglich, um eine Verbindung, mit den DHBW-Services aufzubauen. Wird diese Verbindung geschlossen, müssen sie sich allerdings neu anmelden.
+\noindent Geben Sie nun dort Ihre DHBW-Mailadresse (\frqq{}S-Adresse\flqq{}) und Ihr Passwort, dass sie für Ihren DHBW-Account verwenden, ein. Keine Sorge - Ihr Passwort wird weder lokal noch auf unserem Server gespeichert. Auch nicht als Hash. Wir verwenden es lediglich, um eine Verbindung, mit den DHBW-Services aufzubauen. Wird diese Verbindung geschlossen, müssen sie sich allerdings neu anmelden.
 
 \bigskip
-Anschließend geben Sie noch Ihre Kursbezeichnung an. Beispielweise: \frqq{}TINF19 IT2\flqq{}. Achten Sie bitte auf das Leerzeichen zwischen Semester- und Kursbezeichnung. Oder verwenden Sie einfach die Autovervollständigung (siehe Abb. \ref{img:autocomplete}).
+\noindent Anschließend geben Sie noch Ihre Kursbezeichnung an. Beispielweise: \frqq{}TINF19 IT2\flqq{}. Achten Sie bitte auf das Leerzeichen zwischen Semester- und Kursbezeichnung. Oder verwenden Sie einfach die Autovervollständigung (siehe Abb. \ref{img:autocomplete}).
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=0.8\textwidth]{autocomplete}
@@ -261,9 +236,8 @@ Das BonoboBoard lässt sich ganz einfach über die Sidebar bedienen (siehe Abb. 
 		\label{img:sidebar}
 	\end{center}
 \end{figure}
-\noindent
 
-Die Sidebar kann mit einem Klick eingeklappt und wieder verankert werden.
+\noindent Die Sidebar kann mit einem Klick eingeklappt und wieder verankert werden.
 
 \subsection{Vorlesungsplan}
 Der Vorlesungsplan zeigt all Ihre Veranstaltungen der aktuellen Kalenderwoche an. Die Vorlesungstermine werden in einer Zeitleiste von 7:00 bis 21:45 zusammen mit ihren Titel, der Veranstaltungszeit und der Raumnummer (falls vorhanden) angezeigt (siehe Abb. \ref{img:lecture}). 
@@ -275,9 +249,8 @@ Der Vorlesungsplan zeigt all Ihre Veranstaltungen der aktuellen Kalenderwoche an
 		\label{img:lecture}
 	\end{center}
 \end{figure}
-\noindent
 
-Über die Beiden Pfeile in der Kopfleiste (siehe Abb. \ref{img:lecture_nav}) gelangen Sie zum Vorlesungsplan der vergangenen oder folgenden Wochen. Wenn sie auf den Button \frqq{}Heute\flqq{} tippen, gelangen sie zur aktuellen Woche zurück.
+\noindent Über die Beiden Pfeile in der Kopfleiste (siehe Abb. \ref{img:lecture_nav}) gelangen Sie zum Vorlesungsplan der vergangenen oder folgenden Wochen. Wenn sie auf den Button \frqq{}Heute\flqq{} tippen, gelangen sie zur aktuellen Woche zurück.
 
 \begin{figure}[H]
 	\begin{center}
@@ -286,9 +259,8 @@ Der Vorlesungsplan zeigt all Ihre Veranstaltungen der aktuellen Kalenderwoche an
 		\label{img:lecture_nav}
 	\end{center}
 \end{figure}
-\noindent
 
-Die angezeigten Veranstaltungen werden von der Website \frqq{}\href{https://vorlesungsplan.dhbw-mannheim.de/index.php}{DHBW - Kurskalender}\flqq{} bezogen.
+\noindent Die angezeigten Veranstaltungen werden von der Website \frqq{}\href{https://vorlesungsplan.dhbw-mannheim.de/index.php}{DHBW - Kurskalender}\flqq{} bezogen.
 
 
 \subsection{Leistungsübersicht}
@@ -314,9 +286,8 @@ Das BonoboBoard ermöglicht es Ihnen schnell und einfach eine E-Mail von Ihrem S
 		\label{img:mail}
 	\end{center}
 \end{figure}
-\noindent
 
-Die E-Mail wird von Ihrem DHBW-Mailkonto verschickt und wird Ihnen somit auch in Ihrem Online Postfach als gesendete Mail angezeigt.
+\noindent Die E-Mail wird von Ihrem DHBW-Mailkonto verschickt und wird Ihnen somit auch in Ihrem Online Postfach als gesendete Mail angezeigt.
 
 		%------------------------------------------------------------
 		%-----  -----  ------ End actual content ------  -----  -----
