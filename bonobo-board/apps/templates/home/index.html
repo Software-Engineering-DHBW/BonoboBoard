@@ -44,7 +44,7 @@
                                 <h5>Email</h5>
                             </div>
                             <div class="card-block">
-                                <input type="hidden" name="content" hx-trigger="linkChanged from:body">{{ link }}</label>
+                                <button type="button" class="btn btn-primary">Send Email</button>
                             </div>
                         </div>
                         <div class="card">
@@ -96,7 +96,7 @@
     let content = ''
     content += ' <table class="table"><thead><tr><th>Veranstaltung</th><th>Uhrzeit</th><th>Raum</th></tr></thead> <tbody>'
 
-    content = getTodaysClass(lectureData, content)
+    content += getTodaysLectures(lectureData)
 
     content += '  </tbody> </table>'
     lecturePlan.innerHTML += content
