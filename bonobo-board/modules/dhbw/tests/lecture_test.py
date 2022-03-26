@@ -5,6 +5,8 @@
 import asyncio
 from unittest import TestCase
 
+import pandas as pd
+
 from dhbw.lecture_importer import LectureImporter
 from dhbw.lecture_importer import CourseImporter
 
@@ -16,7 +18,7 @@ class LectureImporterTest(TestCase):
         """
         lec = LectureImporter()
         asyncio.run(lec.scrape(776101))
-        self.assertEqual(lec.lectures.empty, True)
+        self.assertEqual(isinstance(lec.lectures, pd.DataFrame), True)
 
     def test_true_uid(self):
         """Test for check of gathering lectures with right uid.
@@ -26,12 +28,12 @@ class LectureImporterTest(TestCase):
         self.assertEqual(lec.lectures.empty, False)
 
     def test_limit_weeks_in_list(self):
-        """Test for limiting days in lecture-list.
+        """Test for limiting weeks in lecture-list.
         """
         lec = LectureImporter()
         asyncio.run(lec.scrape(7761001))
         lec.lectures = lec.limit_weeks_in_list(3)
-        self.assertEqual(lec.lectures.empty, False)
+        self.assertEqual(isinstance(lec.lectures, pd.DataFrame), True)
 
 
 class CourseImporterTest(TestCase):
