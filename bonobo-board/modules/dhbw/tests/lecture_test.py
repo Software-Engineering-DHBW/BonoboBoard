@@ -25,12 +25,12 @@ class LectureImporterTest(TestCase):
         asyncio.run(lec.scrape(7761001))
         self.assertEqual(lec.lectures.empty, False)
 
-    def test_limit_days_in_list(self):
+    def test_limit_weeks_in_list(self):
         """Test for limiting days in lecture-list.
         """
         lec = LectureImporter()
         asyncio.run(lec.scrape(7761001))
-        lec.lectures = lec.limit_days_in_list(7, 7)
+        lec.lectures = lec.limit_weeks_in_list(3)
         self.assertEqual(lec.lectures.empty, False)
 
 
