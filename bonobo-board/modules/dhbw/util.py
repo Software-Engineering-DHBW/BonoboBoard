@@ -8,10 +8,62 @@ import re
 import requests
 from requests.exceptions import RequestException
 
+#------------------------------------------------------------------------------#
+# C U S T O M - E R R O R - C L A S S E S
+#------------------------------------------------------------------------------#
 
-###              ###
-# HELPER FUNCTIONS #
-###              ###
+class ReturnCodeException(Exception):
+    """Exception raised if the status code differs from the expected code.
+    """
+    def __init__(self, status_code, actual_return_code, msg=""):
+        self.status_code = status_code
+        self.return_code = actual_return_code
+        if not msg:
+            self.msg = (
+                f"the returned STATUS CODE [{self.status_code}]"
+                f"differs from the expected STATUS CODE [{self.return_code}]"
+            )
+        else:
+            self.msg = msg
+        super().__init__(self.msg)
+
+    def __str__(self):
+        return f"{self.msg}"
+
+class ServiceUnavailableException(Exception):
+    """Exception raised if no connection to the service could be established.
+    """
+    def __init__(self, msg="Service gerade nicht verfügbar!"):
+        self.msg = msg
+        super().__init__(self.msg)
+
+    def __str__(self):
+        return f"{self.msg}"
+
+class CredentialsException(Exception):
+    """Exception raised if the credentials are wrong
+    """
+    def __init__(self, msg="Falsche Eingabedaten!"):
+        self.msg = msg
+        super().__init__(self.msg)
+
+    def __str__(self):
+        return f"{self.msg}"
+
+class LoginRequiredException(Exception):
+    """Exception raised if accessing a protected resource, which requires an
+    authentication process.
+    """
+    def __init__(self, msg="Resource is only accessable through authentication!"):
+        self.msg = msg
+        super().__init__(self.msg)
+
+    def __str__(self):
+        return f"{self.msg}"
+
+#------------------------------------------------------------------------------#
+# H E L P E R - F U N C T I O N S
+#------------------------------------------------------------------------------#
 
 def reqpost(
         *, url="", headers=None,
@@ -44,22 +96,23 @@ def reqpost(
     RequestException
         if the expected return code differs from the actual return code
     """
+    try:
+        res = requests.post(
+            url=url,
+            headers=headers,
+            params=params,
+            data=payload,
+            allow_redirects=allow_redirects
+        )
 
-    res = requests.post(
-        url=url,
-        headers=headers,
-        params=params,
-        data=payload,
-        allow_redirects=allow_redirects
-    )
-
-    err_msg = f"return code: [{res.status_code}]\nexpected return code: [{return_code}]"
-
-    # compare return code with expected return code
-    if not res.status_code == return_code:
-        raise RequestException(err_msg)
+        # compare return code with expected return code
+        if not res.status_code == return_code:
+            raise ReturnCodeException(res.status_code, return_code)
+    except RequestException as req_err:
+        raise ServiceUnavailableException() from req_err
+    except ReturnCodeException as ret_err:
+        raise ServiceUnavailableException() from ret_err
     return res
-
 
 def reqget(
         *, url="", headers=None,
@@ -90,24 +143,25 @@ def reqget(
     RequestException
         if the expected return code differs from the actual return code
     """
+    try:
+        res = requests.get(
+            url=url,
+            headers=headers,
+            params=params,
+            allow_redirects=allow_redirects
+        )
 
-    res = requests.get(
-        url=url,
-        headers=headers,
-        params=params,
-        allow_redirects=allow_redirects
-    )
-
-    err_msg = f"return code: [{res.status_code}]\nexpected return code: [{return_code}]"
-
-    # compare return code with expected return code
-    if not res.status_code == return_code:
-        raise RequestException(err_msg)
+        # compare return code with expected return code
+        if not res.status_code == return_code:
+            raise ReturnCodeException(res.status_code, return_code)
+    except RequestException as req_err:
+        raise ServiceUnavailableException() from req_err
+    except ReturnCodeException as ret_err:
+        raise ServiceUnavailableException() from ret_err
     return res
 
-
 def url_get_fqdn(url):
-    """Return fqdn of an url.
+    """Return FQDN of the provided url.
 
     Parameters
     ----------
@@ -117,13 +171,13 @@ def url_get_fqdn(url):
     Returns
     -------
     _ : str
-        the fqdn of the given url
+        the FQDN of the given url
     """
     return re.sub(r"(^http[s]?://)|(/.*$)", "", url)
 
 
 def url_get_path(url):
-    """return path to file of an url
+    """return path to file of the provided url
 
     Parameters
     ----------
@@ -139,7 +193,7 @@ def url_get_path(url):
 
 
 def url_get_args(url):
-    """return array of arguments of an url
+    """return array of arguments of the provided url
 
     Parameters
     ----------
@@ -154,10 +208,9 @@ def url_get_args(url):
     """
     return re.sub(r"^.*\?", "", url).split("&")
 
-
-###                 ###
-# ABSTRACT BASE CLASS #
-###                 ###
+#------------------------------------------------------------------------------#
+# B A S E - C L A S S E S
+#------------------------------------------------------------------------------#
 
 class Importer(ABC):
     """base class for every importer
@@ -207,8 +260,10 @@ class ImporterSession(Importer, metaclass=ABCMeta):
 
     Attributes
     ----------
-    auth_token : str
+    auth_token: str
         the string representing the authentication cookie for the created session
+    email: str
+        the email of the current user
     """
 
     __slots__ = ("auth_token", "email",)
@@ -219,11 +274,11 @@ class ImporterSession(Importer, metaclass=ABCMeta):
         self.email = ""
 
     @abstractmethod
-    def login(self, username, password):
+    async def login(self, username, password):
         pass
 
     @abstractmethod
-    def scrape(self):
+    async def scrape(self):
         pass
 
     @abstractmethod
