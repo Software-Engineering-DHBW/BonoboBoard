@@ -5,11 +5,15 @@
 
 import re
 from bs4 import BeautifulSoup
+
+from .util import ImporterSession, reqget, reqpost, url_get_args, url_get_fqdn
 from .util import (
-    ImporterSession, reqget, reqpost,
-    url_get_args, url_get_fqdn
+    CredentialsException, LoginRequiredException, ServiceUnavailableException
 )
 
+#------------------------------------------------------------------------------#
+# H E L P E R - F U N C T I O N S
+#------------------------------------------------------------------------------#
 
 def trim_str(content, empty_string=""):
     """ Trim given string with leading/training whitespaces/tabs.
@@ -61,7 +65,7 @@ def fit_credits(credits_string):
 
 def fit_grade(grade_string):
     """Fits the string containing the grade to a float.
-    
+
     Parameters
     ----------
     grade_string: str
@@ -83,16 +87,17 @@ def fit_state(state_string):
     state_string: str
 
     """
-    if state_string == "bestanden" or state_string == "Bestanden":
+    if state_string in ("bestanden", "Bestanden"):
         state_string = "p"
-    elif state_string == "Offen" or state_string == "offen":
+    elif state_string in ("offen", "Offen"):
         state_string = "o"
     else:
         state_string = "f"
     return state_string
 
 
-def add_module_to_dualis_dict(m_id, m_name, m_href, m_credits, m_grade, m_state):
+def add_module_to_dualis_dict(
+        *, m_id, m_name, m_href, m_credits, m_grade, m_state):
     """Create the DualisModuleDict with provided values.
 
     Parameters
@@ -120,6 +125,9 @@ def add_module_to_dualis_dict(m_id, m_name, m_href, m_credits, m_grade, m_state)
     }
     return dualis_module
 
+#------------------------------------------------------------------------------#
+# D U A L I S - I M P O R T E R
+#------------------------------------------------------------------------------#
 
 class DualisImporter(ImporterSession):
     """Class to import data from dualis.
@@ -181,17 +189,23 @@ class DualisImporter(ImporterSession):
             "pass": password
         }
 
-        r_login = reqpost(
-            url=url,
-            headers=self.headers,
-            payload=data
-        )
+        try:
+            r_login = reqpost(
+                url=url,
+                headers=self.headers,
+                payload=data
+            )
+        except ServiceUnavailableException as service_err:
+            raise service_err
+        finally:
+            self.drop_header("Content-Type")
 
-        self.drop_header("Content-Type")
-
-        for keyval in url_get_args(r_login.headers["REFRESH"]):
-            temp = keyval.split("=")
-            self.params[temp[0]] = temp[1]
+        try:
+            for keyval in url_get_args(r_login.headers["REFRESH"]):
+                temp = keyval.split("=")
+                self.params[temp[0]] = temp[1]
+        except KeyError as key_err:
+            raise CredentialsException() from key_err
 
         self.params["PRGNAME"] = "MLSSTART"
         self.params["ARGUMENTS"] = self.params["ARGUMENTS"].split(",")[:2]
@@ -238,7 +252,7 @@ class DualisImporter(ImporterSession):
                 i += 1
                 continue
 
-            elif "tbdata" in temp[i].get("class"):
+            if "tbdata" in temp[i].get("class"):
                 href = ""
                 state = temp[i + 5].img.get("title")
                 if not state == "Offen" or (state == "Offen" and temp[i + 4].string):
@@ -272,25 +286,42 @@ class DualisImporter(ImporterSession):
         """
 
         url = DualisImporter.url
-        r_home = reqget(
-            url=url,
-            headers=self.headers,
-            params=self.params,
-        )
+
+        try:
+            r_home = reqget(
+                url=url,
+                headers=self.headers,
+                params=self.params,
+            )
+        except ServiceUnavailableException as service_err:
+            raise service_err
+        except LoginRequiredException as log_req_err:
+            raise log_req_err
 
         home_content = BeautifulSoup(r_home.text, "lxml")
-        url_grade_overview = home_content.find(id="link000310").a.get("href")
+
+        # access only possible if authenticated!
+        try:
+            url_grade_overview = home_content.find(id="link000310").a.get("href")
+        except AttributeError as attr_err:
+            raise LoginRequiredException from attr_err
+
         for keyval in url_get_args(url_grade_overview):
             temp = keyval.split("=")
             self.params[temp[0]] = temp[1]
 
         self.params["PRGNAME"] = "STUDENT_RESULT"
 
-        r_grades = reqget(
-            url=url,
-            headers=self.headers,
-            params=self.params
-        )
+        try:
+            r_grades = reqget(
+                url=url,
+                headers=self.headers,
+                params=self.params
+            )
+        except ServiceUnavailableException as service_err:
+            raise service_err
+        except LoginRequiredException as log_req_err:
+            raise log_req_err
 
         self._fill_grades_into_dict(r_grades.text)
 
@@ -305,10 +336,13 @@ class DualisImporter(ImporterSession):
 
         self.params["PRGNAME"] = "LOGOUT"
 
-        reqget(
-            url=url,
-            headers=self.headers,
-            params=self.params
-        )
+        try:
+            reqget(
+                url=url,
+                headers=self.headers,
+                params=self.params
+            )
+        except ServiceUnavailableException as service_err:
+            raise service_err
 
         self.auth_token = ""
