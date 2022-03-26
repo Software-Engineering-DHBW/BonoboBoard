@@ -1,0 +1,43 @@
+{% block title %} Dashboard {% endblock %}
+{% load widget_tweaks %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+{% with WIDGET_ERROR_CLASS='is-invalid' %}
+<form hx-post="{{ request.path }}" hx-headers='{"X-CSRFToken":"{{ csrf_token }}"}' id="modal" class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">Edit Link</h5>
+    </div>
+
+    {% csrf_token %}
+    <div class="modal-body">
+        <div >
+            Veranstaltung: {{ event }} </br>
+        </div>
+        <div >
+            Alter Link: {{ link }}
+        </div>
+        <div class="input-group mb-3">
+            {{ form.link }}
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Abbrechen
+        </button>
+        <button type="submit" class="btn btn-primary">Link speichern</button>
+    </div>
+</form>
+{% endwith %}
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script>
+    const link = "{{ link }}";
+    console.log(link)
+
+</script>
+{% endblock javascripts %}

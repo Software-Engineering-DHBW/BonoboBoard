@@ -3,6 +3,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 import ast
+from email import header
 import json
 
 import pandas as pd
@@ -19,7 +20,7 @@ from apps.authentication.models import BonoboUser
 
 from dhbw.lecture_importer import LectureImporter
 from dhbw.zimbra import ZimbraHandler
-from .forms import ContactForm
+from .forms import ContactForm, EditLinkForm
 
 BonoboUser = get_user_model()
 
@@ -40,7 +41,7 @@ def index(request):
 
     bonobo_user = BonoboUser.objects.get(email=request.user)
     lectures = get_lecture_results(bonobo_user)
-    return render(request, 'home/index.html', {"dualis_data": bonobo_user.dualis_scraped_data, "lectures": lectures})
+    return render(request, 'home/index.html', {"dualis_data": bonobo_user.dualis_scraped_data, "lectures": lectures, "link": "alter_bluebutton_link", "event": "Programmieren"})
 
 
 @login_required(login_url="/login/")
@@ -115,8 +116,31 @@ def email(request):
 
 
 @login_required(login_url="/login/")
-def vorlesungsplan(request):
+def vorlesungsplan(request, offset=0, old_offset=0):
     """on vorlesungsplan page is opened, load user data and return vorlesungsplan.html
+
+    Parameters
+    ----------
+    offset: int
+        offsets lecture data by a number of weeks
+    old_offset: int
+        offset from previous call
+    request: HttpRequest
+        request of the page
+    Returns
+    -------
+    HttpResponse
+    """
+    offset = int(old_offset) + int(offset)
+    current_user = BonoboUser.objects.get(email=request.user)
+    lectures = get_lecture_results(current_user, offset)
+
+    return render(request, 'home/vorlesungsplan.html', {"lectures": lectures, "offset": offset})
+
+
+@login_required(login_url="/login/")
+def edit_link(request, event, link="Blubb"):
+    """on event is clicked, open a popup window
 
     Parameters
     ----------
@@ -126,10 +150,19 @@ def vorlesungsplan(request):
     -------
     HttpResponse
     """
-    current_user = BonoboUser.objects.get(email=request.user)
-    lectures = get_lecture_results(current_user)
+    event=event.replace("!%&", "/")
+    event=event.replace("_", " ").strip()
+    if request.method == "POST":
+        form = EditLinkForm(request.POST)
+        if form.is_valid():
+            new_link = form.cleaned_data.get("link")
+       
+         
+            return HttpResponse(status=204, headers={'HX-Trigger': 'linkChanged'}) #Code == no content
+    else:
+        form = EditLinkForm()
 
-    return render(request, 'home/vorlesungsplan.html', {"lectures": lectures})
+    return render(request, 'home/edit_link.html', {'form': form, 'link': link, 'event': event})
 
 
 def pages(request):
@@ -183,11 +216,13 @@ def get_dualis_results(current_user):
     # return current_user.user_objects["dualis"].scraped_data
 
 
-def get_lecture_results(current_user):
+def get_lecture_results(current_user, offset=0):
     """get lectures of user
 
     Parameters
     ----------
+    offset: int
+        offsets returned data by a number of weeks
     current_user: BonoboUser
 
     Returns
@@ -197,15 +232,13 @@ def get_lecture_results(current_user):
     #lecture_importer = LectureImporter.read_lectures_from_database(uid)
     lecture_importer = LectureImporter()
     lecture_importer.lectures = pd.read_json(current_user.lectures)
+
     lecture_importer.lectures["start"] = pd.to_datetime(
         lecture_importer.lectures["start"], unit="ms")
     lecture_importer.lectures["end"] = pd.to_datetime(
         lecture_importer.lectures["end"], unit="ms")
-    write_log("Actual lectures")
-    write_log(lecture_importer.lectures)
-    lectures_df = lecture_importer.limit_weeks_in_list(0, 0)
-    write_log("After trimming")
-    write_log(lectures_df)
+
+    lectures_df = lecture_importer.limit_weeks_in_list(int(offset))
     json_records = lectures_df.reset_index().to_json(orient='records')
     lectures = json.loads(json_records)
 
