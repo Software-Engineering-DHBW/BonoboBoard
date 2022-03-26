@@ -3,9 +3,12 @@ from bs4.element import Tag
 
 from .util import ImporterSession, MoodleCourseDict, MoodleModuleDict
 
+
 def add_to_module_dict(name: str, url: str) -> MoodleModuleDict: ...
 
+
 def get_bbb_instance_name(tag_a: Tag) -> str: ...
+
 
 class MoodleImporter(ImporterSession):
     url: ClassVar[str]

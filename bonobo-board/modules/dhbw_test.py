@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""Provide unittests for the dhbw module"""
+"""Provide unittests for the dhbw module
+"""
 
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
-from unittest import makeSuite, TestSuite,  TextTestRunner
+from unittest import makeSuite, TestSuite, TextTestRunner
 
 from dhbw.tests.lecture_test import LectureImporterTest, CourseImporterTest
 from dhbw.tests.moodle_test import TestMoodleImporter
@@ -18,13 +19,15 @@ parser = ArgumentParser(
     prog="dhbw_test"
 )
 parser.add_argument("-t", "--tests", action="extend",
-    choices=["course", "dualis", "lecture", "moodle", "zimbra"],
-    help="Choose sets of tests to run", nargs="+", type=str
-)
+                    choices=["course", "dualis", "lecture", "moodle", "zimbra"],
+                    help="Choose sets of tests to run", nargs="+", type=str
+                    )
 args = parser.parse_args()
 
+
 def suite():
-    """Gather all tests defined in the tests module inside the dhbw module"""
+    """Gather all tests defined in the tests module inside the dhbw module
+    """
     test_suite = TestSuite()
     _args = args.tests
 
@@ -46,12 +49,14 @@ def suite():
                 test_suite.addTest(TestMoodleImporter.cls_suite())
             else:
                 test_suite.addTest(TestZimbraHandler.cls_suite())
-            i+=1
+            i += 1
 
     return test_suite
 
+
 def main():
-    """Run the provided tests"""
+    """Run the provided tests
+    """
     dhbw_suite = suite()
     runner = TextTestRunner(verbosity=2)
     test_result = runner.run(dhbw_suite)

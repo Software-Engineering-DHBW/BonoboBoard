@@ -2,14 +2,17 @@ from typing import Any, ClassVar, Dict, List, TypedDict
 
 from dhbw.util import ImporterSession
 
+
 class NewContact(TypedDict):
     email: str
     firstName: str
     lastName: str
     jobTitle: str
 
+
 class ContactsDict(NewContact):
     id: str
+
 
 class SendMailDict(TypedDict):
     recipients: List[str]
@@ -19,13 +22,16 @@ class SendMailDict(TypedDict):
     cttype: str
     content: str
 
+
 def _entity_list(
-    in_list: List[str],
-    out_list: List[Dict[str, str]],
-    in_type: str
+        in_list: List[str],
+        out_list: List[Dict[str, str]],
+        in_type: str
 ) -> List[Dict[str, str]]: ...
 
+
 def _fill_contacts_dict_elem(contact: Dict[str, str]) -> ContactsDict: ...
+
 
 class ZimbraHandler(ImporterSession):
     accountname: str
@@ -47,10 +53,10 @@ class ZimbraHandler(ImporterSession):
     def remove_contact(self, contact_id: str) -> None: ...
 
     def _create_entities_list(
-        self,
-        recipients: List[str],
-        rec_cc: List[str],
-        rec_bcc: List[str]
+            self,
+            recipients: List[str],
+            rec_cc: List[str],
+            rec_bcc: List[str]
     ) -> List[Dict[str, str]]: ...
 
     def _generate_mail(self, mail_dict: SendMailDict) -> Dict[str, Any]: ...
