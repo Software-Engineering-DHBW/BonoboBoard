@@ -46,7 +46,7 @@ Runs unittests first, then deploys the main branch on the productive server.
 
 ## Local/Developer Setup
 If you desire to run BonoboBoard on your local machine, please follow the instructions mentioned in documents/product_documentation.  
-If you want to contribute to this project, please be sure to check out our [documentation-folder](https://github.com/Software-Engineering-DHBW/BonoboBoard/tree/main/documents) and GitHub-pages first. This provides you with the knowledge how we set up this project and which style-guidelines are applied.
+If you want to contribute to this project, please be sure to check out our [documentation-folder](https://github.com/Software-Engineering-DHBW/BonoboBoard/tree/main/documents) and GitHub-pages first. This provides you with the knowledge how we set up this project and which style-guidelines are applied.  
 Short summary of the setup-process:
 1) Install docker and docker-compose
 2) Clone the repository
