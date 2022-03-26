@@ -16,7 +16,7 @@ class LectureImporterTest(TestCase):
         """
         lec = LectureImporter()
         asyncio.run(lec.scrape(776101))
-        self.assertEqual(lec.lectures.empty, True)
+        self.assertEqual(isinstance(lec.lectures, pd.DataFrame), True)
 
     def test_true_uid(self):
         """Test for check of gathering lectures with right uid.
