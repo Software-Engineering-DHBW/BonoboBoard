@@ -10,9 +10,24 @@ from bs4 import BeautifulSoup
 
 from dhbw.util import ImporterSession, reqget, reqpost, url_get_fqdn
 
+
 def _entity_list(in_list, out_list, in_type):
-    """adds entities to a list while converting an entity string to a dict"""
-    temp = ""
+    """Adds entities to a list while converting an entity string to a dict.
+
+    Parameters
+    ----------
+    in_list : List[str]
+        Description
+    out_list : List[Dict[str, str]]
+        Description
+    in_type : str
+        Description
+    Returns
+    -------
+    List[Dict[str, str]]
+
+    """
+
     if in_type == "recipient":
         temp = "t"
     elif in_type == "cc":
@@ -28,8 +43,19 @@ def _entity_list(in_list, out_list, in_type):
 
     return out_list
 
+
 def _fill_contacts_dict_elem(contact):
-    """checks for existing keys inside the response contact dict and creates contact dict"""
+    """Checks for existing keys inside the response contact dict and creates contact dict.
+
+    Parameters
+    ----------
+    contact : Dict[str, str]
+
+    Returns
+    -------
+    Dict
+
+    """
     temp = {}
     if "email" in contact.keys():
         temp["email"] = contact["email"]
@@ -46,24 +72,25 @@ def _fill_contacts_dict_elem(contact):
 
     return temp
 
+
 ###            ###
 # ZIMBRA HANDLER #
 ###            ###
 
 class ZimbraHandler(ImporterSession):
-    """handler for interacting with zimbra
+    """Handler for interacting with zimbra.
 
     Attributes
     ----------
-    url: str
+    url : str
         the given url for zimbra
-    accountname: str
+    accountname : str
         the dhbw mail account
-    contacts: List[Dict[str, str]]
+    contacts : List[Dict[str, str]]
         a list representing all contacts from zimbra
-    realname: str
+    realname : str
         the real name of the logged in user
-    signatures: List[str]
+    signatures : List[str]
         a list of all available signatures to the user
 
     Methods
@@ -101,7 +128,7 @@ class ZimbraHandler(ImporterSession):
         self.signatures = []
 
     async def login(self, username, password):
-        """authenticate the user against zimbra
+        """Authenticate the user against zimbra.
 
         Parameters
         ----------
@@ -151,7 +178,7 @@ class ZimbraHandler(ImporterSession):
 
     async def scrape(self):
         # TODO documentation?
-        """scrape the wanted data from the website
+        """Scrape the selected data from zimbra.
 
         Returns
         -------
@@ -184,7 +211,7 @@ class ZimbraHandler(ImporterSession):
         self.scraped_data = temp_json
 
     def get_contacts(self):
-        """import contacts from the default contact book
+        """Import contacts from the default contact book.
 
         Returns
         -------
@@ -197,7 +224,7 @@ class ZimbraHandler(ImporterSession):
         self.headers["Referer"] = url
         self.headers["Origin"] = origin
 
-        #TODO query is limited to 100 contact entities --> query all contact entities
+        # TODO query is limited to 100 contact entities --> query all contact entities
 
         query = {
             "Header": {
@@ -213,7 +240,7 @@ class ZimbraHandler(ImporterSession):
                 "SearchRequest": {
                     "_jsns": "urn:zimbraMail",
                     "sortBy": "nameAsc",
-                    "offset":  0,
+                    "offset": 0,
                     "limit": 100,
                     "query": "in:contacts",
                     "types": "contact"
@@ -222,7 +249,7 @@ class ZimbraHandler(ImporterSession):
         }
 
         r_contacts = reqpost(
-            url=origin+"/service/soap/SearchRequest",
+            url=origin + "/service/soap/SearchRequest",
             headers=self.headers,
             payload=json.dumps(query)
         ).json()
@@ -235,7 +262,16 @@ class ZimbraHandler(ImporterSession):
                 self.contacts.append(temp)
 
     def new_contact(self, contact_dict):
-        """create a new contact inside the default contact book"""
+        """Create a new contact inside the default contact book.
+
+        Parameters
+        ----------
+        contact_dict : Dict
+
+        Returns
+        -------
+        None
+        """
         url = ZimbraHandler.url
         origin = "https://" + url_get_fqdn(url)
 
@@ -256,7 +292,7 @@ class ZimbraHandler(ImporterSession):
         contact = {
             "Header": {
                 "context": {
-                    "_jsns":"urn:zimbra",
+                    "_jsns": "urn:zimbra",
                     "account": {
                         "_content": self.accountname,
                         "by": "name"
@@ -276,7 +312,7 @@ class ZimbraHandler(ImporterSession):
         }
 
         r_contact = reqpost(
-            url=origin+"/service/soap/CreateContactRequest",
+            url=origin + "/service/soap/CreateContactRequest",
             headers=self.headers,
             payload=json.dumps(contact),
         ).json()
@@ -286,7 +322,13 @@ class ZimbraHandler(ImporterSession):
         self.contacts.append(contact_dict)
 
     def remove_contact(self, contact_id):
-        """remove an existing contact from the default contact book"""
+        """remove an existing contact from the default contact book
+
+        Parameters
+        ----------
+        contact_id : str
+
+        """
         url = ZimbraHandler.url
         origin = "https://" + url_get_fqdn(url)
 
@@ -297,7 +339,7 @@ class ZimbraHandler(ImporterSession):
         del_contact = {
             "Header": {
                 "context": {
-                    "_jsns":"urn:zimbra",
+                    "_jsns": "urn:zimbra",
                     "account": {
                         "_content": self.accountname,
                         "by": "name"
@@ -318,7 +360,7 @@ class ZimbraHandler(ImporterSession):
         }
 
         reqpost(
-            url=origin+"/service/soap/ContactActionRequest",
+            url=origin + "/service/soap/ContactActionRequest",
             headers=self.headers,
             payload=json.dumps(del_contact)
         )
@@ -329,12 +371,26 @@ class ZimbraHandler(ImporterSession):
         while i < len(self.contacts):
             if self.contacts[i]["id"] == contact_id:
                 break
-            i+=1
+            i += 1
 
         del self.contacts[i]
 
     def _create_entities_list(self, recipients, rec_cc, rec_bcc):
-        """create a list with dictionary elements"""
+        """Create a list with dictionary elements.
+
+        Parameters
+        ----------
+        recipients : List[str]
+
+        rec_cc : List[str]
+
+        rec_bcc : List[str]
+
+
+        Returns
+        -------
+        List[Dict[str, str]]
+        """
         entities_list = [
             {
                 "t": "f",
@@ -350,7 +406,16 @@ class ZimbraHandler(ImporterSession):
         return entities_list
 
     def _generate_mail(self, mail_dict):
-        """build the mail in the needed format for zimbra"""
+        """build the mail in the needed format for zimbra
+
+        Parameters
+        ----------
+        mail_dict : Dict
+
+        Returns
+        -------
+        Dict[str, Any]
+        """
         header_dict = {
             "context": {
                 "_jsns": "urn:zimbra",
@@ -395,7 +460,8 @@ class ZimbraHandler(ImporterSession):
         return mail
 
     def send_mail(self, mail_dict):
-        """sends a mail to the soap backend of zimbra
+        """Sends a mail to the soap backend of zimbra.
+
         Parameters
         ----------
         mail_dict: SendMailDict
@@ -416,7 +482,7 @@ class ZimbraHandler(ImporterSession):
         self.headers["Origin"] = origin
 
         reqpost(
-            url=origin+"/service/soap/SendMsgRequest",
+            url=origin + "/service/soap/SendMsgRequest",
             headers=self.headers,
             payload=json.dumps(mail),
             return_code=200

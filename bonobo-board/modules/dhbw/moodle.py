@@ -8,19 +8,20 @@ from bs4.element import NavigableString
 
 from .util import ImporterSession, reqget, reqpost, url_get_fqdn, url_get_args
 
+
 ###              ###
 # HELPER FUNCTIONS #
 ###              ###
 
 def add_to_module_dict(name, url):
-    """function to fill a MoodleModuleDict with values and return it
+    """Function to fill a MoodleModuleDict with values and return it.
 
     Parameters
     ----------
     name: str
-        a name
+        Name of module
     url: str
-        an url
+
 
     Returns
     -------
@@ -32,8 +33,9 @@ def add_to_module_dict(name, url):
         "url": url
     }
 
+
 def get_bbb_instance_name(tag_a):
-    """searches for the instance name for a given tag and returns it
+    """Searches for the instance name for a given tag and returns it.
 
     Parameters
     ----------
@@ -57,19 +59,20 @@ def get_bbb_instance_name(tag_a):
         break
     return temp
 
+
 ###                   ###
 # MOODLE IMPORTER CLASS #
 ###                   ###
 
 class MoodleImporter(ImporterSession):
-    """class to import data from moodle
+    """Class to import data from moodle.
 
     Attributes
     ----------
     url: str
-        the given url for moodle
+        The given url for moodle.
     logout_url: str
-        the url for logout
+        The url for logout.
 
     Methods
     -------
@@ -78,7 +81,7 @@ class MoodleImporter(ImporterSession):
     find_all_bbb_rooms(self, course_dict): MoodleCourseDict
         find all bbb rooms and store them in the given dictionary
     scrape(self): None
-        scrape for the website data
+        scrape moodle data
     logout(self): None
         sends the logout request
     """
@@ -93,7 +96,7 @@ class MoodleImporter(ImporterSession):
         self.logout_url = ""
 
     async def login(self, username, password):
-        """aquire the authentication token
+        """Acquire the authentication token.
 
         Parameters
         ----------
@@ -112,7 +115,7 @@ class MoodleImporter(ImporterSession):
         url = MoodleImporter.url
 
         # get token from login page
-        r_token = reqget(url=url+"login/index.php", headers=self.headers)
+        r_token = reqget(url=url + "login/index.php", headers=self.headers)
 
         # extract the token from response
         self.headers["Cookie"] = r_token.headers["Set-Cookie"].split(";")[0]
@@ -136,7 +139,7 @@ class MoodleImporter(ImporterSession):
 
         # post request for login
         r_login = reqpost(
-            url=url+"login/index.php",
+            url=url + "login/index.php",
             headers=self.headers,
             payload=payload,
             return_code=303
@@ -155,7 +158,7 @@ class MoodleImporter(ImporterSession):
         return self
 
     def find_all_bbb_rooms(self, course_dict):
-        """method to find all bbc rooms for a given course
+        """Method to find all bbc rooms for a given course.
 
         Attributes
         ----------
@@ -182,7 +185,7 @@ class MoodleImporter(ImporterSession):
         return course_dict
 
     async def scrape(self):
-        """scrape the wanted data from the website
+        """Scrape selected data from moodle.
 
         Returns
         -------
@@ -196,7 +199,7 @@ class MoodleImporter(ImporterSession):
 
         # get profile data
         r_profile = reqget(
-            url=url+"user/profile.php",
+            url=url + "user/profile.php",
             headers=self.headers
         )
 
@@ -223,7 +226,7 @@ class MoodleImporter(ImporterSession):
             courses_dict.append(
                 {
                     "name": elem.string,
-                    "href": url+"course/view.php?id="+course_id,
+                    "href": url + "course/view.php?id=" + course_id,
                     "bbb_rooms": []
                 }
             )
@@ -235,7 +238,7 @@ class MoodleImporter(ImporterSession):
         self.scraped_data["courses"] = courses_dict
 
     def logout(self):
-        """sends a logout request
+        """Sends a logout request.
 
         Returns
         -------

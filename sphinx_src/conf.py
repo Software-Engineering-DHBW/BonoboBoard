@@ -16,13 +16,13 @@ _HERE = os.path.dirname(__file__)
 _ROOT_DIR = os.path.abspath(os.path.join(_HERE, '..'))
 _PACKAGE_DIR = os.path.abspath(os.path.join(_HERE, '../bonobo-board'))
 _MODULES_DIR = os.path.abspath(os.path.join(_HERE, '../bonobo-board/modules'))
-_DHBW_DIR = os.path.abspath(os.path.join(
-    _HERE, '../bonobo-board/modules/dhbw'))
+_APPS_DIR = os.path.abspath(os.path.join(_HERE, '../bonobo-board/apps'))
 
 sys.path.insert(0, _ROOT_DIR)
 sys.path.insert(0, _PACKAGE_DIR)
 sys.path.insert(0, _MODULES_DIR)
-sys.path.insert(0, _DHBW_DIR)
+sys.path.insert(0, _APPS_DIR)
+
 
 # sys.path.insert(0, os.path.abspath('../bonobo-board'))
 
@@ -42,10 +42,14 @@ author = 'Optima Connect'
 extensions = [
     'sphinx.ext.autodoc',  # Core library for html generation from docstrings
     'sphinx.ext.autosummary',  # Create neat summary tables
+    'sphinx.ext.mathjax',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.doctest',
+    'sphinx.ext.inheritance_diagram'
 ]
 autosummary_generate = True  # Turn on sphinx.ext.autosummary
 
-autodoc_mock_imports = ["django", "decouple", "unipath"]
+autodoc_mock_imports = ["django", "icalendar", "core.settings", "apps.home.widgets", "sqlalchemy", "datetime", "decouple", "unipath", "argparse", "unittest"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
