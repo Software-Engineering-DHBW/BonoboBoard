@@ -63,6 +63,7 @@
 	\begin{tabular}{@{} p{20mm} p{25mm} p{25mm} p{75mm}}
 		\textbf{Revision} & \textbf{Datum} & \textbf{Autor(en)} & \textbf{Beschreibung}\\
 		1.0 & 18.03.2022 & NK & A: 1, 2, 3\\
+        1.1 & 26.03.2022 & JH & C: 2\\
 	\end{tabular}
 \end{table}
 \noindent
@@ -129,7 +130,11 @@ Ist das Klonen abgeschlossen, sollte folgende Struktur auf der ersten Ebene des 
 
 \subsection{Installation und Start der Docker Container}
 %TODO maybe Änderung des Ports falls 80 belegt?
-Dieser Abschnitt beschreibt den Ablauf, wie die Docker-Umgebung aufgebaut und gestartet wird. Dazu muss in den Ordner \textit{bonobo-board} (siehe dritter Ordner von oben in Abbildung \ref{img:folder_1}) gewechselt werden. Darin befindet sich eine Datei mit dem Namen \textit{docker-compose.yaml} und ein Dockerfile. Sollten diese nicht vorhanden sein, ist entweder nicht der richtige Ordner ausgewählt oder beim Herunterladen der Dateien sind Fehler aufgetreten. Hier eine Abbildung des Verzeichnisses zum Vergleich:
+Dieser Abschnitt beschreibt den Ablauf, wie die Docker-Umgebung aufgebaut und gestartet wird.
+Dazu muss in den Ordner \textit{bonobo-board} (siehe dritter Ordner von oben in Abbildung \ref{img:folder_1}) gewechselt werden.
+In diesem befindet sich eine \textit{docker-compose.yml} Datei und zwei weitere Dockerfiles: \textit{Dockerfile.base}, \textit{Dockerfile.django}.
+Sollten diese nicht vorhanden sein, ist entweder nicht der richtige Ordner ausgewählt oder beim Herunterladen der Dateien sind Fehler aufgetreten.
+Hier eine Abbildung des Verzeichnisses zum Vergleich:
 \begin{figure}[H]
 \begin{center}
 \includegraphics[width=0.8\textwidth]{folder_repo_2}
@@ -139,18 +144,35 @@ Dieser Abschnitt beschreibt den Ablauf, wie die Docker-Umgebung aufgebaut und ge
 \end{figure}
 
 \noindent Nun muss ein Terminal in diesem Ordner gestartet werden.\\
-Im Terminal ist der Befehl \texttt{docker-compose up} auszuführen. Alternativ kann der Befehl \\\texttt{docker-compose up -d} ausgeführt werden, wenn die Kommandozeile nach dem ausführen des Befehls nicht blockiert sein soll. In diesem Fall laufen die gestarteten Container im Hintergrund weiter. Abbildung \ref{img:docker-compose} zeigt beispielhaft die Ausgabe der Befehle in der Kommandozeile.\\ 
-Bei Fehlermeldungen ist sicherzustellen, dass der docker-deamon läuft (Windows: läuft Docker-Desktop?) oder alle Voraussetzungen (siehe \ref{Grundlagen}) erfüllt sind.
+Im Terminal gibt es nun mehrere Wege die Container zum Laufen zu bekommen.
+Der einfachste Weg stellt das Ausführen der bereitgestellten Skripte dar.
+
+\subsubsection{Automatische Installation (via Skript)}
+Unter \textbf{Windows} führt man das Powershell-Skript namens \textit{build\_image.ps1} aus.
+Der Befehl hierfür lautet \texttt{POWERSHELL-BEFEHL}, welcher zwei Docker Images erstellt.\\
+\\
+Unter \textbf{Ubuntu (Linux)} führt man einfach das Bash-Skript namens \textit{build\_image} aus.
+Der Befehl hierfür ist \texttt{./build\_image -a}, welcher zwei Docker Images erstellt.\\
+\\
+Nach dem Erstellen der Docker Images reicht ein simples \texttt{docker-compose up} und
+die Container werden erstellt. Alternativ kann der Befehl \texttt{docker-compose up -d} ausgeführt werden,
+wenn die Kommandozeile nach dem Ausführen des Befehls nicht blockiert sein soll.
+In diesem Fall laufen die gestarteten Container im Hintergrund weiter.
+Abbildung \ref{img:docker-compose} zeigt beispielhaft die Ausgabe der Befehle in der Kommandozeile.\\ 
+Bei Fehlermeldungen ist sicherzustellen, dass der docker-daemon läuft (Windows: läuft Docker-Desktop?) oder alle Voraussetzungen (siehe \ref{Grundlagen}) erfüllt sind.
 \begin{figure}[H]
 \begin{center}
-\includegraphics[width=\linewidth]{docker-compose}
+\includegraphics[width=0.8\linewidth]{docker-compose}
 \caption{docker-compose in der Kommandozeile}
 \label{img:docker-compose}
 \end{center}
 \end{figure}
 
 \subsection{Darstellung im Webbrowser}
-Da die Container nun gestartet sind, ist zu prüfen ob alles funktioniert und die Website lokal erreichbar ist. Dafür ist ein Webbrowser nach Wahl zu öffnen und \url{http://localhost:80/} einzugeben. Es sollte sich die Website, wie in Abbildung \ref{img:darstellung} dargestellt, öffnen.
+Da die Container nun gestartet sind, ist zu prüfen ob alles funktioniert und die Website lokal erreichbar ist.
+Dafür ist ein Webbrowser nach Wahl zu öffnen und \url{http://localhost:80/} einzugeben.
+Es sollte sich die Website, wie in Abbildung \ref{img:darstellung} dargestellt, öffnen.
+Damit ist die lokale Installation des BonoboBoard abgeschlossen.
 \begin{figure}[H]
 \begin{center}
 \includegraphics[width=0.8\textwidth]{webbrowser_localhost}
@@ -158,18 +180,33 @@ Da die Container nun gestartet sind, ist zu prüfen ob alles funktioniert und di
 \label{img:darstellung}
 \end{center}
 \end{figure}
-\noindent
-Damit ist die lokale Installation des BonoboBoard abgeschlossen.\\
-
-\noindent
-Haben alle Schritte vorab funktioniert und die Darstellung funktioniert trotzdem nicht, ist sicherzustellen, dass kein anderer Dienst Port 80 belegt. Unter Windows kann dies mit Hilfe der Kommandozeile und des Taskmanagers überprüft werden. Dazu ist der Befehl \texttt{netstat -ano -t tcp} auszuführen und die Zeile zu lokalisieren, in der die lokale Adresse 0.0.0.0:80 durch die remote Adresse 0.0.0.0:0 abgehört wird. Die PID am Ende dieser Zeile kann im Task-Manager auf eine Anwendung zurückgeführt werden. In Abbildung \ref{img:netstat} ist dies dargestellt. In diesem Fall wird die Website ordnungsgemäß dargestellt. Benutzt ein anderer Prozess (außer Docker-Desktop) diesen Port, ist dieser zu terminieren.
+\subsection{Installationsprobleme}
+Haben alle Schritte vorab funktioniert und die Darstellung funktioniert trotzdem nicht, ist sicherzustellen, dass kein anderer Dienst Port 80 belegt.\\
+\\
+Unter \textbf{Windows} kann dies mit Hilfe der Kommandozeile und des Taskmanagers überprüft werden.
+Dazu ist der Befehl \texttt{netstat -ano -t tcp} auszuführen und die Zeile zu lokalisieren,
+in der die lokale Adresse 0.0.0.0:80 durch die remote Adresse 0.0.0.0:0 abgehört wird.
+Die PID am Ende dieser Zeile kann im Task-Manager auf eine Anwendung zurückgeführt werden.
+In Abbildung \ref{img:netstat} ist dies dargestellt. In diesem Fall wird die Website ordnungsgemäß dargestellt.
+Benutzt ein anderer Prozess (außer Docker-Desktop) diesen Port, ist dieser zu terminieren.
 \begin{figure}[H]
 \begin{center}
-\includegraphics[width=\textwidth]{netstat_port80}
+\includegraphics[width=0.75\textwidth]{netstat_port80}
 \caption{Überprüfung des lokalen Port 80}
 \label{img:netstat}
 \end{center}
 \end{figure}
+
+\noindent Unter \textbf{Ubuntu (Linux)} gibt man im Terminal den Befehl\\
+\texttt{sudo netstat -peeanut | grep :80} ein.
+Tauchen nun Services auf, so wird der Port 80 bereits genutzt.
+In diesem Fall kann man sich die PID merken, welche in der letzten Spalte steht vor dem Slash und dem Servicenamen.\\
+Hier einmal beispielhaft die PID hervorgehoben: \textit{\textbf{25338}/docker-proxy}.
+Anschließend gibt man im Terminal \texttt{kill <PID>} ein.
+Somit wurde das Programm gestoppt, welches den Port 80 allokiert hatte.\\
+Alternativ kann man auch einfach in der \textit{docker-compose.yml} Datei den Port anpassen,
+welcher genutzt werden soll.
+
 \section{Kurzanleitung}\label{Kurzanleitung}
 Herzlich willkommen beim BonoboBoard! Danke, dass Sie sich für ein Produkt von Optima Connect entschieden haben. 
 
@@ -260,7 +297,7 @@ In der Leistungsübersicht werden Ihre Noten angezeigt, die von Ihrem Dualis Acc
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=0.8\textwidth]{dualis}
-		\caption{BonoboBoard - Leistungsübersicht}
+		\caption{BonoboBoard - Lesitungsübersicht}
 		\label{img:dualis}
 	\end{center}
 \end{figure}
