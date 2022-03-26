@@ -5,7 +5,7 @@ lut = []
 
 currentDate = new Date();
 
-datesOfCurrentWeek = getDatesOfCurrentWeek(currentDate);
+datesOfCurrentWeek = getDatesOfCurrentWeek(new Date(currentDate));
 
 function getDayNames() {
     return ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa']
@@ -49,30 +49,31 @@ function createEmptyLut(dimensions) {
 }
 
 //return an array of dates for the current week starting on monday
-function getDatesOfCurrentWeek(currentDate) {
+function getDatesOfCurrentWeek(date) {
     var week = new Array();
     // Starting week on monday not on sunday
-    if (currentDate.getDay() != 0) {
-        currentDate.setDate((currentDate.getDate() - currentDate.getDay() + 1));
+    if (date.getDay() != 0) {
+        date.setDate((date.getDate() - date.getDay() + 1));
     }
     else {
-        currentDate.setDate((currentDate.getDate() - 6));
+        date.setDate((date.getDate() - 6));
     }
     for (var i = monday; i <= sunday; i++) {
         week.push(
-            new Date(currentDate)
+            new Date(date)
         );
-        currentDate.setDate(currentDate.getDate() + 1);
+        date.setDate(date.getDate() + 1);
     }
     return week;
 }
 
 //copied from https://www.delftstack.com/de/howto/javascript/javascript-get-week-number/
 function getWeekNumber() {
-    currentDate.setDate(currentDate.getDate() - 1);
-    var oneJan = new Date(currentDate.getFullYear(), 0, 1);
-    var numberOfDays = Math.floor((currentDate - oneJan) / (24 * 60 * 60 * 1000));
-    return Math.ceil((currentDate.getDay() + 1 + numberOfDays) / 7);
+    date = new Date(currentDate)
+    date.setDate(date.getDate() - 1);
+    var oneJan = new Date(date.getFullYear(), 0, 1);
+    var numberOfDays = Math.floor((date - oneJan) / (24 * 60 * 60 * 1000));
+    return Math.ceil((date.getDay() + 1 + numberOfDays) / 7);
 }
 
 //checks if time is between 7am and 9:45pm and between monday and saturday
