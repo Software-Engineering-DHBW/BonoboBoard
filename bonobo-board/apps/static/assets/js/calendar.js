@@ -1,11 +1,8 @@
 dayNames = getDayNames()
 monday = getMonday()
 sunday = getSunday()
-lut = []
 
 currentDate = new Date();
-
-datesOfCurrentWeek = getDatesOfCurrentWeek(new Date(currentDate));
 
 function getDayNames() {
     return ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa']
@@ -25,10 +22,10 @@ function getWeekday(ts) {
     return a.getDay() - 1;
 }
 
-//get hour from timestamp - -1 because of internal timing differing from actual time by 1 hour
+//get hour from timestamp - Needs to be UTC because of data format
 function getHour(ts) {
     var a = new Date(ts);
-    return a.getHours() - 1;
+    return a.getUTCHours();
 }
 
 function getMinute(ts) {
@@ -68,12 +65,11 @@ function getDatesOfCurrentWeek(date) {
 }
 
 //copied from https://www.delftstack.com/de/howto/javascript/javascript-get-week-number/
-function getWeekNumber() {
-    date = new Date(currentDate)
+function getWeekNumber(date) {
     date.setDate(date.getDate() - 1);
     var oneJan = new Date(date.getFullYear(), 0, 1);
     var numberOfDays = Math.floor((date - oneJan) / (24 * 60 * 60 * 1000));
-    return Math.ceil((date.getDay() + 1 + numberOfDays) / 7);
+    return Math.ceil((date.getDay() + 1 + numberOfDays) / 7) -1;
 }
 
 //checks if time is between 7am and 9:45pm and between monday and saturday
@@ -100,7 +96,7 @@ function changeMinutePresentation(time) {
 
 //creates empty lut and fills it with lecture data (one field for every quarter of an hour between 7am and 9:45pm - 6 days a week)
 function createLut(lectureData) {
-    lut = createEmptyLut([64, 6])
+    let lut = createEmptyLut([64, 6])
 
     for (let lecture in lectureData) {
         //get start and end timestamp
@@ -134,8 +130,9 @@ function isToday(day) {
 }
 
 //function to fill in the correct dates in schedule header. Marks current day as well.
-function createHeaderContent() {
+function createHeaderContent(date) {
     content = ''
+    datesOfCurrentWeek = getDatesOfCurrentWeek(date)
     for (let day = monday; day < sunday; day++) {
         content += '<th' + (isToday(day) ? ' class="today"' : '')
                 + '>' + dayNames[day] + ', '  //Mo, Di, Mi etc
@@ -146,10 +143,8 @@ function createHeaderContent() {
 }
 
 function createCalendarBody() {
-    //create look up table for lecture data (if not already present)
-    if(!lut.length){
-        lut = createLut(lectureData)
-    }
+    //create look up table for lecture data
+    let lut = createLut(lectureData)
 
     content = ''
     //creates extra row above for cosmetic reason
@@ -191,10 +186,8 @@ function createCalendarBody() {
 function getTodaysLectures(lectureData) {
     let currentDay = getWeekday(currentDate)
 
-    //create look up table for lecture data (if not already present)
-    if(!lut.length){
-        lut = createLut(lectureData)
-    }
+    //create look up table for lecture data
+    let lut = createLut(lectureData)
 
     content = ''
     for (let timeslot in lut) {

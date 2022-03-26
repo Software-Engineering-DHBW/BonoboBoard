@@ -75,10 +75,10 @@ table {
 
 .headcol {
   width: 60px;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.5);
-  padding: 0.25rem 0;
+  padding: 0 0;
   text-align: center;
   border: 0;
   position: relative;
@@ -193,12 +193,12 @@ button.secondary:focus {
         <div class="card">
           <div class="calendar">
             <header>
-              <button class="secondary" style="align-self: flex-start; flex: 0 0 1">Today</button>
+              <a class="secondary" style="align-self: flex-start; flex: 0 0 1" href="/vorlesungsplan">Today</a>
               <div class="calendar__title" style="display: flex; justify-content: center; align-items: center">
                 <!-- Date selection -->
-                <div class="icon secondary chevron_left">‹</div>
+                <div class="icon secondary chevron_left" ><a href="/vorlesungsplan/-1/{{offset}}">‹</a></div>
                 <h1 class="" id="week_of_year" style="flex: 1;"></h1>
-                <div class="icon secondary chevron_left">›</div>
+                <div class="icon secondary chevron_left"><a href="/vorlesungsplan/1/{{offset}}">›</a></div>
                 <!-- Date selection end -->
               </div>
               <div style="align-self: flex-start; flex: 0 0 1"></div>
@@ -222,9 +222,12 @@ button.secondary:focus {
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 <script>
+  let dateForHeader = new Date();
+  dateForHeader.setDate(dateForHeader.getDate() + {{offset}} * 7);
+
   //Set week of year in Header
   var week_of_year = document.getElementById("week_of_year")
-  week_of_year.innerHTML = '<strong>Kalenderwoche ' + getWeekNumber(Date.now()) + '</strong>'
+  week_of_year.innerHTML = '<strong>Kalenderwoche ' + getWeekNumber(dateForHeader) + '</strong>'
 
   //encode lecture data
   rawLectureData = "{{lectures}}"
@@ -240,7 +243,7 @@ button.secondary:focus {
 
   //create header (Dates of current week)
   content += '<table><thead><tr><th class="headcol"></th>'
-  content += createHeaderContent()
+  content += createHeaderContent(dateForHeader)
   content += '</tr></thead></table>'
 
   //create calendar body

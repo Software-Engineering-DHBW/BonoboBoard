@@ -130,46 +130,24 @@ class LectureImporter(Importer):
         self.lectures = df
         return df
 
-    def limit_days_in_list(self, days_past, days_future):
-        """Method to limit/crop the lectures-DataFrame gathered in LectureImporter.scrape() by limiting the days.
-
-        Parameters
-        ----------
-        days_past : int
-            include the last x days in the list
-        days_future : int
-            include the future x days in the list
-
-        Returns
-        -------
-        pandas.Dataframe
-            cropped lectures-DataFrame
-        """
-        d_past = datetime.today() - timedelta(days=days_past)
-        d_future = datetime.today() + timedelta(days=days_future)
-        df = self.lectures
-        return df[(df["start"] > d_past) & (df["start"] < d_future)]
-
-    def limit_weeks_in_list(self, weeks_past, weeks_future):
+    def limit_weeks_in_list(self, offset):
         """method to limit/crop the lectures-DataFrame gathered in LectureImporter.scrape() by limiting the weeks
 
         Parameters
         ----------
-        weeks_past : int
-            include the last x weeks in the list
-        weeks_future : int
-            include the future x weeks in the list
+        offset : int
+            offsets returned data by a number of weeks
 
         Returns
         -------
         pd.Dataframe
             cropped lectures-DataFrame
         """
-        w_past = datetime.today() - timedelta(days=datetime.today().weekday(), weeks=weeks_past)
-        w_future = datetime.today() + timedelta(days=-datetime.today().weekday(), weeks=weeks_future + 1)
+        w_start = datetime.today() + timedelta(days=-datetime.today().weekday(), weeks=offset)
+        w_end = w_start + timedelta(weeks=1)
         df = self.lectures
-        return df[(df["start"] > w_past.replace(hour=0, minute=0, second=0)) & (
-                df["start"] < w_future.replace(hour=0, minute=0, second=0))]
+        return df[(df["start"] > w_start.replace(hour=0, minute=0, second=0)) & (
+                df["start"] < w_end.replace(hour=0, minute=0, second=0))]
 
 
 # ?: remove (its cool that we can do it, but I dont see a reason for this to exist) @NK
