@@ -168,13 +168,11 @@ tbody tr td {
   rawLectureData = rawLectureData.replace(/&#x27;/g, '"')
   const lectureData = JSON.parse(rawLectureData);
 
-  //encode lecture data
+  //encode lecture data links
   rawLectureLinks = "{{lecture_links}}"
   rawLectureLinks = rawLectureLinks.replace(/&quot;/g, '"')
   rawLectureLinks = rawLectureLinks.replace(/&#x27;/g, '"')
   const lectureLinks = JSON.parse(rawLectureLinks);
-
-  //fill tables with lecture data
 
   //get element
   var lecture_plan = document.getElementById("lecture_plan")

@@ -224,7 +224,13 @@ function getTodaysLectures(lectureData) {
 
     content = ''
     for (let timeslot in lut) {
+        if (current = sunday){
+            break;
+        }
+
         if (lut[timeslot][currentDay] != 0) {
+            console.log(lut)
+            console.log(lut[timeslot][currentDay])
             content += '<tr><td>' + lut[timeslot][currentDay].name + '</td>'
             content += '<td>' + lut[timeslot][currentDay].start + ' - ' + lut[timeslot][currentDay].end + '</td>'
 
