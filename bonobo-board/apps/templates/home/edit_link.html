@@ -42,7 +42,7 @@
     rawMoodleData = "{{moodle_data}}"
     rawMoodleData = rawMoodleData.replace(/&quot;/g, '"')
     rawMoodleData = rawMoodleData.replace(/&#x27;/g, '"')
-    const moodleData = JSON.parse(rawMoodleData);
+    moodleData = JSON.parse(rawMoodleData);
 
     //generate moodle data Map with all bbb rooms, drop rest
     courseMap = new Map()
