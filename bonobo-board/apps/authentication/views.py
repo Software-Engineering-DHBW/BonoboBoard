@@ -81,8 +81,8 @@ def lecture_handler(course):
     except Exception:
         lecture_importer = LectureImporter()
         lecture_importer.scrape(course)
-        lecture_df = lecture_importer.lectures
-        write_lectures_to_database(lecture_df, course)
+        write_lectures_to_database(lecture_importer.lectures, course)
+        lecture_df = read_lectures_from_database(course)
     return lecture_df.to_json()
 
 def authenticate_user(request, username, password, course, lectures_json):
