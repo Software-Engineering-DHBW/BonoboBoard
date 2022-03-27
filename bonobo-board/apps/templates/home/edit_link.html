@@ -1,8 +1,5 @@
 {% load widget_tweaks %}
 
-<!-- Specific CSS goes HERE -->
-{% block stylesheets %}{% endblock stylesheets %}
-
 {% block content %}
 {% with WIDGET_ERROR_CLASS='is-invalid' %}
 <form hx-post="{{ request.path }}" hx-headers='{"X-CSRFToken":"{{ csrf_token }}"}' id="modal" class="modal-content">
@@ -12,9 +9,8 @@
 
     {% csrf_token %}
     <div class="modal-body">
-        <div>
-            Aktualisiere deinen Link für diese Veranstaltung.
-        </div>
+        <div><b>Aktualisiere deinen Link für diese Veranstaltung.</b></div>
+        <br>
         <div id="all_links"></div>
         <div class="input-group mb-3">
             {{ form.link }}
@@ -24,7 +20,7 @@
         <button type="button" class="btn btn-secondary" data-dismiss="modal">
             Abbrechen
         </button>
-        <button type="submit" id="submit_btn" class="btn btn-primary">Link speichern</button>
+        <button type="submit" id="submit_btn" class="click-text btn btn-primary">Link speichern</button>
     </div>
 </form>
 {% endwith %}
@@ -59,7 +55,7 @@
     allLinksContent = ""
     id = 0
     for (let [key, value] of courseMap) {
-        allLinksContent += '<div class="mb-3" id="course' + id + '" onClick=onCourseClick(' + id + ')>' + key + '</div>'
+        allLinksContent += '<div class="click-text mb-3" id="course' + id + '" onClick=onCourseClick(' + id + ')>' + key + '</div>'
         id++
     }
 
@@ -71,6 +67,7 @@
         origin = document.getElementById("course" + id)
         formLink.value = courseMap.get(origin.innerHTML)[1]
     }
+
 
 </script>
 {% endblock javascripts %}

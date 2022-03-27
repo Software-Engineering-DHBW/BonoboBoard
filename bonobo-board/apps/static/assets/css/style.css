@@ -63,12 +63,13 @@ File: style.css
     margin-bottom: 15px;
 }
 
-a {
+a, .click-text {
   color: #356E14;
 }
 
-a:hover {
+a:hover, .click-text:hover {
   color: #569233;
+  cursor: pointer;
 }
 
 .event {
