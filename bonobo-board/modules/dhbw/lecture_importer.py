@@ -3,6 +3,7 @@
 """Provide functionality to interact with the students timetable.
 """
 import asyncio
+import os
 from datetime import datetime, timedelta
 import pandas as pd
 import sqlalchemy
@@ -85,16 +86,7 @@ class LectureImporter(Importer):
         super().__init__()
         self.lectures = None
 
-    async def login(self):
-        """Async login method for frontend
-
-        Returns
-        -------
-        LectureImporter
-        """
-        return self
-
-    async def scrape(self, uid):
+    def scrape(self, uid):
         """Method to scrape the courses-icalendar and parse it to a pandas.DataFrame.
 
         Parameters
@@ -193,6 +185,7 @@ def link_lectures_and_links(df_lectures, df_links):
     Parameters
     ----------
     df_lectures : pd.DataFrame
+
     df_links : pd.DataFrame
 
     Returns
@@ -246,18 +239,20 @@ def read_courses_from_database():
 # ----------------- LECTURE DATABASE --------------------
 # WRITE
 def write_all_courses_lectures_to_database():
-    """ Scraping lectures of all courses. Warning: May take while.
+    """ Scraping lectures of all courses. Warning: Does only work in docker-container.
 
     Returns
     -------
     None
     """
+
+    # Change to bonobo-working directory in docker-container
+    os.chdir("/bonobo-board/")
     courses = CourseImporter()
-    print("Length Course-List:", len(courses.uid_list))
     for course in courses.uid_list:
         print(course)
         lecture_imp = LectureImporter()
-        asyncio.run(lecture_imp.scrape(course))
+        lecture_imp.scrape(course)
         df = lecture_imp.lectures
         write_lectures_to_database(df, course)
 
@@ -267,13 +262,17 @@ def write_lectures_to_database(lectures_df, course_uid):
 
     Parameters
     ----------
+    path_to_db : str
+
     lectures_df : pd.DataFrame
+
     course_uid : str
 
     Returns
     -------
-
+    None
     """
+
     engine_string = "sqlite:///lectures.db"
     engine = sqlalchemy.create_engine(engine_string)
     lectures_df.to_sql(str(course_uid), engine, if_exists='replace', index=False)
@@ -335,7 +334,7 @@ def read_lecture_links_from_database(user_uid):
     table_name = str(user_uid) + "_link"
     engine = sqlalchemy.create_engine(engine_string)
     try:
-        result =pd.read_sql("SELECT * FROM \'" + table_name + "\';", engine)      
+        result = pd.read_sql("SELECT * FROM \'" + table_name + "\';", engine)
     except Exception:
         new_df = pd.DataFrame(columns=["lecture", "link"])
         _write_lecture_links_to_database(df=new_df, user_uid=user_uid)
@@ -360,10 +359,10 @@ def add_lecture_links_to_database(user_uid, event, link):
     """
     df = read_lecture_links_from_database(user_uid)
     if (df['lecture'] == event).any():
-        #df['link'][(df['lecture'] == event).any().index] = link
+        # df['link'][(df['lecture'] == event).any().index] = link
         df.loc[df["lecture"] == event, "link"] = link
-    else: 
-        df_to_append = pd.DataFrame({"lecture": [event], "link":[link]})
+    else:
+        df_to_append = pd.DataFrame({"lecture": [event], "link": [link]})
         df = df.append(df_to_append)
 
     _write_lecture_links_to_database(df, user_uid)

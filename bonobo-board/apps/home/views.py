@@ -247,14 +247,13 @@ def get_lecture_results(current_user, offset=0):
     -------
     JSON, pd.DataFrame
     """
-    #lecture_importer = LectureImporter.read_lectures_from_database(uid)
     lecture_importer = LectureImporter()
     lecture_importer.lectures = pd.read_json(current_user.lectures)
 
     lecture_importer.lectures["start"] = pd.to_datetime(
-        lecture_importer.lectures["start"], unit="ms")
+        lecture_importer.lectures["start"])
     lecture_importer.lectures["end"] = pd.to_datetime(
-        lecture_importer.lectures["end"], unit="ms")
+        lecture_importer.lectures["end"])
 
     lecture_links_df = read_lecture_links_from_database(current_user)
     lectures_df = lecture_importer.limit_weeks_in_list(int(offset))

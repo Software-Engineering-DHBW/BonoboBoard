@@ -6,4 +6,5 @@ RUN python manage.py migrate
 RUN python manage.py collectstatic --no-input
 
 # gunicorn
-CMD ["gunicorn", "--config", "gunicorn-cfg.py", "core.wsgi"]
+CMD service cron start && \
+    gunicorn --config gunicorn-cfg.py core.wsgi
