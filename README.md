@@ -6,7 +6,7 @@
 |**Teammitglieder** | patpatwithhat, Na1k, J4ywng, Av3g3n, Firomaeor |
 
 ## User Manual
-The user manual is located in documents/product_documentation.  
+The user manual is located in [documents/product_documentation](https://github.com/Software-Engineering-DHBW/BonoboBoard/blob/main/documents/product_documentation/product_documentation.pdf).  
 Please be aware, that we only use your credentials to log in to your DHBW-Mannheim accounts (Zimbra, Moodle, Dualis). This project is non-profit, **we do not forward your personal data to anyone**.  
 Because this project is open source, it's fully transparent how we process your data.
 
