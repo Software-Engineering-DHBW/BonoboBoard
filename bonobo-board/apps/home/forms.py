@@ -85,4 +85,4 @@ class EditLinkForm(forms.Form):
                 "placeholder": "Link zur Veranstaltung",
                 "class": "form-control"
             }
-        ))
+        ),required=False)

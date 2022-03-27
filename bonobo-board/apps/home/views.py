@@ -156,6 +156,7 @@ def edit_link(request, event, link=""):
     -------
     HttpResponse
     """
+    current_user = BonoboUser.objects.get(email=request.user)
     event=event.replace("!&!", "/")
     event=event.replace("_", " ").strip()
     #replace html tokens with custom ones for making them processable
@@ -168,18 +169,18 @@ def edit_link(request, event, link=""):
         form = EditLinkForm(request.POST)
         if form.is_valid():
             new_link = form.cleaned_data.get("link")
-            write_log(str("new link: "+new_link))
             new_link = new_link.replace("https://","")
             new_link = new_link.replace("http://","")
-            write_log(str("clean link: "+new_link))
-            current_user = BonoboUser.objects.get(email=request.user)
+
+          
+     
             
             add_lecture_links_to_database(current_user, event, new_link)
             return HttpResponse(status=204) #Code == no content
     else:
         form = EditLinkForm()
 
-    return render(request, 'home/edit_link.html', {'form': form, 'link': link, 'event': event})
+    return render(request, 'home/edit_link.html', {'form': form, 'link': link, 'event': event, 'moodle_data': current_user.moodle_scraped_data})
 
 
 def pages(request):
