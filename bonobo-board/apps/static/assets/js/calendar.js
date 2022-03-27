@@ -191,9 +191,9 @@ function createCalendarBody() {
                     + (lut[index][day].duration * 100) + '%;"></label>' //size of event box
                     + lut[index][day].start + '-'
                     + lut[index][day].end + '<br>'
-                    + lut[index][day].name + '<br>'
+                    + '<b>' + lut[index][day].name + '</b><br>'
                 if (lut[index][day].room != "") {
-                    content += '<b>' + lut[index][day].room + '<br>'
+                    content += lut[index][day].room + '<br>'
                 }
                 if (currentLink != "") {
                     content += '<a href="https://' + currentLink + '">Zum Kursraum</a>'
@@ -224,7 +224,13 @@ function getTodaysLectures(lectureData) {
 
     content = ''
     for (let timeslot in lut) {
+        if (current = sunday){
+            break;
+        }
+
         if (lut[timeslot][currentDay] != 0) {
+            console.log(lut)
+            console.log(lut[timeslot][currentDay])
             content += '<tr><td>' + lut[timeslot][currentDay].name + '</td>'
             content += '<td>' + lut[timeslot][currentDay].start + ' - ' + lut[timeslot][currentDay].end + '</td>'
 
@@ -234,7 +240,6 @@ function getTodaysLectures(lectureData) {
             else {
                 content += '<td>' + lut[timeslot][currentDay].room + '</td></tr>'
             }
-
         }
     }
     return content
