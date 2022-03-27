@@ -21,7 +21,7 @@ class ReturnCodeException(Exception):
         if not msg:
             self.msg = (
                 f"the returned STATUS CODE [{self.status_code}]"
-                f"differs from the expected STATUS CODE [{self.return_code}]"
+                f" differs from the expected STATUS CODE [{self.return_code}]"
             )
         else:
             self.msg = msg
