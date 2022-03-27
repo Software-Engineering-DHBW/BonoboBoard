@@ -16,10 +16,6 @@ body {
   height: 100vh;
 }
 
-.outer {
-  position:relative;
-}
-
 .calendar {
   margin: 0 auto;
   min-width: 500px;
@@ -90,6 +86,7 @@ td {
   text-align: center;
   position: relative;
 }
+
 tr:nth-child(odd) td:not(.headcol) {
   border-bottom: 1px solid #e8e8e8;
 }
@@ -105,69 +102,6 @@ tbody tr td {
   height: 20px;
   padding: 0.25rem 0.25rem 0 0.25rem;
   width: auto;
-}
-
-.event {
-  background: #7CB45B ;
-  color: white;
-  border-radius: 2px;
-  text-align: left;
-  font-size: 0.875rem;
-  padding: 0.5rem;
-  overflow-x: hidden;
-  transition: all 0.2s;
-  cursor: pointer;
-  position: absolute;
-  z-index: 1;
-  width: 96%;
-  height: 84%;
-}
-
-.event:hover {
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
-  background: #9BCA7F;
-}
-
-a.secondary {
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background: white;
-  padding: 0.5rem 0.75rem;
-  font-size: 14px;
-  border-radius: 2px;
-  color: #7CB45B;
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  font-weight: 500;
-}
-
-a.secondary:hover {
-  background: #fafafa;
-}
-a.secondary:active {
-  box-shadow: none;
-}
-a.secondary:focus {
-  outline: 0;
-}
-
-/** < > signs to change week */
-.icon {
-  font-size: 1.5rem;
-  margin: 0 1rem;
-  text-align: center;
-  cursor: pointer;
-  vertical-align: middle;
-  position: relative;
-  top: -2px;
-  color: #7CB45B;
-}
-
-.icon:hover {
-  color: #53c213;
-}
-
-.today {
-  color: #53c213;
 }
 </style>
 {% endblock stylesheets %}
@@ -194,12 +128,12 @@ a.secondary:focus {
         <div class="card">
           <div class="calendar">
             <header>
-              <a class="secondary" style="align-self: flex-start; flex: 0 0 1" href="/vorlesungsplan">Heute</a>
-              <div class="calendar__title" style="display: flex; justify-content: center; align-items: center">
+              <a class="todays-btn" href="/vorlesungsplan">Heute</a>
+              <div style="display: flex; justify-content: center; align-items: center">
                 <!-- Date selection -->
-                <div><a class="icon" href="/vorlesungsplan/-1/{{offset}}">‹</a></div>
-                <h1 class="" id="week_of_year" style="flex: 1;"></h1>
-                <div><a class="icon" href="/vorlesungsplan/1/{{offset}}">›</a></div>
+                <div><a class="prev-ic" href="/vorlesungsplan/-1/{{offset}}">‹</a></div>
+                <h1 id="week_of_year" style="flex: 1; margin-top:7px"></h1>
+                <div><a class="next-ic" href="/vorlesungsplan/1/{{offset}}">›</a></div>
                 <!-- Date selection end -->
               </div>
               <div style="align-self: flex-start; flex: 0 0 1"></div>
