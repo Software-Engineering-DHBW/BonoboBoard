@@ -17,7 +17,7 @@ from dhbw.lecture_importer import CourseImporter, LectureImporter
 from dhbw.moodle import MoodleImporter
 from dhbw.zimbra import ZimbraHandler
 
-from dhbw.lecture_importer import LectureImporter, read_lectures_from_database
+from dhbw.lecture_importer import LectureImporter, read_lectures_from_database, write_lectures_to_database
 
 BonoboUser = get_user_model()
 
@@ -52,7 +52,7 @@ def login_view(request):
             if not is_valid_course(course_list, course):
                 msg = 'Unbekannter Kurs'
                 return render(request, "accounts/login.html", {"form": form, "msg": msg, "course_list": course_list})
-            lectures_json = lecture_handler(course_importer, course)
+            lectures_json = lecture_handler(course_importer.get_course_uid(course))
             user, err_msg = authenticate_user(request, username, password, course, lectures_json)
 
             if user is not None:
@@ -65,16 +65,24 @@ def login_view(request):
 
     return render(request, "accounts/login.html", {"form": form, "msg": msg, "course_list": course_list})
 
-def lecture_handler(course_importer, course):
-    write_log("lecture_handler")
-    try:
-        lecture_df = read_lectures_from_database(course_importer.get_course_uid(course))
-    except Exception:
-        write_log("in exception")
-        lecture_importer = LectureImporter()
-        asyncio.run(lecture_importer.scrape(course_importer.get_course_uid(course)))
-        lecture_df = lecture_importer.lectures
+def lecture_handler(course):
+    """ Handles database communication. Pulls latest entries in lectures.db or creates the table if it does not exist.
 
+    Parameters
+    ----------
+    course : str
+        uid of the course to get the lectures from
+    Returns
+    -------
+    json
+    """
+    try:
+        lecture_df = read_lectures_from_database(course)
+    except Exception:
+        lecture_importer = LectureImporter()
+        lecture_importer.scrape(course)
+        lecture_df = lecture_importer.lectures
+        write_lectures_to_database(lecture_df, course)
     return lecture_df.to_json()
 
 def authenticate_user(request, username, password, course, lectures_json):
