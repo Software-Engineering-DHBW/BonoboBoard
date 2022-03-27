@@ -196,7 +196,7 @@ function createCalendarBody() {
                     content += lut[index][day].room + '<br>'
                 }
                 if (currentLink != "") {
-                    content += '<a href="https://' + currentLink + '">Zum Kursraum</a>'
+                    content += '<a id="alink" onclick="event.stopPropagation()" href="https://' + currentLink + '" target="_blank" rel="noopener noreferrer">Zum Kursraum</a>'
                 }
                 content += '</div></td>'
             }
@@ -211,9 +211,7 @@ function createCalendarBody() {
     return content
 }
 
-function onLinkClick(link) {
-    console.log(link)
-}
+
 
 //creates table of lectures for current day
 function getTodaysLectures(lectureData) {

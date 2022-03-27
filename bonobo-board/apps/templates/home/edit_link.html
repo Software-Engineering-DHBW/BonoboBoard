@@ -1,4 +1,3 @@
-{% block title %} Dashboard {% endblock %}
 {% load widget_tweaks %}
 
 <!-- Specific CSS goes HERE -->
@@ -13,10 +12,10 @@
 
     {% csrf_token %}
     <div class="modal-body">
-        <div >
+        <div>
             Aktualisiere deinen Link für diese Veranstaltung.
         </div>
-
+        <div id="all_links"></div>
         <div class="input-group mb-3">
             {{ form.link }}
         </div>
@@ -25,7 +24,7 @@
         <button type="button" class="btn btn-secondary" data-dismiss="modal">
             Abbrechen
         </button>
-        <button type="submit" class="btn btn-primary" onclick="parent.location.reload(true)">Link speichern</button>
+        <button type="submit" id="submit_btn" class="btn btn-primary">Link speichern</button>
     </div>
 </form>
 {% endwith %}
@@ -34,7 +33,44 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 <script>
+    button = document.getElementById("submit_btn")
+    button.addEventListener("click", () => {
+        window.setTimeout(() => {
+            window.parent.location.reload(true)
+        }, 1000)
+    })
+    rawMoodleData = "{{moodle_data}}"
+    rawMoodleData = rawMoodleData.replace(/&quot;/g, '"')
+    rawMoodleData = rawMoodleData.replace(/&#x27;/g, '"')
+    const moodleData = JSON.parse(rawMoodleData);
 
+    //generate moodle data Map with all bbb rooms, drop rest
+    courseMap = new Map()
+    moodleData["courses"].forEach(element => {
+        if (element["bbb_rooms"].length != 0) {
+            console.log(element["bbb_rooms"])
+            element["bbb_rooms"].forEach(bbb_room => {
+                courseMap.set(element["name"]+': ' + bbb_room["name"]  , [bbb_room["name"], bbb_room["url"]])
+            })
+        }
+    });
+
+    allLinks = document.getElementById("all_links")
+    allLinksContent = ""
+    id = 0
+    for (let [key, value] of courseMap) {
+        allLinksContent += '<div class="mb-3" id="course' + id + '" onClick=onCourseClick(' + id + ')>' + key + '</div>'
+        id++
+    }
+
+    allLinks.innerHTML += allLinksContent
+
+    formLink = document.getElementById("id_link")
+
+    function onCourseClick(id) {
+        origin = document.getElementById("course" + id)
+        formLink.value = courseMap.get(origin.innerHTML)[1]
+    }
 
 </script>
 {% endblock javascripts %}
