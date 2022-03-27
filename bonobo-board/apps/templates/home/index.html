@@ -53,7 +53,9 @@
                         <!-- GPA Display start -->
                         <div class="card">
                             <div class="card-header">
-                                <h5>Leistungsübersicht</h5>
+
+                                <h5>Leistungsübersicht<span style="padding-left: 20px;"> <i id="icon"
+                                            class="feather icon-eye"></i></span></h5>
                             </div>
                             <div class="card-block">
                                 <div id="gpa" class="col-sm-12"></div>
@@ -83,11 +85,30 @@
     rawDualisData = rawDualisData.replace(/&#x27;/g, '"')
     const dualisData = JSON.parse(rawDualisData);
 
+    //show_hide gpa click
+    let gpa = document.getElementById("gpa")
+    let icon = document.getElementById("icon")
+    icon.addEventListener("click", () => {
+        if (icon.className == "feather icon-eye") {
+            icon.className = "feather icon-eye-off"
+            if (gpa !== null && dualisData["gpa_total"] !== undefined) {
+                gpa.innerHTML = '<p><b>GPA-Total:</b> ' + dualisData["gpa_total"] + '</p>'
+                console.log("off")
+            }
+        } else {
+            icon.className = "feather icon-eye"
+            if (gpa !== null && dualisData["gpa_total"] !== undefined) {
+                gpa.innerHTML = '<p><b>GPA-Total:</b> Ausgeblendet </p>'
+                console.log("on")
+            }
+        }
+    })
+
     //show gpa
-    var gpa = document.getElementById("gpa")
     if (gpa !== null && dualisData["gpa_total"] !== undefined) {
-        gpa.innerHTML += '<p><b>GPA-Total:</b> ' + dualisData["gpa_total"] + '</p>'
-    }
+                gpa.innerHTML = '<p><b>GPA-Total:</b> Ausgeblendet </p>'
+            }
+
 
     //encode lecture data
     rawLectureData = "{{lectures}}"
