@@ -1,4 +1,5 @@
-#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
 """Solo-Script to be included in a cronjob in the docker-container. Scrapes all lectures and writes them to a database.
 """
 
