@@ -1,10 +1,10 @@
 @font-face {
   font-family: "custom";
-  src:  url('../fonts/icomoon.eot?2du16w');
-  src:  url('../fonts/icomoon.eot?2du16w#iefix') format('embedded-opentype'),
-    url('../fonts/icomoon.ttf?2du16w') format('truetype'),
-    url('../fonts/icomoon.woff?2du16w') format('woff'),
-    url('../fonts/icomoon.svg?2du16w#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?uaifeh');
+  src:  url('fonts/icomoon.eot?uaifeh#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?uaifeh') format('truetype'),
+    url('fonts/icomoon.woff?uaifeh') format('woff'),
+    url('fonts/icomoon.svg?uaifeh#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,6 +25,9 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-Bonobo:before {
+.icon-Bonobo_right:before {
   content: "\e900";
+}
+.icon-Bonobo_left:before {
+  content: "\e901";
 }
