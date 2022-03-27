@@ -115,6 +115,7 @@ def authenticate_user(request, username, password, course, lectures_json):
         return None, err_msg
 
     if BonoboUser.objects.filter(email=username).exists():
+        # No password should be stored --> pre-defined password-field is set to the username
         bonobo_user = authenticate(request, email=username, password=username)
         if bonobo_user is None:
             return None, "Benutzer AUA!!!"

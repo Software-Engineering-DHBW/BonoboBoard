@@ -30,7 +30,7 @@ RUN pip install -r ./modules/dhbw/requirements.txt
 
 RUN apt-get update && apt-get -y install cron
 
-RUN echo "* * * * * root /usr/local/bin/python3 /bonobo-board/modules/lecture_scraper_cronjob.py" > /etc/cron.d/dhbw_lectures
+RUN echo "0 */6 * * * root /usr/local/bin/python3 /bonobo-board/modules/lecture_scraper_cronjob.py" > /etc/cron.d/dhbw_lectures
 
 RUN chmod 0644 /etc/cron.d/dhbw_lectures
 
