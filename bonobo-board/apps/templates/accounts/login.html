@@ -2,20 +2,28 @@
 
 {% block title %} Login {% endblock %}
 
+{% block stylesheets %}
+<style>
+    body {
+        background-color: green;
+    }
+</style>
+{% endblock stylesheets %}
 {% block content %}
+
 
 <div class="auth-wrapper">
     <div class="auth-content">
         <div class="auth-bg">
-            <span class="r"></span>
-            <span class="r s"></span>
-            <span class="r s"></span>
-            <span class="r"></span>
+            <span class="r"><i class="custom icon-Bonobo" style="font-size:100px; transform: scale(-1, 1);"></i></span>
+            <span class="r s"><i class="custom icon-Bonobo" style="font-size:45px;"></i></span>
+            <span class="r s"><i class="custom icon-Bonobo" style="font-size:45px;"></i></span>
+            <span class="r"><i class="custom icon-Bonobo" style="font-size:100px;"></i></span>
         </div>
         <div class="card">
             <div class="card-body text-center">
                 <div class="mb-4">
-                    <i class="feather icon-unlock auth-icon"></i>
+                    <i class="custom icon-Bonobo" style="font-size:45px;"></i>
                 </div>
                 <h3 class="mb-4">Login</h3>
 
@@ -62,9 +70,9 @@
 {% block javascripts %}
 <script>
     error_msg = document.getElementById("error_msg")
-    setTimeout(()=> { 
-        error_msg.textContent="Gib deine DHBW Login-Daten ein."
-        error_msg.style.color="#000"
+    setTimeout(() => {
+        error_msg.textContent = "Gib deine DHBW Login-Daten ein."
+        error_msg.style.color = "#000"
     }, 5000)
 
     element = document.getElementsByName("{{ form.course.name }}")
@@ -72,20 +80,20 @@
 
     loading = document.getElementById("loading")
     button = document.getElementById("login")
-    button.addEventListener("click", function() {
+    button.addEventListener("click", function () {
         loading.style.visibility = "visible";
         button.disabled = true
         button.parentElement.submit()
     });
 
     let rawCourseImport = "{{ course_list }}"
-    try{
+    try {
         rawCourseImport = rawCourseImport.replace(/&#x27;/g, '"')
         rawCourseImport = rawCourseImport.replace(/&quot;/g, '"')
-    }catch(e){}
+    } catch (e) { }
     const courseList = JSON.parse(rawCourseImport);
-   
-  
+
+
     autocomplete(courseFiled, courseList);
 </script>
 {% endblock javascripts %}
