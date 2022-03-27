@@ -2,7 +2,7 @@
 
 """Provide functionality to interact with the students timetable.
 """
-
+import asyncio
 from datetime import datetime, timedelta
 import pandas as pd
 import sqlalchemy
@@ -147,40 +147,6 @@ class LectureImporter(Importer):
                 df["start"] < w_end.replace(hour=0, minute=0, second=0))]
 
 
-# ?: remove (its cool that we can do it, but I dont see a reason for this to exist) @NK
-# NK: Its cool that we can do it, but its also mandatory (load all courses for database with cronjob) @Anonymous
-def all_courses_lectures(limit_days_past=14, limit_days_future=14):
-    """Gather lectures for all available courses.
-
-    Parameters
-    ----------
-    limit_days_past : int
-        Only save lectures of the last x days.
-    limit_days_future : int
-        Only save lectures of the future x days.
-    Returns
-    -------
-    list
-        Containing 2 lists (all_courses (uid), all_lectures (array with all lectures for every course).
-    """
-    courses = CourseImporter()
-    all_lectures = pd.DataFrame(columns=["lecture", "location", "start", "end", "c_uid"])  # foreign key c_uid
-    print(len(courses.uid_list))
-    course_data = list(zip(courses.uid_list, courses.course_list))
-    all_courses = pd.DataFrame(course_data, columns=["c_uid", "name"])
-    i = 0
-    for course in courses.uid_list:
-        i += 1
-        if i > 0 and i % 10 == 0:
-            print(i)
-        lectures = LectureImporter(course)
-        df = lectures.limit_days_in_list(limit_days_past, limit_days_future).copy()
-        df['c_uid'] = course
-        all_lectures = pd.concat([all_lectures, df], ignore_index=True)
-
-    return [all_courses, all_lectures]
-
-
 # -------------- HELPERS --------------------
 
 def _get_unique_lectures(df_lectures):
@@ -289,8 +255,10 @@ def write_all_courses_lectures_to_database():
     courses = CourseImporter()
     print("Length Course-List:", len(courses.uid_list))
     for course in courses.uid_list:
-        lectures = LectureImporter(course)
-        df = lectures.limit_days_in_list(14, 14).copy()
+        print(course)
+        lecture_imp = LectureImporter()
+        asyncio.run(lecture_imp.scrape(course))
+        df = lecture_imp.lectures
         write_lectures_to_database(df, course)
 
 

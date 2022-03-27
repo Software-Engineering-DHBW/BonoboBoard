@@ -11,10 +11,12 @@ COPY . .
 # remove unwanted files
 RUN rm -rf CHANGELOG.md \
     docker-compose.yml \
-    Dockerfile \
+    Dockerfile.base \
+    Dockerfile.django \
     LICENSE.md \
     nginx/ \
     README.md
+
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -25,3 +27,13 @@ ENV PYTHONPATH /bonobo-board/modules
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 RUN pip install -r ./modules/dhbw/requirements.txt
+
+RUN apt-get update && apt-get -y install cron
+
+COPY cronjobs /etc/cron.d/cronjobs
+
+RUN chmod 0644 /etc/cron.d/cronjobs
+
+Run chmod +x /bonobo-board/modules/lecture_scraper_cronjob.py
+
+RUN crontab /etc/cron.d/cronjobs
