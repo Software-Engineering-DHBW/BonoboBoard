@@ -5,29 +5,35 @@
 {% block stylesheets %}
 <style>
     body {
-        background-color: green;
+        background-color: #EFEFEF;
     }
-    .bonobo1 {
+    .bonobo1{
         font-size:200px;
-        color: pink;
+        color: #7CB45B;
+    }
+    .bonobo2{
+        font-size:150px;
+        color: #ADDA92;
+    }
+    .bonobo3{
+        font-size:200px;
+        color: #569233;
     }
 </style>
 {% endblock stylesheets %}
+
 {% block content %}
-
-
 <div class="auth-wrapper">
     <div class="auth-content">
         <div class="auth-bg">
-            <span class="r"><i class="custom icon-Bonobo bonobo1"></i></span>
-            <span class="r s"><i class="custom icon-Bonobo" style="font-size:45px;"></i></span>
-            <span class="r s"><i class="custom icon-Bonobo" style="font-size:45px;"></i></span>
-            <span class="r"><i class="custom icon-Bonobo" style="font-size:100px;"></i></span>
+            <span class="r"><i class="custom icon-Bonobo_right bonobo1"></i></span>
+            <span class="r s"><i class="custom icon-Bonobo_right bonobo2"></i></span>
+            <span class="r s"><i class="custom icon-Bonobo_left bonobo3"></i></span>
         </div>
         <div class="card">
             <div class="card-body text-center">
                 <div class="mb-4">
-                    <i class="custom icon-Bonobo" style="font-size:45px;"></i>
+                    <i class="custom icon-Bonobo_right" style="font-size:45px;"></i>
                 </div>
                 <h3 class="mb-4">Login</h3>
 
