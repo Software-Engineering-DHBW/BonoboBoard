@@ -41,8 +41,8 @@ def index(request):
     """
 
     bonobo_user = BonoboUser.objects.get(email=request.user)
-    lectures = get_lecture_results(bonobo_user)
-    return render(request, 'home/index.html', {"dualis_data": bonobo_user.dualis_scraped_data, "lectures": lectures, "link": "alter_bluebutton_link", "event": "Programmieren"})
+    lectures, lecture_links = get_lecture_results(bonobo_user)
+    return render(request, 'home/index.html', {"dualis_data": bonobo_user.dualis_scraped_data, "lecture_links": lecture_links, "lectures": lectures, "link": "alter_bluebutton_link", "event": "Programmieren"})
 
 
 @login_required(login_url="/login/")

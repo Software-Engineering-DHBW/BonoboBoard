@@ -105,17 +105,31 @@
     rawLectureData = "{{lectures}}"
     rawLectureData = rawLectureData.replace(/&quot;/g, '"')
     rawLectureData = rawLectureData.replace(/&#x27;/g, '"')
-    const lectureData = JSON.parse(rawLectureData);
+    const lectureData = JSON.parse(rawLectureData)
+
+     //encode lecture data links
+    rawLectureLinks = "{{lecture_links}}"
+    rawLectureLinks = rawLectureLinks.replace(/&quot;/g, '"')
+    rawLectureLinks = rawLectureLinks.replace(/&#x27;/g, '"')
+    const lectureLinks = JSON.parse(rawLectureLinks);
 
     //show lecture plan
     let lecturePlan = document.getElementById("lecture_plan")
     let content = ''
-    content += ' <table class="table"><thead><tr><th>Veranstaltung</th><th>Uhrzeit</th><th>Raum</th></tr></thead> <tbody>'
 
-    content += getTodaysLectures(lectureData)
+    console.log(getTodaysLectures(lectureData))
 
-    content += '  </tbody> </table>'
+    if(getTodaysLectures(lectureData)){
+        content += ' <table class="table"><thead><tr><th>Veranstaltung</th><th>Uhrzeit</th><th>Raum</th></tr></thead> <tbody>'
+        content += getTodaysLectures(lectureData)
+        content += '  </tbody> </table>'
+    }
+    else {
+        content += '  <p> Du hast heute frei! </p>'
+    }
+
     lecturePlan.innerHTML += content
+
 
 </script>
 {% endblock javascripts %}
