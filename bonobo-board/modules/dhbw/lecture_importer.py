@@ -3,6 +3,7 @@
 """Provide functionality to interact with the students timetable.
 """
 import asyncio
+import os
 from datetime import datetime, timedelta
 import pandas as pd
 import sqlalchemy
@@ -246,14 +247,16 @@ def read_courses_from_database():
 # ----------------- LECTURE DATABASE --------------------
 # WRITE
 def write_all_courses_lectures_to_database():
-    """ Scraping lectures of all courses. Warning: May take while.
+    """ Scraping lectures of all courses. Warning: Does only work in docker-container.
 
     Returns
     -------
     None
     """
+
+    # Change to bonobo-working directory in docker-container
+    os.chdir("/bonobo-board/")
     courses = CourseImporter()
-    print("Length Course-List:", len(courses.uid_list))
     for course in courses.uid_list:
         print(course)
         lecture_imp = LectureImporter()
@@ -267,13 +270,17 @@ def write_lectures_to_database(lectures_df, course_uid):
 
     Parameters
     ----------
+    path_to_db : str
+
     lectures_df : pd.DataFrame
+
     course_uid : str
 
     Returns
     -------
 
     """
+
     engine_string = "sqlite:///lectures.db"
     engine = sqlalchemy.create_engine(engine_string)
     lectures_df.to_sql(str(course_uid), engine, if_exists='replace', index=False)
