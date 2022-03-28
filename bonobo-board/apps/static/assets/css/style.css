@@ -1801,6 +1801,7 @@ p.text-muted {
   display: -ms-flexbox;
   display: flex;
   min-height: 70px;
+  min-width: 370px;
   padding: 0;
   position: relative;
   top: 0;
@@ -2112,6 +2113,14 @@ p.text-muted {
   }
 }
 
+@media only screen and (max-width: 991px) {
+  .col-6 {
+    max-width: 100%;
+    min-width: 350px;
+    width: 100%;
+  }
+}
+
 /* header css end */
 /* menu[ vartical ] css start */
 .mobile-menu {
@@ -2126,10 +2135,11 @@ p.text-muted {
           justify-content: center;
   width: 37px;
   height: 70px;
-  position: absolute;
+  position: static;
   right: 0;
   top: 0;
   padding: 0 10px;
+  margin-left: 2%;
 }
 .mobile-menu span {
   position: relative;

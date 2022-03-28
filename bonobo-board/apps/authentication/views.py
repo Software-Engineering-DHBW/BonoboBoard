@@ -7,6 +7,7 @@ import asyncio
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, get_user_model, authenticate
+from django.views.decorators.csrf import csrf_protect
 
 from .forms import LoginForm
 from .models import BonoboUser
@@ -21,7 +22,7 @@ from dhbw.lecture_importer import LectureImporter, read_lectures_from_database, 
 
 BonoboUser = get_user_model()
 
-
+@csrf_protect
 def login_view(request):
     """on login view is opened, show window login.html
     authenticate user
@@ -38,16 +39,22 @@ def login_view(request):
     if request.user.is_authenticated:
         return redirect("/logout/")
 
-    form = LoginForm(request.POST or None)
     course_importer = CourseImporter()
     course_list = course_importer.course_list
-    msg = None
+    msg = "Gib deine DHBW Login-Daten ein."
+    write_log("before post")
     if request.method == "POST":
-
+        form = LoginForm(request.POST)
+        write_log("get form")
         if form.is_valid():
-            username = form.cleaned_data.get("username")
-            password = form.cleaned_data.get("password")
-            course = form.cleaned_data.get("course")
+            write_log("form valid")
+            username = form.cleaned_data.get("username").strip()
+            password = form.cleaned_data.get("password").strip()
+            course = form.cleaned_data.get("course").strip()
+            if not username or not password or not course:
+                write_log("user empty")
+                msg = 'Ungültige Eingabedaten'
+                return render(request, "accounts/login.html", {"form": form, "msg": msg, "course_list": course_list}) 
 
             if not is_valid_course(course_list, course):
                 msg = 'Unbekannter Kurs'
@@ -62,6 +69,8 @@ def login_view(request):
                 msg = err_msg
         else:
             msg = 'Ungültige Eingabedaten'
+    else:
+        form = LoginForm()
 
     return render(request, "accounts/login.html", {"form": form, "msg": msg, "course_list": course_list})
 
@@ -127,7 +136,14 @@ def authenticate_user(request, username, password, course, lectures_json):
     bonobo_user.user_objects["moodle"] = moodle_result
     bonobo_user.user_objects["zimbra"] = zimbra_result
 
-    asyncio.run(load_user_data(bonobo_user, course))
+    loop = get_new_event_loop()
+    status = loop.run_until_complete(load_user_data(bonobo_user, course))
+    loop.close()
+
+    if status:
+        return None, status
+
+    bonobo_user.user_objects["zimbra"].get_contacts()
 
     # save scraped data to user in db
     bonobo_user.dualis_scraped_data = bonobo_user.user_objects["dualis"].scraped_data
@@ -229,12 +245,13 @@ async def load_user_data(bonobo_user, course):
 
     try:
         await asyncio.gather(dualis_future, moodle_future, zimbra_future)
-    except LoginRequiredException:
-        # TODO something meaningful x)
-        pass
-    except ServiceUnavailableException:
-        # TODO RENDER 500 ERROR
-        pass
+    except LoginRequiredException as login_err:
+        error_msg = f"{login_err}"
+        return error_msg
+    except ServiceUnavailableException as service_err:
+        error_msg = f"{service_err}"
+        return error_msg
+    return None
 
 
 def write_log(msg):

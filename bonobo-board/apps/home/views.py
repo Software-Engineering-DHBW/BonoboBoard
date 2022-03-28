@@ -106,14 +106,7 @@ def email(request):
     else:
         form = ContactForm()
 
-    # current_user.user_objects["zimbra"].get_contacts()
-    # contacts = current_user.user_objects["zimbra"].contacts
-    # user_contacts = []
-    # for contact in contacts:
-        # user_contacts.append(contact["email"])
-
-    # , 'user_contacts': user_contacts
-    return render(request, 'home/email.html', {'form': form, 'msg': msg})
+    return render(request, 'home/email.html', {'form': form, 'msg': msg, 'contacts': current_user.zimbra_contacts})
 
 
 @login_required(login_url="/login/")
@@ -172,9 +165,6 @@ def edit_link(request, event, link=""):
             new_link = new_link.replace("https://","")
             new_link = new_link.replace("http://","")
 
-          
-     
-            
             add_lecture_links_to_database(current_user, event, new_link)
             return HttpResponse(status=204) #Code == no content
     else:
