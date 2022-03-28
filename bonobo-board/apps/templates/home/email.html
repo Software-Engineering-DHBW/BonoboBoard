@@ -60,7 +60,6 @@
     rawMsg = "{{ msg }}"
     rawMsg = rawMsg.replace(/&#x27;/g, '"')
     const msg = JSON.parse(rawMsg);
-    console.log(msg[0])
     if (msg[0] == "error") {
         error_msg_field.style.color = "#ff0000"
     } else {
@@ -71,16 +70,12 @@
     setTimeout(() => {
         error_msg_field.textContent = ""
     }, 5000)
-    /* element = document.getElementsByName("{{ form.empfänger.name }}")
-    recipients = element[0]
+    
+    rawContacts = "{{ contacts }}"
+    rawContacts = rawContacts.replace(/&#x27;/g, '"')
+    rawContacts = rawContacts.replace(/None/g, null)
+    const contacts = JSON.parse(rawContacts);
+    console.log(contacts)
 
-    let rawUserContacts = "{{ user_contacts }}"
-    try{
-        rawUserContacts = rawUserContacts.replace(/&#x27;/g, '"')
-        rawUserContacts = rawUserContacts.replace(/&quot;/g, '"')
-    }catch(e){}
-    const userContacts = JSON.parse(rawUserContacts);
-
-    autocomplete(recipients, userContacts) */
 </script>
 {% endblock javascripts %}
