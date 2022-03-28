@@ -323,7 +323,8 @@ class DualisImporter(ImporterSession):
         except LoginRequiredException as log_req_err:
             raise log_req_err
 
-        self._fill_grades_into_dict(r_grades.text)
+        utf_text = r_grades.text.encode(r_grades.encoding).decode("utf-8")
+        self._fill_grades_into_dict(utf_text)
 
     def logout(self):
         """Sends a logout request (log the user out of the dualis session).
