@@ -4,7 +4,6 @@ Copyright (c) 2019 - present AppSeed.us
 """
 import ast
 from distutils.fancy_getopt import wrap_text
-from email import header
 import json
 
 import pandas as pd
@@ -12,7 +11,7 @@ from django import template
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
@@ -61,7 +60,7 @@ def leistungsuebersicht(request):
 
 
 @login_required(login_url="/login/")
-def email(request):
+def email(request, inc_msg=""):
     """on email page is opened, return home/email.html
     on send email click, check input and send mail by ZimbraHandler
 
@@ -82,7 +81,8 @@ def email(request):
     zimbra.contacts = current_user.zimbra_contacts
     zimbra.headers = ast.literal_eval(current_user.zimbra_headers)
 
-    msg = ["error", ""]
+    msg = ""
+    
     if request.method == 'POST':
         form = ContactForm(request.POST)
 
@@ -97,11 +97,9 @@ def email(request):
             }
 
             zimbra.send_mail(mail_dict)
-            msg = ["info", "Email erfolgreich gesendet!"]
-            form = ContactForm()  # clear the from
-            return render(request, 'home/email.html', {'form': form, 'msg': msg})
+            return redirect("/email/success")
         else:
-            msg[1] = "Fehlerhafte Eingabe"
+            msg = "Fehlerhafte Eingabe"
 
     else:
         form = ContactForm()
