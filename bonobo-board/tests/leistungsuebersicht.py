@@ -26,9 +26,11 @@ args = parser.parse_args()
 def suite():
     """import all tests regarding the 'Leistungsübersicht' page"""
     test_suite = TestSuite()
-    browsers = list(args.browser)
+    browsers = args.browser
     if not browsers:
         browsers = ["firefox", "chrome", "brave"]
+    else:
+        browsers = list(browsers)
     TestPagesUI().set_drivers(browsers)
     test_suite.addTest(TestDualisImporter.cls_suite())
     test_suite.addTest(TestPagesUI.cls_suite())
