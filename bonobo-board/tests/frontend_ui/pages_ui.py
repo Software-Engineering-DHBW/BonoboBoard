@@ -5,10 +5,9 @@
 
 from os import environ, devnull
 import unittest
-from unittest import TestCase
+from unittest import TestCase, TestSuite
 
 from selenium import webdriver
-#from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -42,10 +41,11 @@ def fill_input_form(driver):
     cookie = driver.get_cookies()[0]
     driver.add_cookie({"name": cookie["name"], "value": cookie["value"]})
 
-def add_browsers_to_test():
+def add_browsers_to_test(drivers):
     """add browsers to the unittest"""
     browsers = []
     for elem in drivers:
+        elem = str(elem)
         if elem == "chrome":
             options = webdriver.ChromeOptions()
             options.add_experimental_option("detach", True)
@@ -88,15 +88,14 @@ def url_changed(browser, url):
 class TestPagesUI(TestCase):
     """Test Class for the frontend UI"""
     def setUp(self):
-        """set up for browser tests"""
-        self.browsers = add_browsers_to_test()
+        """get the browser objects"""
+        self.browsers = add_browsers_to_test(self.drivers)
 
     def test_everything(self):
         """full feature test"""
         check_env_vars_set()
         for browser in self.browsers:
             browser.get(fconf.URL)
-            login_url = browser.current_url
             self.assertEqual("BonoboBoard - Login", browser.title)
             # fill login form
             fill_input_form(browser)
@@ -105,8 +104,6 @@ class TestPagesUI(TestCase):
             login_btn.click()
             wait = WebDriverWait(browser,10)
             wait.until(EC.url_changes(fconf.URL))
-            #wait = WebDriverWait(browser, 10)
-            #wait.until(lambda browser: browser.current_url != login_url)
             browser.implicitly_wait(3)
             icon_btn = browser.find_element(by=By.ID, value="icon")
             icon_btn.click()
@@ -127,9 +124,20 @@ class TestPagesUI(TestCase):
         for browser in self.browsers:
             browser.quit()
 
+    @classmethod
+    def cls_suite(cls):
+        """make a suite for this test"""
+        cls_suite = TestSuite()
+        cls_suite.addTest(cls("test_everything"))
+        return cls_suite
+
+    @classmethod
+    def set_drivers(cls, driver_list):
+        """set drivers for the test"""
+        cls.drivers = driver_list.copy()
+
 # YOU CAN SAFELY IGNORE THE WARNING ABOUT RESOURCEWARNING
 # see here for details: https://github.com/seleniumhq/selenium-google-code-issue-archive/issues/5923
 if __name__ == "__main__":
-    global drivers
-    drivers = ["chrome", "firefox", "brave"]
+    TestPagesUI().set_drivers(["firefox", "chrome", "brave"])
     unittest.main(verbosity=2)
