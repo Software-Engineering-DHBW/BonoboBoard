@@ -26,23 +26,39 @@
         <div class="main-body">
             <div class="page-wrapper">
                 <!-- [ Main Content ] start -->
-                <div class="col-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Email <span id="error_msg_field" style="color: #ff0000; padding-left: 40px;"> {{ msg
-                                    | safe }}</span></h5>
+                <!-- write Email -->
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Email <span id="error_msg_field" style="color: #ff0000; padding-left: 40px;"> {{ msg
+                                        | safe }}</span></h5>
+                            </div>
+                            <div class="card-block">
+                                <!-- Form start -->
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        {{ form }}
+                                    </div>
+                                    <button type="submit" id="btn_senden" class="btn btn-primary" title="Sende Email"
+                                        data-toggle="tooltip">Sende Email</button>
+                                </form>
+                                <!-- Form end -->
+                            </div>
                         </div>
-                        <div class="card-block">
-                            <!-- Form start -->
-                            <form method="POST">
-                                {% csrf_token %}
+                    </div>
+                    <!-- show contacts -->
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Kontakte</span></h5>
+                            </div>
+                            <div class="card-block">
                                 <div class="form-group">
-                                    {{ form }}
+                                    <div id="contacts"> </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary" title="Sende Email"
-                                    data-toggle="tooltip">Sende Email</button>
-                            </form>
-                            <!-- Form end -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -56,26 +72,63 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 <script>
+    //show email errors, if sth is wrong with the input
     error_msg_field = document.getElementById("error_msg_field")
     rawMsg = "{{ msg }}"
-    rawMsg = rawMsg.replace(/&#x27;/g, '"')
-    const msg = JSON.parse(rawMsg);
-    if (msg[0] == "error") {
-        error_msg_field.style.color = "#ff0000"
-    } else {
-        error_msg_field.style.color = "#53c213"
-    }
-    error_msg_field.textContent = msg[1]
+    msg = rawMsg.replace(/&#x27;/g, '"')
+
+    error_msg_field.textContent = msg
 
     setTimeout(() => {
         error_msg_field.textContent = ""
     }, 5000)
-    
+
+    //reacte to success message
+    btn_senden = document.getElementById("btn_senden")
+    if (window.location.href.includes("/email/success")) {
+        btn_senden.disabled = true
+        error_msg_field.style.color = "#53c213"
+        error_msg_field.textContent = "Email erfolgreich gesendet!"
+        setTimeout(() => {
+            window.location.href = "/email"
+        }, 3500)
+    }
+
+
+    //show contact selection for user
     rawContacts = "{{ contacts }}"
     rawContacts = rawContacts.replace(/&#x27;/g, '"')
     rawContacts = rawContacts.replace(/None/g, null)
     const contacts = JSON.parse(rawContacts);
     console.log(contacts)
+    contactsDiv = document.getElementById("contacts")
+    contactsContent = ""
+    i = 0
+    contacts.forEach(contact => {
+        contactsContent += '<div >' + contact["firstName"] + " " + contact["lastName"] + '<button onclick="getEmailById(' + i + ',1)">Empfänger </button>  <button onclick="getEmailById(' + i + ',2)">Cc </button> <button onclick="getEmailById(' + i + ',3)"">Bcc </button> <div>'
+        i++
+    });
+    contactsDiv.innerHTML += contactsContent
 
+    recipientField = document.getElementById("id_empfänger")
+    ccField = document.getElementById("id_cc")
+    bccField = document.getElementById("id_bcc")
+
+    //recipient == 1 -> recipient, recipient == 2 -> cc, recipient == 3 -> bcc
+    function getEmailById(id, recipient) {
+        switch (recipient) {
+            case 1:
+                recipientField.value += contacts[id]["email"] + ";"
+                break
+            case 2:
+                ccField.value += contacts[id]["email"] + ";"
+                break
+            case 3:
+                bccField.value += contacts[id]["email"] + ";"
+                break
+        }
+        console.log()
+        return
+    }
 </script>
 {% endblock javascripts %}
