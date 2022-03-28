@@ -1,4 +1,4 @@
 # -*- encoding: utf-8 -*-
 """
-apps
+Django Frontend and Middleware
 """
