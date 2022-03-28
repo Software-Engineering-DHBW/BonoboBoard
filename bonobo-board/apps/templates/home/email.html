@@ -56,7 +56,7 @@
                             </div>
                             <div class="card-block">
                                 <div class="form-group">
-                                    <div id="contacts"> </div>
+                                    <div id="contacts" style="overflow-x:auto;"> </div>
                                 </div>
                             </div>
                         </div>
@@ -99,9 +99,7 @@
     rawContacts = rawContacts.replace(/&#x27;/g, '"')
     rawContacts = rawContacts.replace(/None/g, null)
     const contacts = JSON.parse(rawContacts);
-    console.log(contacts)
     contactsDiv = document.getElementById("contacts")
-    contactsContent = ""
     i = 0
     contactsContent += '<table>'
     contacts.forEach(contact => {
@@ -131,7 +129,6 @@
                 bccField.value += contacts[id]["email"] + ";"
                 break
         }
-        console.log()
         return
     }
 </script>
