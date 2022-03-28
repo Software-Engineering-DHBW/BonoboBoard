@@ -14,14 +14,15 @@ Diese kann man ganz einfach über `pip3 install -U -r requirements.txt` installi
 
 ### Credentials
 
-Die Umgebungsvariablen: **STUDENTMAIL**, **STUDENTPASS** und **STUDENTCOURSE** müssen gesetzt sein, damit etwaige Authentifizierungsprozesse funktionieren.
+Die Umgebungsvariablen: **STUDENTMAIL**, **STUDENTPASS** und **STUDENTCOURSE** müssen gesetzt sein, damit etwaige Authentifizierungsprozesse funktionieren.  
+Für **Windows** müssen die Umgebungsvariablen angepasst werden. Diese sind über das Startmenü -> Systemumgebungsvariablen bearbeiten -> Umgebungsvariablen -> Benutzervariablen zu erreichen. Mit Hilfe des Buttons "Neu" kann ein neuer Eintrag hinzugefügt werden. Der Name der Variablen entspricht dabei **STUDENTMAIL**, **STUDENTPASS** und **STUDENTCOURSE**, der Wert ist der zugehörige Wert.
 
 ### PYTHONPATH
 
-Des Weiteren kann es nötig sein, das Verzeichnis [tests](https://github.com/Software-Engineering-DHBW/BonoboBoard/tree/main/bonobo-board/tests)
-der Umgebungsvariable PYTHONPATH hinzuzufügen, falls gewisse Imports beim Ausführen der Tests fehlschlagen sollten.  
+Des Weiteren ist es nötig, das Verzeichnis [tests](https://github.com/Software-Engineering-DHBW/BonoboBoard/tree/main/bonobo-board/tests)
+der Umgebungsvariable PYTHONPATH hinzuzufügen. Gewisse Imports beim Ausführen der Tests schlagen sonst fehl.  
   
-Unter Ubuntu/Linux kann man das Ganze dauerhaft hinzufügen, in dem man in die Datei **.bashrc** unter dem Home-Verzeichnis des Benutzers (via `cd ~` zu erreichen)
+Unter **Ubuntu/Linux** kann man das Ganze dauerhaft hinzufügen, in dem man in die Datei **.bashrc** unter dem Home-Verzeichnis des Benutzers (via `cd ~` zu erreichen)
 folgende Zeilen an das Ende der Datei anhängt:  
 ```
 bonobo_test_path="$HOME/path/to/bonobo-board/tests"
@@ -29,6 +30,8 @@ if [ "${PYTHONPATH##*${bonobo_test_path}}" == "$PYTHONPATH" ] && [ "${PYTHONPATH
     export PYTHONPATH="${PYTHONPATH:+${PYTHONPATH}:}${bonobo_test_path}"
 fi
 ```
+
+Unter **Windows** muss der PYTHONPATH in den Umgebungsvariablen angepasst werden. Fall mehr als ein Eintrag im PYTHONPATH besteht, sind diese durch ein Semikolon zu trennen. Der hinzuzufügende Pfad muss in etwa folgenden Ansprüchen C:\path\to\bonobo-board\tests genügen.
 
 ## Frontend UI
 
