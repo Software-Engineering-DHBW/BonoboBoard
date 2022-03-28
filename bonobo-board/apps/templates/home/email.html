@@ -100,6 +100,7 @@
     rawContacts = rawContacts.replace(/None/g, null)
     const contacts = JSON.parse(rawContacts);
     contactsDiv = document.getElementById("contacts")
+    contactsContent = ""
     i = 0
     contactsContent += '<table>'
     contacts.forEach(contact => {
