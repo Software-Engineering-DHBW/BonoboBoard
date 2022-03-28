@@ -126,7 +126,13 @@
             error_msg.style.color = "#000"
         }, 5000)
     }
-
+    function HandleBackFunctionality() {
+        if (window.event) {
+            if (event.currentTarget.performance.navigation.type == 2) {
+                console.log("back pressed collected")
+            }
+        }
+    }
     autocomplete(courseFiled, courseList);
 </script>
 {% endblock javascripts %}

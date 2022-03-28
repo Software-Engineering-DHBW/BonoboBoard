@@ -8,7 +8,7 @@
 {% block stylesheets %}{% endblock stylesheets %}
 
 {% block content %}
-<div class="pcoded-content">
+
     <div class="pcoded-inner-content">
         <div class="page-header-title">
             <h3 class="m-b-10">Dashboard </h3>
@@ -40,7 +40,7 @@
                     </div>
                     <!-- Lecture plan overview end-->
                     <div class="col-sm">
-                   
+
                         <!-- GPA Display start -->
                         <div class="card">
                             <div class="card-header">
@@ -95,8 +95,8 @@
 
     //initial show gpa
     if (gpa !== null && dualisData["gpa_total"] !== undefined) {
-                gpa.innerHTML = '<p><b>GPA-Total:</b> Ausgeblendet </p>'
-            }
+        gpa.innerHTML = '<p><b>GPA-Total:</b> Ausgeblendet </p>'
+    }
 
 
     //encode lecture data
@@ -105,7 +105,7 @@
     rawLectureData = rawLectureData.replace(/&#x27;/g, '"')
     const lectureData = JSON.parse(rawLectureData)
 
-     //encode lecture data links
+    //encode lecture data links
     rawLectureLinks = "{{lecture_links}}"
     rawLectureLinks = rawLectureLinks.replace(/&quot;/g, '"')
     rawLectureLinks = rawLectureLinks.replace(/&#x27;/g, '"')
@@ -116,7 +116,7 @@
 
     let content = ''
     lectureContent = getTodaysLectures(lectureData)
-    if(lectureContent){
+    if (lectureContent) {
 
         content += ' <table class="table"><thead><tr><th>Veranstaltung</th><th>Uhrzeit</th><th>Raum</th></tr></thead> <tbody>'
         content += lectureContent
@@ -127,7 +127,6 @@
     }
 
     lecturePlan.innerHTML += content
-
-
+ 
 </script>
 {% endblock javascripts %}
