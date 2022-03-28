@@ -141,11 +141,11 @@ function isToday(day) {
 }
 
 //function to fill in the correct dates in schedule header. Marks current day as well.
-function createHeaderContent(date) {
+function createHeaderContent(date, offset) {
     let content = ''
     datesOfCurrentWeek = getDatesOfCurrentWeek(date)
     for (let day = monday; day < sunday; day++) {
-        content += '<th' + (isToday(day) ? ' class="today"' : '')
+        content += '<th' + (isToday(day) && offset == 0  ? ' class="today"' : '')
             + '>' + dayNames[day] + ', '  //Mo, Di, Mi etc
             + datesOfCurrentWeek[day].getDate() + '.'
             + (datesOfCurrentWeek[day].getMonth() + 1) + '</th>' //plus one --> Jan = 0 in js
@@ -213,8 +213,6 @@ function createCalendarBody() {
     return content
 }
 
-
-
 //creates table of lectures for current day
 function getTodaysLectures(lectureData) {
     let currentDay = getWeekday(currentDate)
@@ -227,7 +225,6 @@ function getTodaysLectures(lectureData) {
         if (currentDay == sunday){
             break;
         }
-
         if (lut[timeslot][currentDay] != 0) {
             content += '<tr><td>' + lut[timeslot][currentDay].name + '</td>'
             content += '<td>' + lut[timeslot][currentDay].start + ' - ' + lut[timeslot][currentDay].end + '</td>'
