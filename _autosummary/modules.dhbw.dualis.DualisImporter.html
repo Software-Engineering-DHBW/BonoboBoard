@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>modules.dhbw.dualis.DualisImporter &mdash; Bonoboboard  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="modules.dhbw.lecture_importer" href="modules.dhbw.lecture_importer.html" />
+    <link rel="prev" title="modules.dhbw.dualis.trim_str" href="modules.dhbw.dualis.trim_str.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Bonoboboard
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">modules</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="modules.dhbw.html">modules.dhbw</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="modules.dhbw.dualis.html">modules.dhbw.dualis</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="modules.dhbw.dualis.add_module_to_dualis_dict.html">modules.dhbw.dualis.add_module_to_dualis_dict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules.dhbw.dualis.fit_credits.html">modules.dhbw.dualis.fit_credits</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules.dhbw.dualis.fit_grade.html">modules.dhbw.dualis.fit_grade</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules.dhbw.dualis.fit_state.html">modules.dhbw.dualis.fit_state</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules.dhbw.dualis.repl_comma_with_dot.html">modules.dhbw.dualis.repl_comma_with_dot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules.dhbw.dualis.trim_str.html">modules.dhbw.dualis.trim_str</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">modules.dhbw.dualis.DualisImporter</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules.dhbw.lecture_importer.html">modules.dhbw.lecture_importer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules.dhbw.moodle.html">modules.dhbw.moodle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules.dhbw.tests.html">modules.dhbw.tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules.dhbw.util.html">modules.dhbw.util</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules.dhbw.zimbra.html">modules.dhbw.zimbra</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules.lecture_scraper_cronjob.html">modules.lecture_scraper_cronjob</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apps.html">apps</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Bonoboboard</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">modules</a> &raquo;</li>
+          <li><a href="modules.dhbw.html">modules.dhbw</a> &raquo;</li>
+          <li><a href="modules.dhbw.dualis.html">modules.dhbw.dualis</a> &raquo;</li>
+      <li>modules.dhbw.dualis.DualisImporter</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/modules.dhbw.dualis.DualisImporter.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="modules-dhbw-dualis-dualisimporter">
+<h1>modules.dhbw.dualis.DualisImporter<a class="headerlink" href="#modules-dhbw-dualis-dualisimporter" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="modules.dhbw.dualis.DualisImporter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">modules.dhbw.dualis.</span></span><span class="sig-name descname"><span class="pre">DualisImporter</span></span><a class="reference internal" href="../_modules/modules/dhbw/dualis.html#DualisImporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modules.dhbw.dualis.DualisImporter" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="modules.dhbw.util.ImporterSession.html#modules.dhbw.util.ImporterSession" title="modules.dhbw.util.ImporterSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">modules.dhbw.util.ImporterSession</span></code></a></p>
+<p>Class to import data from dualis.</p>
+<dl class="simple">
+<dt>url: str</dt><dd><p>the given url for dualis</p>
+</dd>
+<dt>params: dict</dt><dd><p>dict containing the params for the requests</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>login(self, username, password): None</dt><dd><p>creates a session for the user</p>
+</dd>
+<dt>scrape(self): None</dt><dd><p>scrape for the website data</p>
+</dd>
+<dt>logout(self): None</dt><dd><p>removes the session</p>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#modules.dhbw.dualis.DualisImporter.drop_header" title="modules.dhbw.dualis.DualisImporter.drop_header"><code class="xref py py-obj docutils literal notranslate"><span class="pre">drop_header</span></code></a></p></td>
+<td><p>method to drop an header</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#modules.dhbw.dualis.DualisImporter.login" title="modules.dhbw.dualis.DualisImporter.login"><code class="xref py py-obj docutils literal notranslate"><span class="pre">login</span></code></a></p></td>
+<td><p>Async function to acquire the dualis authentication token.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#modules.dhbw.dualis.DualisImporter.logout" title="modules.dhbw.dualis.DualisImporter.logout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logout</span></code></a></p></td>
+<td><p>Sends a logout request (log the user out of the dualis session).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#modules.dhbw.dualis.DualisImporter.scrape" title="modules.dhbw.dualis.DualisImporter.scrape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scrape</span></code></a></p></td>
+<td><p>Scrape the wanted data from the dualis-website.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">params</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">auth_token</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">email</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">headers</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">scraped_data</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">url</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="modules.dhbw.dualis.DualisImporter.drop_header">
+<span class="sig-name descname"><span class="pre">drop_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#modules.dhbw.dualis.DualisImporter.drop_header" title="Permalink to this definition"></a></dt>
+<dd><p>method to drop an header</p>
+<dl class="simple">
+<dt>header: str</dt><dd><p>the name of the header which should be dropped</p>
+</dd>
+</dl>
+<p>None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="modules.dhbw.dualis.DualisImporter.login">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/dhbw/dualis.html#DualisImporter.login"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modules.dhbw.dualis.DualisImporter.login" title="Permalink to this definition"></a></dt>
+<dd><p>Async function to acquire the dualis authentication token.</p>
+<dl class="simple">
+<dt>username: str</dt><dd><p>username used to login</p>
+</dd>
+<dt>password: str</dt><dd><p>password used to login</p>
+</dd>
+</dl>
+<p>DualisImporter</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="modules.dhbw.dualis.DualisImporter.logout">
+<span class="sig-name descname"><span class="pre">logout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/dhbw/dualis.html#DualisImporter.logout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modules.dhbw.dualis.DualisImporter.logout" title="Permalink to this definition"></a></dt>
+<dd><p>Sends a logout request (log the user out of the dualis session).</p>
+<p>None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="modules.dhbw.dualis.DualisImporter.scrape">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scrape</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/dhbw/dualis.html#DualisImporter.scrape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#modules.dhbw.dualis.DualisImporter.scrape" title="Permalink to this definition"></a></dt>
+<dd><p>Scrape the wanted data from the dualis-website.</p>
+<p>None</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.dhbw.dualis.trim_str.html" class="btn btn-neutral float-left" title="modules.dhbw.dualis.trim_str" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.dhbw.lecture_importer.html" class="btn btn-neutral float-right" title="modules.dhbw.lecture_importer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Optima Connect.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

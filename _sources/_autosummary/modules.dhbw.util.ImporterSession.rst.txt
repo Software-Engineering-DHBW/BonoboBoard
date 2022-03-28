@@ -1,0 +1,37 @@
+modules.dhbw.util.ImporterSession
+=================================
+
+.. currentmodule:: modules.dhbw.util
+
+.. autoclass:: ImporterSession
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~ImporterSession.drop_header
+      ~ImporterSession.login
+      ~ImporterSession.logout
+      ~ImporterSession.scrape
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ImporterSession.auth_token
+      ~ImporterSession.email
+      ~ImporterSession.headers
+      ~ImporterSession.scraped_data
+   
+   

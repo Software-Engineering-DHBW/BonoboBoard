@@ -1,0 +1,6 @@
+modules.dhbw.lecture\_importer.add\_lecture\_links\_to\_database
+================================================================
+
+.. currentmodule:: modules.dhbw.lecture_importer
+
+.. autofunction:: add_lecture_links_to_database

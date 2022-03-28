@@ -1,0 +1,46 @@
+modules.dhbw.zimbra.ZimbraHandler
+=================================
+
+.. currentmodule:: modules.dhbw.zimbra
+
+.. autoclass:: ZimbraHandler
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~ZimbraHandler.drop_header
+      ~ZimbraHandler.get_contacts
+      ~ZimbraHandler.login
+      ~ZimbraHandler.logout
+      ~ZimbraHandler.new_contact
+      ~ZimbraHandler.remove_contact
+      ~ZimbraHandler.scrape
+      ~ZimbraHandler.send_mail
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ZimbraHandler.accountname
+      ~ZimbraHandler.contacts
+      ~ZimbraHandler.realname
+      ~ZimbraHandler.signatures
+      ~ZimbraHandler.auth_token
+      ~ZimbraHandler.email
+      ~ZimbraHandler.headers
+      ~ZimbraHandler.scraped_data
+      ~ZimbraHandler.url
+   
+   

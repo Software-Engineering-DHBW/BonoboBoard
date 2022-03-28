@@ -1,0 +1,32 @@
+apps.config.AppsConfig
+======================
+
+.. currentmodule:: apps.config
+
+.. autoclass:: AppsConfig
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AppsConfig.default_auto_field
+      ~AppsConfig.label
+      ~AppsConfig.name
+   
+   

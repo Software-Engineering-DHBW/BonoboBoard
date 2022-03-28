@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>modules.dhbw.zimbra &mdash; Bonoboboard  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> Bonoboboard
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/modules.html">modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/core.html">core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/apps.html">apps</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Bonoboboard</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>modules.dhbw.zimbra</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for modules.dhbw.zimbra</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;the zimbra module provides an interface to interact with zimbra</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+
+<span class="kn">from</span> <span class="nn">dhbw.util</span> <span class="kn">import</span> <span class="n">ImporterSession</span><span class="p">,</span> <span class="n">reqget</span><span class="p">,</span> <span class="n">reqpost</span><span class="p">,</span> <span class="n">url_get_fqdn</span>
+<span class="kn">from</span> <span class="nn">dhbw.util</span> <span class="kn">import</span> <span class="n">ServiceUnavailableException</span><span class="p">,</span> <span class="n">LoginRequiredException</span>
+
+<span class="c1">#------------------------------------------------------------------------------#</span>
+<span class="c1"># H E L P E R - F U N C T I O N S</span>
+<span class="c1">#------------------------------------------------------------------------------#</span>
+
+<span class="k">def</span> <span class="nf">_entity_list</span><span class="p">(</span><span class="n">in_list</span><span class="p">,</span> <span class="n">out_list</span><span class="p">,</span> <span class="n">in_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Adds entities to a list while converting an entity string to a dict.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_list : List[str]</span>
+<span class="sd">        Description</span>
+<span class="sd">    out_list : List[Dict[str, str]]</span>
+<span class="sd">        Description</span>
+<span class="sd">    in_type : str</span>
+<span class="sd">        Description</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    List[Dict[str, str]]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">in_type</span> <span class="o">==</span> <span class="s2">&quot;recipient&quot;</span><span class="p">:</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="s2">&quot;t&quot;</span>
+    <span class="k">elif</span> <span class="n">in_type</span> <span class="o">==</span> <span class="s2">&quot;cc&quot;</span><span class="p">:</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="s2">&quot;c&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="s2">&quot;b&quot;</span>
+
+    <span class="k">for</span> <span class="n">account</span> <span class="ow">in</span> <span class="n">in_list</span><span class="p">:</span>
+        <span class="n">temp_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">temp_dict</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span>
+        <span class="n">temp_dict</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">account</span>
+        <span class="n">out_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">temp_dict</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">out_list</span>
+
+
+<span class="k">def</span> <span class="nf">_fill_contacts_dict_elem</span><span class="p">(</span><span class="n">contact</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks for existing keys inside the response contact dict and creates contact dict.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    contact : Dict[str, str]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Dict</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="s2">&quot;email&quot;</span> <span class="ow">in</span> <span class="n">contact</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">temp</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">contact</span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">]</span>
+        <span class="n">temp</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">contact</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+        <span class="n">temp</span><span class="p">[</span><span class="s2">&quot;firstName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">temp</span><span class="p">[</span><span class="s2">&quot;lastName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">temp</span><span class="p">[</span><span class="s2">&quot;jobTitle&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="s2">&quot;firstName&quot;</span> <span class="ow">in</span> <span class="n">contact</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">temp</span><span class="p">[</span><span class="s2">&quot;firstName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">contact</span><span class="p">[</span><span class="s2">&quot;firstName&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;lastName&quot;</span> <span class="ow">in</span> <span class="n">contact</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">temp</span><span class="p">[</span><span class="s2">&quot;lastName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">contact</span><span class="p">[</span><span class="s2">&quot;lastName&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;jobTitle&quot;</span> <span class="ow">in</span> <span class="n">contact</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">temp</span><span class="p">[</span><span class="s2">&quot;jobTitle&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">contact</span><span class="p">[</span><span class="s2">&quot;jobTitle&quot;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">temp</span>
+
+<span class="c1">#------------------------------------------------------------------------------#</span>
+<span class="c1"># Z I M B R A - H A N D L E R</span>
+<span class="c1">#------------------------------------------------------------------------------#</span>
+
+<div class="viewcode-block" id="ZimbraHandler"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.zimbra.ZimbraHandler.html#modules.dhbw.zimbra.ZimbraHandler">[docs]</a><span class="k">class</span> <span class="nc">ZimbraHandler</span><span class="p">(</span><span class="n">ImporterSession</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Handler for interacting with zimbra.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    url : str</span>
+<span class="sd">        the given url for zimbra</span>
+<span class="sd">    accountname : str</span>
+<span class="sd">        the dhbw mail account</span>
+<span class="sd">    contacts : List[Dict[str, str]]</span>
+<span class="sd">        a list representing all contacts from zimbra</span>
+<span class="sd">    realname : str</span>
+<span class="sd">        the real name of the logged in user</span>
+<span class="sd">    signatures : List[str]</span>
+<span class="sd">        a list of all available signatures to the user</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    login(self): None</span>
+<span class="sd">        creates a session for the user</span>
+<span class="sd">    logout(self): None</span>
+<span class="sd">        sends a logout request</span>
+<span class="sd">    scrape(self): None</span>
+<span class="sd">        scrape the wanted data from the website</span>
+<span class="sd">    get_contacts(self): None</span>
+<span class="sd">        import contacts from the default &quot;contact&quot; book</span>
+<span class="sd">    new_contact(self, contact_dict): None</span>
+<span class="sd">        create a new contact inside the default contact book</span>
+<span class="sd">    remove_contact(self, contact_id): None</span>
+<span class="sd">        remove an existing contact from the default contact book</span>
+<span class="sd">    _create_entities_list(self, recipients, rec_cc, rec_bcc): List[Dict[str, str]]</span>
+<span class="sd">        create a list with dictionary elements</span>
+<span class="sd">    _generate_mail(self, mail_dict): Dict[str, Any]</span>
+<span class="sd">        build the mail in the needed format for zimbra</span>
+<span class="sd">    send_mail(self, mail_dict): None</span>
+<span class="sd">        sends a mail to the soap backend of zimbra</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://studgate.dhbw-mannheim.de/zimbra/&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;accountname&quot;</span><span class="p">,</span> <span class="s2">&quot;contacts&quot;</span><span class="p">,</span> <span class="s2">&quot;realname&quot;</span><span class="p">,</span> <span class="s2">&quot;signatures&quot;</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accountname</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contacts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Host&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">url_get_fqdn</span><span class="p">(</span><span class="n">ZimbraHandler</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">realname</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signatures</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="ZimbraHandler.login"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.zimbra.ZimbraHandler.html#modules.dhbw.zimbra.ZimbraHandler.login">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Authenticate the user against zimbra.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            username: str</span>
+<span class="sd">                the username for the authentication process</span>
+<span class="sd">            password: str</span>
+<span class="sd">                the password for the authentication process</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ZimbraHandler</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">ZimbraHandler</span><span class="o">.</span><span class="n">url</span>
+
+        <span class="c1"># add accountname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accountname</span> <span class="o">=</span> <span class="n">username</span>
+
+        <span class="c1"># set headers for post request</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;application/x-www-form-urlencoded&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Cookie&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ZM_TEST=true&quot;</span>
+
+        <span class="c1"># form data</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;client&quot;</span><span class="p">:</span> <span class="s2">&quot;preferred&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;loginOp&quot;</span><span class="p">:</span> <span class="s2">&quot;login&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+            <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">password</span>
+        <span class="p">}</span>
+
+        <span class="c1"># LOGIN - POST REQUEST</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r_login</span> <span class="o">=</span> <span class="n">reqpost</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span>
+                <span class="n">allow_redirects</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">return_code</span><span class="o">=</span><span class="mi">302</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">service_err</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="c1"># drop content-type header</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drop_header</span><span class="p">(</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">)</span>
+
+        <span class="c1"># add authentication cookie to the headers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth_token</span> <span class="o">=</span> <span class="n">r_login</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Set-Cookie&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Cookie&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Cookie&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;; &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth_token</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="ZimbraHandler.scrape"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.zimbra.ZimbraHandler.html#modules.dhbw.zimbra.ZimbraHandler.scrape">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">scrape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># TODO documentation?</span>
+        <span class="sd">&quot;&quot;&quot;Scrape the selected data from zimbra.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">ZimbraHandler</span><span class="o">.</span><span class="n">url</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r_home</span> <span class="o">=</span> <span class="n">reqget</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">service_err</span>
+
+        <span class="n">content_home</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r_home</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">)</span>
+
+        <span class="c1"># improvement idea -&gt; let it loop reversed, since needed content</span>
+        <span class="c1">#                     is inside the last / one of the last script tag(s)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">tag_script_all</span> <span class="o">=</span> <span class="n">content_home</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;script&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">attr_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">LoginRequiredException</span><span class="p">()</span> <span class="kn">from</span> <span class="nn">attr_err</span>
+
+        <span class="k">for</span> <span class="n">tag_script</span> <span class="ow">in</span> <span class="n">tag_script_all</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;var batchInfoResponse&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag_script</span><span class="o">.</span><span class="n">string</span><span class="p">):</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+                    <span class="sa">r</span><span class="s2">&quot;var\ batchInfoResponse\ =\ \{</span><span class="se">\&quot;</span><span class="s2">Header</span><span class="se">\&quot;</span><span class="s2">:.*</span><span class="se">\&quot;</span><span class="s2">_jsns</span><span class="se">\&quot;</span><span class="s2">:</span><span class="se">\&quot;</span><span class="s2">urn:zimbraSoap</span><span class="se">\&quot;</span><span class="s2">\};&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">tag_script</span><span class="o">.</span><span class="n">string</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">break</span>
+        <span class="n">temp_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+            <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(var\ batchInfoResponse\ =\ )|(;$)&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">temp</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">realname</span> <span class="o">=</span> <span class="n">temp_json</span><span class="p">[</span><span class="s2">&quot;Body&quot;</span><span class="p">][</span><span class="s2">&quot;BatchResponse&quot;</span><span class="p">][</span><span class="s2">&quot;GetInfoResponse&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;attrs&quot;</span><span class="p">][</span><span class="s2">&quot;_attrs&quot;</span><span class="p">][</span><span class="s2">&quot;cn&quot;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scraped_data</span> <span class="o">=</span> <span class="n">temp_json</span></div>
+
+<div class="viewcode-block" id="ZimbraHandler.get_contacts"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.zimbra.ZimbraHandler.html#modules.dhbw.zimbra.ZimbraHandler.get_contacts">[docs]</a>    <span class="k">def</span> <span class="nf">get_contacts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Import contacts from the default contact book.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">ZimbraHandler</span><span class="o">.</span><span class="n">url</span>
+        <span class="n">origin</span> <span class="o">=</span> <span class="s2">&quot;https://&quot;</span> <span class="o">+</span> <span class="n">url_get_fqdn</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;application/soap+xml; charset=utf-8&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Referer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Origin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">origin</span>
+
+        <span class="c1"># TODO query is limited to 100 contact entities --&gt; query all contact entities</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;Header&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;_jsns&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:zimbra&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;account&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;_content&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">accountname</span><span class="p">,</span>
+                        <span class="s2">&quot;by&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;Body&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;SearchRequest&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;_jsns&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:zimbraMail&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;sortBy&quot;</span><span class="p">:</span> <span class="s2">&quot;nameAsc&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;offset&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;in:contacts&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;types&quot;</span><span class="p">:</span> <span class="s2">&quot;contact&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r_contacts</span> <span class="o">=</span> <span class="n">reqpost</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">origin</span> <span class="o">+</span> <span class="s2">&quot;/service/soap/SearchRequest&quot;</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">payload</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">service_err</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drop_header</span><span class="p">(</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">contacts</span> <span class="o">=</span> <span class="n">r_contacts</span><span class="p">[</span><span class="s2">&quot;Body&quot;</span><span class="p">][</span><span class="s2">&quot;SearchResponse&quot;</span><span class="p">][</span><span class="s2">&quot;cn&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">attr_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">attr_err</span>
+
+        <span class="k">for</span> <span class="n">contact</span> <span class="ow">in</span> <span class="n">contacts</span><span class="p">:</span>
+            <span class="n">cnt</span> <span class="o">=</span> <span class="n">contact</span><span class="p">[</span><span class="s2">&quot;_attrs&quot;</span><span class="p">]</span>
+            <span class="n">cnt</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">contact</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="n">_fill_contacts_dict_elem</span><span class="p">(</span><span class="n">cnt</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">temp</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">contacts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ZimbraHandler.new_contact"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.zimbra.ZimbraHandler.html#modules.dhbw.zimbra.ZimbraHandler.new_contact">[docs]</a>    <span class="k">def</span> <span class="nf">new_contact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contact_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a new contact inside the default contact book.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        contact_dict : Dict</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">ZimbraHandler</span><span class="o">.</span><span class="n">url</span>
+        <span class="n">origin</span> <span class="o">=</span> <span class="s2">&quot;https://&quot;</span> <span class="o">+</span> <span class="n">url_get_fqdn</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;application/soap+xml; charset=utf-8&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Referer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Origin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">origin</span>
+
+        <span class="n">contact_details</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">contact_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">contact_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+                        <span class="s2">&quot;_content&quot;</span><span class="p">:</span> <span class="n">value</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+
+        <span class="n">contact</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;Header&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;_jsns&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:zimbra&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;account&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;_content&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">accountname</span><span class="p">,</span>
+                        <span class="s2">&quot;by&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span>
+                    <span class="p">},</span>
+                    <span class="s2">&quot;auth_token&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth_token</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;Body&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;CreateContactRequest&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;_jsns&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:zimbraMail&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;cn&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="s2">&quot;7&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="n">contact_details</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r_contact</span> <span class="o">=</span> <span class="n">reqpost</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">origin</span> <span class="o">+</span> <span class="s2">&quot;/service/soap/CreateContactRequest&quot;</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">payload</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">contact</span><span class="p">),</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">service_err</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drop_header</span><span class="p">(</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">contact_dict</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">r_contact</span><span class="p">[</span><span class="s2">&quot;Body&quot;</span><span class="p">][</span><span class="s2">&quot;CreateContactResponse&quot;</span><span class="p">][</span><span class="s2">&quot;cn&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">attr_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">LoginRequiredException</span><span class="p">()</span> <span class="kn">from</span> <span class="nn">attr_err</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">contacts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contact_dict</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ZimbraHandler.remove_contact"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.zimbra.ZimbraHandler.html#modules.dhbw.zimbra.ZimbraHandler.remove_contact">[docs]</a>    <span class="k">def</span> <span class="nf">remove_contact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contact_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;remove an existing contact from the default contact book</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        contact_id : str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">ZimbraHandler</span><span class="o">.</span><span class="n">url</span>
+        <span class="n">origin</span> <span class="o">=</span> <span class="s2">&quot;https://&quot;</span> <span class="o">+</span> <span class="n">url_get_fqdn</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;application/soap+xml; charset=utf-8&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Referer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Origin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">origin</span>
+
+        <span class="n">del_contact</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;Header&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;_jsns&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:zimbra&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;account&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;_content&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">accountname</span><span class="p">,</span>
+                        <span class="s2">&quot;by&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span>
+                    <span class="p">},</span>
+                    <span class="s2">&quot;auth_token&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth_token</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;Body&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;ContactActionRequest&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;_jsns&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:zimbraMail&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">contact_id</span><span class="p">,</span>
+                        <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;op&quot;</span><span class="p">:</span> <span class="s2">&quot;move&quot;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">reqpost</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">origin</span> <span class="o">+</span> <span class="s2">&quot;/service/soap/ContactActionRequest&quot;</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">payload</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">del_contact</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">service_err</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drop_header</span><span class="p">(</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">)</span>
+
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contacts</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">contacts</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">contact_id</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">contacts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">_create_entities_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recipients</span><span class="p">,</span> <span class="n">rec_cc</span><span class="p">,</span> <span class="n">rec_bcc</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a list with dictionary elements.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        recipients : List[str]</span>
+
+<span class="sd">        rec_cc : List[str]</span>
+
+<span class="sd">        rec_bcc : List[str]</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        List[Dict[str, str]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">entities_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">accountname</span><span class="p">,</span>
+                <span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">realname</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+
+        <span class="n">entities_list</span> <span class="o">=</span> <span class="n">_entity_list</span><span class="p">(</span><span class="n">rec_bcc</span><span class="p">,</span> <span class="n">entities_list</span><span class="p">,</span> <span class="s2">&quot;bcc&quot;</span><span class="p">)</span>
+        <span class="n">entities_list</span> <span class="o">=</span> <span class="n">_entity_list</span><span class="p">(</span><span class="n">rec_cc</span><span class="p">,</span> <span class="n">entities_list</span><span class="p">,</span> <span class="s2">&quot;cc&quot;</span><span class="p">)</span>
+        <span class="n">entities_list</span> <span class="o">=</span> <span class="n">_entity_list</span><span class="p">(</span><span class="n">recipients</span><span class="p">,</span> <span class="n">entities_list</span><span class="p">,</span> <span class="s2">&quot;recipient&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">entities_list</span>
+
+    <span class="k">def</span> <span class="nf">_generate_mail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mail_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;build the mail in the needed format for zimbra</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mail_dict : Dict</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Dict[str, Any]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">header_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;_jsns&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:zimbra&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;account&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;_content&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">accountname</span><span class="p">,</span>
+                    <span class="s2">&quot;by&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;auth_token&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth_token</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="n">entities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_entities_list</span><span class="p">(</span>
+            <span class="n">mail_dict</span><span class="p">[</span><span class="s2">&quot;recipients&quot;</span><span class="p">],</span>
+            <span class="n">mail_dict</span><span class="p">[</span><span class="s2">&quot;rec_cc&quot;</span><span class="p">],</span>
+            <span class="n">mail_dict</span><span class="p">[</span><span class="s2">&quot;rec_bcc&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">message_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;_jsns&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:zimbraMail&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;m&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;e&quot;</span><span class="p">:</span> <span class="n">entities</span><span class="p">,</span>
+                <span class="s2">&quot;su&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;_content&quot;</span><span class="p">:</span> <span class="n">mail_dict</span><span class="p">[</span><span class="s2">&quot;subject&quot;</span><span class="p">]</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;mp&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;ct&quot;</span><span class="p">:</span> <span class="n">mail_dict</span><span class="p">[</span><span class="s2">&quot;cttype&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;_content&quot;</span><span class="p">:</span> <span class="n">mail_dict</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1"># join the dicts to create the whole mail</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;Header&quot;</span><span class="p">:</span> <span class="n">header_dict</span><span class="p">,</span>
+            <span class="s2">&quot;Body&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;SendMsgRequest&quot;</span><span class="p">:</span> <span class="n">message_dict</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">mail</span>
+
+<div class="viewcode-block" id="ZimbraHandler.send_mail"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.zimbra.ZimbraHandler.html#modules.dhbw.zimbra.ZimbraHandler.send_mail">[docs]</a>    <span class="k">def</span> <span class="nf">send_mail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mail_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sends a mail to the soap backend of zimbra.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mail_dict: SendMailDict</span>
+<span class="sd">            a dictionary containing recipients, subject, content-type and the actual content</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># create mail</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_mail</span><span class="p">(</span><span class="n">mail_dict</span><span class="p">)</span>
+
+        <span class="c1"># IMPROVEMENT IDEA:</span>
+        <span class="c1"># store mail_dict somewhere, in case that the service is unavailable</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="n">ZimbraHandler</span><span class="o">.</span><span class="n">url</span>
+        <span class="n">origin</span> <span class="o">=</span> <span class="s2">&quot;https://&quot;</span> <span class="o">+</span> <span class="n">url_get_fqdn</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;application/soap+xml; charset=utf-8&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Referer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Origin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">origin</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">reqpost</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">origin</span> <span class="o">+</span> <span class="s2">&quot;/service/soap/SendMsgRequest&quot;</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">payload</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">mail</span><span class="p">),</span>
+                <span class="n">return_code</span><span class="o">=</span><span class="mi">200</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">service_err</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drop_header</span><span class="p">(</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ZimbraHandler.logout"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.zimbra.ZimbraHandler.html#modules.dhbw.zimbra.ZimbraHandler.logout">[docs]</a>    <span class="k">def</span> <span class="nf">logout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;sends a logout request</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">ZimbraHandler</span><span class="o">.</span><span class="n">url</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">reqget</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;loginOp&quot;</span><span class="p">:</span> <span class="s2">&quot;logout&quot;</span><span class="p">},</span>
+                <span class="n">return_code</span><span class="o">=</span><span class="mi">200</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">service_err</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth_token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Optima Connect.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

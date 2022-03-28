@@ -1,0 +1,99 @@
+modules.dhbw.tests.lecture\_test.CourseImporterTest
+===================================================
+
+.. currentmodule:: modules.dhbw.tests.lecture_test
+
+.. autoclass:: CourseImporterTest
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~CourseImporterTest.addClassCleanup
+      ~CourseImporterTest.addCleanup
+      ~CourseImporterTest.addTypeEqualityFunc
+      ~CourseImporterTest.assertAlmostEqual
+      ~CourseImporterTest.assertAlmostEquals
+      ~CourseImporterTest.assertCountEqual
+      ~CourseImporterTest.assertDictContainsSubset
+      ~CourseImporterTest.assertDictEqual
+      ~CourseImporterTest.assertEqual
+      ~CourseImporterTest.assertEquals
+      ~CourseImporterTest.assertFalse
+      ~CourseImporterTest.assertGreater
+      ~CourseImporterTest.assertGreaterEqual
+      ~CourseImporterTest.assertIn
+      ~CourseImporterTest.assertIs
+      ~CourseImporterTest.assertIsInstance
+      ~CourseImporterTest.assertIsNone
+      ~CourseImporterTest.assertIsNot
+      ~CourseImporterTest.assertIsNotNone
+      ~CourseImporterTest.assertLess
+      ~CourseImporterTest.assertLessEqual
+      ~CourseImporterTest.assertListEqual
+      ~CourseImporterTest.assertLogs
+      ~CourseImporterTest.assertMultiLineEqual
+      ~CourseImporterTest.assertNotAlmostEqual
+      ~CourseImporterTest.assertNotAlmostEquals
+      ~CourseImporterTest.assertNotEqual
+      ~CourseImporterTest.assertNotEquals
+      ~CourseImporterTest.assertNotIn
+      ~CourseImporterTest.assertNotIsInstance
+      ~CourseImporterTest.assertNotRegex
+      ~CourseImporterTest.assertNotRegexpMatches
+      ~CourseImporterTest.assertRaises
+      ~CourseImporterTest.assertRaisesRegex
+      ~CourseImporterTest.assertRaisesRegexp
+      ~CourseImporterTest.assertRegex
+      ~CourseImporterTest.assertRegexpMatches
+      ~CourseImporterTest.assertSequenceEqual
+      ~CourseImporterTest.assertSetEqual
+      ~CourseImporterTest.assertTrue
+      ~CourseImporterTest.assertTupleEqual
+      ~CourseImporterTest.assertWarns
+      ~CourseImporterTest.assertWarnsRegex
+      ~CourseImporterTest.assert_
+      ~CourseImporterTest.countTestCases
+      ~CourseImporterTest.debug
+      ~CourseImporterTest.defaultTestResult
+      ~CourseImporterTest.doClassCleanups
+      ~CourseImporterTest.doCleanups
+      ~CourseImporterTest.fail
+      ~CourseImporterTest.failIf
+      ~CourseImporterTest.failIfAlmostEqual
+      ~CourseImporterTest.failIfEqual
+      ~CourseImporterTest.failUnless
+      ~CourseImporterTest.failUnlessAlmostEqual
+      ~CourseImporterTest.failUnlessEqual
+      ~CourseImporterTest.failUnlessRaises
+      ~CourseImporterTest.id
+      ~CourseImporterTest.run
+      ~CourseImporterTest.setUp
+      ~CourseImporterTest.setUpClass
+      ~CourseImporterTest.shortDescription
+      ~CourseImporterTest.skipTest
+      ~CourseImporterTest.subTest
+      ~CourseImporterTest.tearDown
+      ~CourseImporterTest.tearDownClass
+      ~CourseImporterTest.test_check_values
+      ~CourseImporterTest.test_course_importer
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~CourseImporterTest.longMessage
+      ~CourseImporterTest.maxDiff
+   
+   

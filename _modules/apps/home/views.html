@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apps.home.views &mdash; Bonoboboard  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> Bonoboboard
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/modules.html">modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/core.html">core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/apps.html">apps</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Bonoboboard</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>apps.home.views</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apps.home.views</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- encoding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Copyright (c) 2019 - present AppSeed.us</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">ast</span>
+<span class="kn">from</span> <span class="nn">distutils.fancy_getopt</span> <span class="kn">import</span> <span class="n">wrap_text</span>
+<span class="kn">from</span> <span class="nn">email</span> <span class="kn">import</span> <span class="n">header</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">template</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">HttpResponseRedirect</span>
+<span class="kn">from</span> <span class="nn">django.template</span> <span class="kn">import</span> <span class="n">loader</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">reverse</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">django.views.decorators.csrf</span> <span class="kn">import</span> <span class="n">csrf_protect</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth</span> <span class="kn">import</span> <span class="n">get_user_model</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.decorators</span> <span class="kn">import</span> <span class="n">login_required</span>
+
+<span class="kn">from</span> <span class="nn">apps.authentication.models</span> <span class="kn">import</span> <span class="n">BonoboUser</span>
+
+<span class="kn">from</span> <span class="nn">dhbw.lecture_importer</span> <span class="kn">import</span> <span class="n">LectureImporter</span><span class="p">,</span> <span class="n">read_lecture_links_from_database</span><span class="p">,</span> <span class="n">add_lecture_links_to_database</span>
+<span class="kn">from</span> <span class="nn">dhbw.zimbra</span> <span class="kn">import</span> <span class="n">ZimbraHandler</span>
+<span class="kn">from</span> <span class="nn">.forms</span> <span class="kn">import</span> <span class="n">ContactForm</span><span class="p">,</span> <span class="n">EditLinkForm</span>
+
+<span class="n">BonoboUser</span> <span class="o">=</span> <span class="n">get_user_model</span><span class="p">()</span>
+
+
+<span class="nd">@csrf_protect</span>
+<span class="nd">@login_required</span><span class="p">(</span><span class="n">login_url</span><span class="o">=</span><span class="s2">&quot;/login/&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;on index page is opened, get dualis data and lecture data of user and return home/index.html with data</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    request: HttpRequest</span>
+<span class="sd">        request of the page</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">bonobo_user</span> <span class="o">=</span> <span class="n">BonoboUser</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+    <span class="n">lectures</span><span class="p">,</span> <span class="n">lecture_links</span> <span class="o">=</span> <span class="n">get_lecture_results</span><span class="p">(</span><span class="n">bonobo_user</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;home/index.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;dualis_data&quot;</span><span class="p">:</span> <span class="n">bonobo_user</span><span class="o">.</span><span class="n">dualis_scraped_data</span><span class="p">,</span> <span class="s2">&quot;lecture_links&quot;</span><span class="p">:</span> <span class="n">lecture_links</span><span class="p">,</span> <span class="s2">&quot;lectures&quot;</span><span class="p">:</span> <span class="n">lectures</span><span class="p">,</span> <span class="s2">&quot;link&quot;</span><span class="p">:</span> <span class="s2">&quot;alter_bluebutton_link&quot;</span><span class="p">,</span> <span class="s2">&quot;event&quot;</span><span class="p">:</span> <span class="s2">&quot;Programmieren&quot;</span><span class="p">})</span>
+
+
+<span class="nd">@login_required</span><span class="p">(</span><span class="n">login_url</span><span class="o">=</span><span class="s2">&quot;/login/&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">leistungsuebersicht</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;on leistungsuebersicht page is opened, return home/leistungsuebersicht.html</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    request: HttpRequest</span>
+<span class="sd">        request of the page</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;home/leistungsuebersicht.html&#39;</span><span class="p">)</span>
+
+
+<span class="nd">@login_required</span><span class="p">(</span><span class="n">login_url</span><span class="o">=</span><span class="s2">&quot;/login/&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">email</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;on email page is opened, return home/email.html</span>
+<span class="sd">    on send email click, check input and send mail by ZimbraHandler</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    request: HttpRequest</span>
+<span class="sd">        request of the page</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">current_user</span> <span class="o">=</span> <span class="n">BonoboUser</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+
+    <span class="n">zimbra</span> <span class="o">=</span> <span class="n">ZimbraHandler</span><span class="p">()</span>
+    <span class="n">zimbra</span><span class="o">.</span><span class="n">auth_token</span> <span class="o">=</span> <span class="n">current_user</span><span class="o">.</span><span class="n">zimbra_token</span>
+    <span class="n">zimbra</span><span class="o">.</span><span class="n">accountname</span> <span class="o">=</span> <span class="n">current_user</span><span class="o">.</span><span class="n">zimbra_accountname</span>
+    <span class="n">zimbra</span><span class="o">.</span><span class="n">realname</span> <span class="o">=</span> <span class="n">current_user</span><span class="o">.</span><span class="n">zimbra_name</span>
+    <span class="n">zimbra</span><span class="o">.</span><span class="n">contacts</span> <span class="o">=</span> <span class="n">current_user</span><span class="o">.</span><span class="n">zimbra_contacts</span>
+    <span class="n">zimbra</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">zimbra_headers</span><span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">ContactForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">mail_dict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;recipients&quot;</span><span class="p">:</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;empfänger&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;rec_cc&quot;</span><span class="p">:</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cc&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;rec_bcc&quot;</span><span class="p">:</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bcc&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;betreff&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;cttype&quot;</span><span class="p">:</span> <span class="s2">&quot;text/plain&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nachricht&quot;</span><span class="p">),</span>
+            <span class="p">}</span>
+
+            <span class="n">zimbra</span><span class="o">.</span><span class="n">send_mail</span><span class="p">(</span><span class="n">mail_dict</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;Email erfolgreich gesendet!&quot;</span><span class="p">]</span>
+            <span class="n">form</span> <span class="o">=</span> <span class="n">ContactForm</span><span class="p">()</span>  <span class="c1"># clear the from</span>
+            <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;home/email.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">,</span> <span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Fehlerhafte Eingabe&quot;</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">ContactForm</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;home/email.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">,</span> <span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;contacts&#39;</span><span class="p">:</span> <span class="n">current_user</span><span class="o">.</span><span class="n">zimbra_contacts</span><span class="p">})</span>
+
+
+<span class="nd">@login_required</span><span class="p">(</span><span class="n">login_url</span><span class="o">=</span><span class="s2">&quot;/login/&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">vorlesungsplan</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">old_offset</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;on vorlesungsplan page is opened, load user data and return vorlesungsplan.html</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    offset: int</span>
+<span class="sd">        offsets lecture data by a number of weeks</span>
+<span class="sd">    old_offset: int</span>
+<span class="sd">        offset from previous call</span>
+<span class="sd">    request: HttpRequest</span>
+<span class="sd">        request of the page</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">old_offset</span><span class="p">)</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span>
+    <span class="n">current_user</span> <span class="o">=</span> <span class="n">BonoboUser</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+
+    <span class="n">lectures</span><span class="p">,</span> <span class="n">lecture_links</span> <span class="o">=</span> <span class="n">get_lecture_results</span><span class="p">(</span><span class="n">current_user</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;home/vorlesungsplan.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;lectures&quot;</span><span class="p">:</span> <span class="n">lectures</span><span class="p">,</span> <span class="s2">&quot;lecture_links&quot;</span><span class="p">:</span> <span class="n">lecture_links</span><span class="p">,</span> <span class="s2">&quot;offset&quot;</span><span class="p">:</span> <span class="n">offset</span><span class="p">})</span>
+
+
+<span class="nd">@login_required</span><span class="p">(</span><span class="n">login_url</span><span class="o">=</span><span class="s2">&quot;/login/&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">edit_link</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">link</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;on event is clicked, open a popup window</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    request: HttpRequest</span>
+<span class="sd">        request of the page</span>
+<span class="sd">    event: str</span>
+<span class="sd">        name of the event</span>
+<span class="sd">    link: str</span>
+<span class="sd">        link to the event</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">current_user</span> <span class="o">=</span> <span class="n">BonoboUser</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+    <span class="n">event</span><span class="o">=</span><span class="n">event</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;!&amp;!&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+    <span class="n">event</span><span class="o">=</span><span class="n">event</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="c1">#replace html tokens with custom ones for making them processable</span>
+    <span class="n">link</span><span class="o">=</span><span class="n">link</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;!&amp;!&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+    <span class="n">link</span><span class="o">=</span><span class="n">link</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;!&amp;&amp;!&quot;</span><span class="p">,</span><span class="s2">&quot;?&quot;</span><span class="p">)</span>
+    <span class="n">link</span><span class="o">=</span><span class="n">link</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;!&amp;&amp;&amp;!&quot;</span><span class="p">,</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
+    <span class="n">link</span><span class="o">=</span><span class="n">link</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;!&amp;&amp;&amp;&amp;!&quot;</span><span class="p">,</span><span class="s2">&quot;%&quot;</span><span class="p">)</span>
+    <span class="n">link</span><span class="o">=</span><span class="n">link</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">EditLinkForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">new_link</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;link&quot;</span><span class="p">)</span>
+            <span class="n">new_link</span> <span class="o">=</span> <span class="n">new_link</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">new_link</span> <span class="o">=</span> <span class="n">new_link</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+            <span class="n">add_lecture_links_to_database</span><span class="p">(</span><span class="n">current_user</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">new_link</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">204</span><span class="p">)</span> <span class="c1">#Code == no content</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">EditLinkForm</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;home/edit_link.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">,</span> <span class="s1">&#39;link&#39;</span><span class="p">:</span> <span class="n">link</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">:</span> <span class="n">event</span><span class="p">,</span> <span class="s1">&#39;moodle_data&#39;</span><span class="p">:</span> <span class="n">current_user</span><span class="o">.</span><span class="n">moodle_scraped_data</span><span class="p">})</span>
+
+
+<div class="viewcode-block" id="pages"><a class="viewcode-back" href="../../../_autosummary/apps.home.views.pages.html#apps.home.views.pages">[docs]</a><span class="k">def</span> <span class="nf">pages</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;on unknown page is opened, return error.html accordingly</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    request: HttpRequest</span>
+<span class="sd">        request of the page</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    HttpResponse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># All resource paths end in .html.</span>
+    <span class="c1"># Pick out the html file name from the url. And load that template.</span>
+    <span class="k">try</span><span class="p">:</span>
+
+        <span class="n">load_template</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">load_template</span> <span class="o">==</span> <span class="s1">&#39;admin&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">HttpResponseRedirect</span><span class="p">(</span><span class="n">reverse</span><span class="p">(</span><span class="s1">&#39;admin:index&#39;</span><span class="p">))</span>
+        <span class="n">context</span><span class="p">[</span><span class="s1">&#39;segment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_template</span>
+
+        <span class="n">html_template</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">get_template</span><span class="p">(</span><span class="s1">&#39;home/&#39;</span> <span class="o">+</span> <span class="n">load_template</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">html_template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">request</span><span class="p">))</span>
+
+    <span class="k">except</span> <span class="n">template</span><span class="o">.</span><span class="n">TemplateDoesNotExist</span><span class="p">:</span>
+
+        <span class="n">html_template</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">get_template</span><span class="p">(</span><span class="s1">&#39;home/page-404.html&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">html_template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">request</span><span class="p">))</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">html_template</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">get_template</span><span class="p">(</span><span class="s1">&#39;home/page-500.html&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">html_template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">request</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_dualis_results"><a class="viewcode-back" href="../../../_autosummary/apps.home.views.get_dualis_results.html#apps.home.views.get_dualis_results">[docs]</a><span class="k">def</span> <span class="nf">get_dualis_results</span><span class="p">(</span><span class="n">current_user</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;get dualis data of user</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    current_user: BonoboUser</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Dict</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+    <span class="c1"># if current_user.user_objects[&quot;dualis&quot;] == None:</span>
+    <span class="c1">#     return</span>
+    <span class="c1"># return current_user.user_objects[&quot;dualis&quot;].scraped_data</span>
+
+
+<div class="viewcode-block" id="get_lecture_results"><a class="viewcode-back" href="../../../_autosummary/apps.home.views.get_lecture_results.html#apps.home.views.get_lecture_results">[docs]</a><span class="k">def</span> <span class="nf">get_lecture_results</span><span class="p">(</span><span class="n">current_user</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;get lectures of user</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    offset: int</span>
+<span class="sd">        offsets returned data by a number of weeks</span>
+<span class="sd">    current_user: BonoboUser</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    JSON, pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lecture_importer</span> <span class="o">=</span> <span class="n">LectureImporter</span><span class="p">()</span>
+    <span class="n">lecture_importer</span><span class="o">.</span><span class="n">lectures</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">lectures</span><span class="p">)</span>
+
+    <span class="n">lecture_importer</span><span class="o">.</span><span class="n">lectures</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+        <span class="n">lecture_importer</span><span class="o">.</span><span class="n">lectures</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">])</span>
+    <span class="n">lecture_importer</span><span class="o">.</span><span class="n">lectures</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+        <span class="n">lecture_importer</span><span class="o">.</span><span class="n">lectures</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">])</span>
+
+    <span class="n">lecture_links_df</span> <span class="o">=</span> <span class="n">read_lecture_links_from_database</span><span class="p">(</span><span class="n">current_user</span><span class="p">)</span>
+    <span class="n">lectures_df</span> <span class="o">=</span> <span class="n">lecture_importer</span><span class="o">.</span><span class="n">limit_weeks_in_list</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span>
+
+    <span class="n">json_records</span> <span class="o">=</span> <span class="n">lectures_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">)</span>
+    <span class="n">json_links</span> <span class="o">=</span> <span class="n">lecture_links_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">)</span>
+    <span class="n">lectures</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">json_records</span><span class="p">)</span>
+    <span class="n">lecture_links</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">json_links</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">lectures</span><span class="p">,</span> <span class="n">lecture_links</span></div>
+
+
+<div class="viewcode-block" id="write_log"><a class="viewcode-back" href="../../../_autosummary/apps.home.views.write_log.html#apps.home.views.write_log">[docs]</a><span class="k">def</span> <span class="nf">write_log</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;internally used for logging</span>
+<span class="sd">    print message to log.txt</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    msg: str</span>
+<span class="sd">        Message to print</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;log.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Optima Connect.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

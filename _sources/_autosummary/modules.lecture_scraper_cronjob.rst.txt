@@ -1,0 +1,31 @@
+modules.lecture\_scraper\_cronjob
+=================================
+
+.. automodule:: modules.lecture_scraper_cronjob
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      main
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

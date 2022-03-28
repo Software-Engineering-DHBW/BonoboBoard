@@ -1,0 +1,39 @@
+modules.dhbw.dualis.DualisImporter
+==================================
+
+.. currentmodule:: modules.dhbw.dualis
+
+.. autoclass:: DualisImporter
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~DualisImporter.drop_header
+      ~DualisImporter.login
+      ~DualisImporter.logout
+      ~DualisImporter.scrape
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~DualisImporter.params
+      ~DualisImporter.auth_token
+      ~DualisImporter.email
+      ~DualisImporter.headers
+      ~DualisImporter.scraped_data
+      ~DualisImporter.url
+   
+   

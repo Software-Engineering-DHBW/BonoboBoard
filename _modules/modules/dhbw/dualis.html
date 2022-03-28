@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>modules.dhbw.dualis &mdash; Bonoboboard  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> Bonoboboard
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/modules.html">modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/core.html">core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/apps.html">apps</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Bonoboboard</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>modules.dhbw.dualis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for modules.dhbw.dualis</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;Provide functionality to scrape student grades from dualis.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">ImporterSession</span><span class="p">,</span> <span class="n">reqget</span><span class="p">,</span> <span class="n">reqpost</span><span class="p">,</span> <span class="n">url_get_args</span><span class="p">,</span> <span class="n">url_get_fqdn</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CredentialsException</span><span class="p">,</span> <span class="n">LoginRequiredException</span><span class="p">,</span> <span class="n">ServiceUnavailableException</span>
+<span class="p">)</span>
+
+<span class="c1">#------------------------------------------------------------------------------#</span>
+<span class="c1"># H E L P E R - F U N C T I O N S</span>
+<span class="c1">#------------------------------------------------------------------------------#</span>
+
+<div class="viewcode-block" id="trim_str"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.dualis.trim_str.html#modules.dhbw.dualis.trim_str">[docs]</a><span class="k">def</span> <span class="nf">trim_str</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">empty_string</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Trim given string with leading/training whitespaces/tabs.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    content : str</span>
+<span class="sd">        String with leading/trailing whitespaces/tabs.</span>
+<span class="sd">    empty_string : str</span>
+<span class="sd">        String value in case that the value of content is None.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    content: str</span>
+<span class="sd">        String with removed leading/trailing whitespaces/tabs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">content</span><span class="p">:</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">empty_string</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[\t\s]*|[\t\s]*$&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">content</span></div>
+
+
+<div class="viewcode-block" id="repl_comma_with_dot"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.dualis.repl_comma_with_dot.html#modules.dhbw.dualis.repl_comma_with_dot">[docs]</a><span class="k">def</span> <span class="nf">repl_comma_with_dot</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Replaces every comma with a dot.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    content: str</span>
+<span class="sd">        String where commas should be replaced by dots.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="fit_credits"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.dualis.fit_credits.html#modules.dhbw.dualis.fit_credits">[docs]</a><span class="k">def</span> <span class="nf">fit_credits</span><span class="p">(</span><span class="n">credits_string</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fits the string containing the credits to an integer.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    credits_string: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_credits</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">credits_string</span><span class="p">:</span>
+        <span class="n">credits_string</span> <span class="o">=</span> <span class="n">repl_comma_with_dot</span><span class="p">(</span><span class="n">trim_str</span><span class="p">(</span><span class="n">credits_string</span><span class="p">))</span>
+        <span class="n">_credits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">credits_string</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">_credits</span></div>
+
+
+<div class="viewcode-block" id="fit_grade"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.dualis.fit_grade.html#modules.dhbw.dualis.fit_grade">[docs]</a><span class="k">def</span> <span class="nf">fit_grade</span><span class="p">(</span><span class="n">grade_string</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fits the string containing the grade to a float.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grade_string: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">grade</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">if</span> <span class="n">grade_string</span><span class="p">:</span>
+        <span class="n">grade_string</span> <span class="o">=</span> <span class="n">repl_comma_with_dot</span><span class="p">(</span><span class="n">trim_str</span><span class="p">(</span><span class="n">grade_string</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[0-9]+[,\.][0-9]+&quot;</span><span class="p">,</span> <span class="n">grade_string</span><span class="p">):</span>
+            <span class="n">grade</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">grade_string</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">grade</span></div>
+
+
+<div class="viewcode-block" id="fit_state"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.dualis.fit_state.html#modules.dhbw.dualis.fit_state">[docs]</a><span class="k">def</span> <span class="nf">fit_state</span><span class="p">(</span><span class="n">state_string</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Provides mapping for state values to shortcut literals.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    state_string: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">state_string</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;bestanden&quot;</span><span class="p">,</span> <span class="s2">&quot;Bestanden&quot;</span><span class="p">):</span>
+        <span class="n">state_string</span> <span class="o">=</span> <span class="s2">&quot;p&quot;</span>
+    <span class="k">elif</span> <span class="n">state_string</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;offen&quot;</span><span class="p">,</span> <span class="s2">&quot;Offen&quot;</span><span class="p">):</span>
+        <span class="n">state_string</span> <span class="o">=</span> <span class="s2">&quot;o&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">state_string</span> <span class="o">=</span> <span class="s2">&quot;f&quot;</span>
+    <span class="k">return</span> <span class="n">state_string</span></div>
+
+
+<div class="viewcode-block" id="add_module_to_dualis_dict"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.dualis.add_module_to_dualis_dict.html#modules.dhbw.dualis.add_module_to_dualis_dict">[docs]</a><span class="k">def</span> <span class="nf">add_module_to_dualis_dict</span><span class="p">(</span>
+        <span class="o">*</span><span class="p">,</span> <span class="n">m_id</span><span class="p">,</span> <span class="n">m_name</span><span class="p">,</span> <span class="n">m_href</span><span class="p">,</span> <span class="n">m_credits</span><span class="p">,</span> <span class="n">m_grade</span><span class="p">,</span> <span class="n">m_state</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create the DualisModuleDict with provided values.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    m_id: str</span>
+
+<span class="sd">    m_name: str</span>
+
+<span class="sd">    m_href: str</span>
+
+<span class="sd">    m_credits: str</span>
+
+<span class="sd">    m_grade: str</span>
+
+<span class="sd">    m_state: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dualis_module</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">m_id</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">m_name</span><span class="p">,</span>
+        <span class="s2">&quot;href&quot;</span><span class="p">:</span> <span class="n">m_href</span><span class="p">,</span>
+        <span class="s2">&quot;credits&quot;</span><span class="p">:</span> <span class="n">fit_credits</span><span class="p">(</span><span class="n">m_credits</span><span class="p">),</span>
+        <span class="s2">&quot;grade&quot;</span><span class="p">:</span> <span class="n">fit_grade</span><span class="p">(</span><span class="n">m_grade</span><span class="p">),</span>
+        <span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="n">fit_state</span><span class="p">(</span><span class="n">m_state</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">dualis_module</span></div>
+
+<span class="c1">#------------------------------------------------------------------------------#</span>
+<span class="c1"># D U A L I S - I M P O R T E R</span>
+<span class="c1">#------------------------------------------------------------------------------#</span>
+
+<div class="viewcode-block" id="DualisImporter"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.dualis.DualisImporter.html#modules.dhbw.dualis.DualisImporter">[docs]</a><span class="k">class</span> <span class="nc">DualisImporter</span><span class="p">(</span><span class="n">ImporterSession</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to import data from dualis.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    url: str</span>
+<span class="sd">        the given url for dualis</span>
+<span class="sd">    params: dict</span>
+<span class="sd">        dict containing the params for the requests</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    login(self, username, password): None</span>
+<span class="sd">        creates a session for the user</span>
+<span class="sd">    scrape(self): None</span>
+<span class="sd">        scrape for the website data</span>
+<span class="sd">    logout(self): None</span>
+<span class="sd">        removes the session</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://dualis.dhbw.de/scripts/mgrqispi.dll&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;params&quot;</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Host&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">url_get_fqdn</span><span class="p">(</span><span class="n">DualisImporter</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="DualisImporter.login"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.dualis.DualisImporter.html#modules.dhbw.dualis.DualisImporter.login">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Async function to acquire the dualis authentication token.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        username: str</span>
+<span class="sd">            username used to login</span>
+<span class="sd">        password: str</span>
+<span class="sd">            password used to login</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DualisImporter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="n">DualisImporter</span><span class="o">.</span><span class="n">url</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;application/x-www-form-urlencoded&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;APPNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;CampusNet&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;PRGNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;LOGINCHECK&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ARGUMENTS&quot;</span><span class="p">:</span> <span class="s2">&quot;clino,usrname,pass,menuno,menu_type,browser,platform&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;clino&quot;</span><span class="p">:</span> <span class="s2">&quot;000000000000001&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;menuno&quot;</span><span class="p">:</span> <span class="s2">&quot;000324&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;menu_type&quot;</span><span class="p">:</span> <span class="s2">&quot;classic&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;browser&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;usrname&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+            <span class="s2">&quot;pass&quot;</span><span class="p">:</span> <span class="n">password</span>
+        <span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r_login</span> <span class="o">=</span> <span class="n">reqpost</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">payload</span><span class="o">=</span><span class="n">data</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">service_err</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drop_header</span><span class="p">(</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">keyval</span> <span class="ow">in</span> <span class="n">url_get_args</span><span class="p">(</span><span class="n">r_login</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;REFRESH&quot;</span><span class="p">]):</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="n">keyval</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">key_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">CredentialsException</span><span class="p">()</span> <span class="kn">from</span> <span class="nn">key_err</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;PRGNAME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;MLSSTART&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ARGUMENTS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ARGUMENTS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth_token</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[\s]|(;.*)&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">r_login</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Set-Cookie&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Cookie&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth_token</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">username</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="k">def</span> <span class="nf">_fill_grades_into_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response_text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Extracts needed data and fills the dictionary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        response_text: str</span>
+<span class="sd">            the response text of the request</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">grades_content</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">response_text</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">)</span>
+        <span class="n">grades_tables</span> <span class="o">=</span> <span class="n">grades_content</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;table&quot;</span><span class="p">)</span>
+
+        <span class="c1"># fill gpa fields</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">grades_tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;th&quot;</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">temp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">string</span> <span class="o">==</span> <span class="s1">&#39;Gesamt-GPA&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scraped_data</span><span class="p">[</span><span class="s1">&#39;gpa_total&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fit_grade</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">string</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scraped_data</span><span class="p">[</span><span class="s1">&#39;gpa_main_subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fit_grade</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">string</span><span class="p">)</span>
+                <span class="k">break</span>
+
+        <span class="c1"># fill modules field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scraped_data</span><span class="p">[</span><span class="s1">&#39;modules&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">grades_tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;td&quot;</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">temp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">):</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="s2">&quot;tbdata&quot;</span> <span class="ow">in</span> <span class="n">temp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">):</span>
+                <span class="n">href</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">img</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;Offen&quot;</span> <span class="ow">or</span> <span class="p">(</span><span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;Offen&quot;</span> <span class="ow">and</span> <span class="n">temp</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">string</span><span class="p">):</span>
+                    <span class="n">href</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">)</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">string</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">trim_str</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">string</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">scraped_data</span><span class="p">[</span><span class="s1">&#39;modules&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">add_module_to_dualis_dict</span><span class="p">(</span>
+                        <span class="n">m_id</span><span class="o">=</span><span class="n">temp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+                        <span class="n">m_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                        <span class="n">m_href</span><span class="o">=</span><span class="n">href</span><span class="p">,</span>
+                        <span class="n">m_credits</span><span class="o">=</span><span class="n">temp</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+                        <span class="n">m_grade</span><span class="o">=</span><span class="n">temp</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+                        <span class="n">m_state</span><span class="o">=</span><span class="n">state</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">6</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="DualisImporter.scrape"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.dualis.DualisImporter.html#modules.dhbw.dualis.DualisImporter.scrape">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">scrape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Scrape the wanted data from the dualis-website.</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="n">DualisImporter</span><span class="o">.</span><span class="n">url</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r_home</span> <span class="o">=</span> <span class="n">reqget</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">service_err</span>
+        <span class="k">except</span> <span class="n">LoginRequiredException</span> <span class="k">as</span> <span class="n">log_req_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">log_req_err</span>
+
+        <span class="n">home_content</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r_home</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">)</span>
+
+        <span class="c1"># access only possible if authenticated!</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">url_grade_overview</span> <span class="o">=</span> <span class="n">home_content</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;link000310&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">attr_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">LoginRequiredException</span> <span class="kn">from</span> <span class="nn">attr_err</span>
+
+        <span class="k">for</span> <span class="n">keyval</span> <span class="ow">in</span> <span class="n">url_get_args</span><span class="p">(</span><span class="n">url_grade_overview</span><span class="p">):</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="n">keyval</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;PRGNAME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;STUDENT_RESULT&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r_grades</span> <span class="o">=</span> <span class="n">reqget</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">service_err</span>
+        <span class="k">except</span> <span class="n">LoginRequiredException</span> <span class="k">as</span> <span class="n">log_req_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">log_req_err</span>
+
+        <span class="n">utf_text</span> <span class="o">=</span> <span class="n">r_grades</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">r_grades</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fill_grades_into_dict</span><span class="p">(</span><span class="n">utf_text</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DualisImporter.logout"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.dualis.DualisImporter.html#modules.dhbw.dualis.DualisImporter.logout">[docs]</a>    <span class="k">def</span> <span class="nf">logout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sends a logout request (log the user out of the dualis session).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">DualisImporter</span><span class="o">.</span><span class="n">url</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;PRGNAME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;LOGOUT&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">reqget</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">service_err</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth_token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Optima Connect.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

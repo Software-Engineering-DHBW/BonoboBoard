@@ -1,0 +1,101 @@
+modules.dhbw.tests.dualis\_test.TestDualisImporter
+==================================================
+
+.. currentmodule:: modules.dhbw.tests.dualis_test
+
+.. autoclass:: TestDualisImporter
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~TestDualisImporter.addClassCleanup
+      ~TestDualisImporter.addCleanup
+      ~TestDualisImporter.addTypeEqualityFunc
+      ~TestDualisImporter.assertAlmostEqual
+      ~TestDualisImporter.assertAlmostEquals
+      ~TestDualisImporter.assertCountEqual
+      ~TestDualisImporter.assertDictContainsSubset
+      ~TestDualisImporter.assertDictEqual
+      ~TestDualisImporter.assertEqual
+      ~TestDualisImporter.assertEquals
+      ~TestDualisImporter.assertFalse
+      ~TestDualisImporter.assertGreater
+      ~TestDualisImporter.assertGreaterEqual
+      ~TestDualisImporter.assertIn
+      ~TestDualisImporter.assertIs
+      ~TestDualisImporter.assertIsInstance
+      ~TestDualisImporter.assertIsNone
+      ~TestDualisImporter.assertIsNot
+      ~TestDualisImporter.assertIsNotNone
+      ~TestDualisImporter.assertLess
+      ~TestDualisImporter.assertLessEqual
+      ~TestDualisImporter.assertListEqual
+      ~TestDualisImporter.assertLogs
+      ~TestDualisImporter.assertMultiLineEqual
+      ~TestDualisImporter.assertNotAlmostEqual
+      ~TestDualisImporter.assertNotAlmostEquals
+      ~TestDualisImporter.assertNotEqual
+      ~TestDualisImporter.assertNotEquals
+      ~TestDualisImporter.assertNotIn
+      ~TestDualisImporter.assertNotIsInstance
+      ~TestDualisImporter.assertNotRegex
+      ~TestDualisImporter.assertNotRegexpMatches
+      ~TestDualisImporter.assertRaises
+      ~TestDualisImporter.assertRaisesRegex
+      ~TestDualisImporter.assertRaisesRegexp
+      ~TestDualisImporter.assertRegex
+      ~TestDualisImporter.assertRegexpMatches
+      ~TestDualisImporter.assertSequenceEqual
+      ~TestDualisImporter.assertSetEqual
+      ~TestDualisImporter.assertTrue
+      ~TestDualisImporter.assertTupleEqual
+      ~TestDualisImporter.assertWarns
+      ~TestDualisImporter.assertWarnsRegex
+      ~TestDualisImporter.assert_
+      ~TestDualisImporter.cls_suite
+      ~TestDualisImporter.countTestCases
+      ~TestDualisImporter.debug
+      ~TestDualisImporter.defaultTestResult
+      ~TestDualisImporter.doClassCleanups
+      ~TestDualisImporter.doCleanups
+      ~TestDualisImporter.fail
+      ~TestDualisImporter.failIf
+      ~TestDualisImporter.failIfAlmostEqual
+      ~TestDualisImporter.failIfEqual
+      ~TestDualisImporter.failUnless
+      ~TestDualisImporter.failUnlessAlmostEqual
+      ~TestDualisImporter.failUnlessEqual
+      ~TestDualisImporter.failUnlessRaises
+      ~TestDualisImporter.id
+      ~TestDualisImporter.run
+      ~TestDualisImporter.setUp
+      ~TestDualisImporter.setUpClass
+      ~TestDualisImporter.shortDescription
+      ~TestDualisImporter.skipTest
+      ~TestDualisImporter.subTest
+      ~TestDualisImporter.tearDown
+      ~TestDualisImporter.tearDownClass
+      ~TestDualisImporter.test_login
+      ~TestDualisImporter.test_logout
+      ~TestDualisImporter.test_scrape
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~TestDualisImporter.longMessage
+      ~TestDualisImporter.maxDiff
+   
+   

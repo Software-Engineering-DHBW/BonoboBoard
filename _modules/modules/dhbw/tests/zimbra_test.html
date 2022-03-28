@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>modules.dhbw.tests.zimbra_test &mdash; Bonoboboard  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> Bonoboboard
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_autosummary/modules.html">modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_autosummary/core.html">core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_autosummary/apps.html">apps</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Bonoboboard</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>modules.dhbw.tests.zimbra_test</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for modules.dhbw.tests.zimbra_test</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;Unittests for the zimbra module.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">environ</span>
+<span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">TestCase</span><span class="p">,</span> <span class="n">TestSuite</span>
+<span class="kn">from</span> <span class="nn">dhbw.zimbra</span> <span class="kn">import</span> <span class="n">ZimbraHandler</span>
+
+<span class="n">zimbra_handler</span> <span class="o">=</span> <span class="n">ZimbraHandler</span><span class="p">()</span>
+
+<div class="viewcode-block" id="TestZimbraHandler"><a class="viewcode-back" href="../../../../_autosummary/modules.dhbw.tests.zimbra_test.TestZimbraHandler.html#modules.dhbw.tests.zimbra_test.TestZimbraHandler">[docs]</a><span class="k">class</span> <span class="nc">TestZimbraHandler</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Unittests for the zimbra class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TestZimbraHandler.test_login"><a class="viewcode-back" href="../../../../_autosummary/modules.dhbw.tests.zimbra_test.TestZimbraHandler.html#modules.dhbw.tests.zimbra_test.TestZimbraHandler.test_login">[docs]</a>    <span class="k">def</span> <span class="nf">test_login</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test login functionality.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">usr_name</span> <span class="o">=</span> <span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;STUDENTMAIL&quot;</span><span class="p">)</span>
+        <span class="n">passwd</span> <span class="o">=</span> <span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;STUDENTPASS&quot;</span><span class="p">)</span>
+        <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">zimbra_handler</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">usr_name</span><span class="p">,</span> <span class="n">passwd</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNotNone</span><span class="p">(</span><span class="n">zimbra_handler</span><span class="o">.</span><span class="n">auth_token</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNotNone</span><span class="p">(</span><span class="n">zimbra_handler</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Cookie&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNotNone</span><span class="p">(</span><span class="n">zimbra_handler</span><span class="o">.</span><span class="n">accountname</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestZimbraHandler.test_scrape"><a class="viewcode-back" href="../../../../_autosummary/modules.dhbw.tests.zimbra_test.TestZimbraHandler.html#modules.dhbw.tests.zimbra_test.TestZimbraHandler.test_scrape">[docs]</a>    <span class="k">def</span> <span class="nf">test_scrape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test scraping functionality.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">zimbra_handler</span><span class="o">.</span><span class="n">scrape</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNotNone</span><span class="p">(</span><span class="n">zimbra_handler</span><span class="o">.</span><span class="n">scraped_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNotNone</span><span class="p">(</span><span class="n">zimbra_handler</span><span class="o">.</span><span class="n">realname</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestZimbraHandler.test_get_contacts"><a class="viewcode-back" href="../../../../_autosummary/modules.dhbw.tests.zimbra_test.TestZimbraHandler.html#modules.dhbw.tests.zimbra_test.TestZimbraHandler.test_get_contacts">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_contacts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test get contacts functionality.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">zimbra_handler</span><span class="o">.</span><span class="n">get_contacts</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNotNone</span><span class="p">(</span><span class="n">zimbra_handler</span><span class="o">.</span><span class="n">contacts</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestZimbraHandler.test_new_contact"><a class="viewcode-back" href="../../../../_autosummary/modules.dhbw.tests.zimbra_test.TestZimbraHandler.html#modules.dhbw.tests.zimbra_test.TestZimbraHandler.test_new_contact">[docs]</a>    <span class="k">def</span> <span class="nf">test_new_contact</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test creating a new contact.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">contact</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;unittest@bonoboboard.de&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;unittest&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lastName&quot;</span><span class="p">:</span> <span class="s2">&quot;bonoboboard&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;jobTitle&quot;</span><span class="p">:</span> <span class="s2">&quot;BONOBOTESTER&quot;</span>
+        <span class="p">}</span>
+        <span class="n">zimbra_handler</span><span class="o">.</span><span class="n">new_contact</span><span class="p">(</span><span class="n">contact</span><span class="p">)</span>
+
+        <span class="n">contact_found</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">zimbra_handler</span><span class="o">.</span><span class="n">contacts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">elem</span><span class="p">[</span><span class="s2">&quot;firstName&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">contact</span><span class="p">[</span><span class="s2">&quot;firstName&quot;</span><span class="p">]:</span>
+                <span class="n">contact_found</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># meaningful test output</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&gt;&gt;&gt; Created Contact: </span><span class="se">\&quot;</span><span class="s2">{ contact_found }</span><span class="se">\&quot;\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="n">contact</span><span class="p">,</span> <span class="n">zimbra_handler</span><span class="o">.</span><span class="n">contacts</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestZimbraHandler.test_remove_contact"><a class="viewcode-back" href="../../../../_autosummary/modules.dhbw.tests.zimbra_test.TestZimbraHandler.html#modules.dhbw.tests.zimbra_test.TestZimbraHandler.test_remove_contact">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_contact</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test removing an existing contact (created by test_new_contact).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">contact_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">zimbra_handler</span><span class="o">.</span><span class="n">contacts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">elem</span><span class="p">[</span><span class="s2">&quot;firstName&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;unittest&quot;</span><span class="p">:</span>
+                <span class="n">contact_id</span> <span class="o">=</span> <span class="n">elem</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+                <span class="k">break</span>
+
+        <span class="c1"># meaningful test output</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&gt;&gt;&gt; Removing contact with firstName </span><span class="se">\&quot;</span><span class="s2">unittest</span><span class="se">\&quot;</span><span class="s2"> and id </span><span class="se">\&quot;</span><span class="s2">{ contact_id }</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">zimbra_handler</span><span class="o">.</span><span class="n">remove_contact</span><span class="p">(</span><span class="n">contact_id</span><span class="p">)</span>
+        <span class="n">contact_found</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">zimbra_handler</span><span class="o">.</span><span class="n">contacts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">elem</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">elem</span><span class="p">[</span><span class="s2">&quot;firstName&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;unittest&quot;</span><span class="p">:</span>
+                <span class="n">contact_found</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+
+        <span class="c1"># meaningful test output</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&gt;&gt;&gt; Contact found locally: </span><span class="se">\&quot;</span><span class="s2">{ contact_found }</span><span class="se">\&quot;\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">contact_found</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestZimbraHandler.test_send_mail"><a class="viewcode-back" href="../../../../_autosummary/modules.dhbw.tests.zimbra_test.TestZimbraHandler.html#modules.dhbw.tests.zimbra_test.TestZimbraHandler.test_send_mail">[docs]</a>    <span class="k">def</span> <span class="nf">test_send_mail</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test send mail functionality by sending a mail.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mymail</span> <span class="o">=</span> <span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;STUDENTMAIL&quot;</span><span class="p">)</span>
+        <span class="n">mail_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;recipients&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">mymail</span><span class="p">],</span>
+            <span class="s2">&quot;rec_cc&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;rec_bcc&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="s2">&quot;Unittest Zimbra&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cttype&quot;</span><span class="p">:</span> <span class="s2">&quot;text/plain&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello there my old me,</span><span class="se">\n\n</span><span class="s2">if this mail reached you then sending mails works as expected</span><span class="se">\n\n</span><span class="s2">Best Regards</span><span class="se">\n</span><span class="s2">~ future you ~&quot;</span>
+        <span class="p">}</span>
+        <span class="n">zimbra_handler</span><span class="o">.</span><span class="n">send_mail</span><span class="p">(</span><span class="n">mail_dict</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestZimbraHandler.test_logout"><a class="viewcode-back" href="../../../../_autosummary/modules.dhbw.tests.zimbra_test.TestZimbraHandler.html#modules.dhbw.tests.zimbra_test.TestZimbraHandler.test_logout">[docs]</a>    <span class="k">def</span> <span class="nf">test_logout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test logout functionality.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">zimbra_handler</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">zimbra_handler</span><span class="o">.</span><span class="n">auth_token</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestZimbraHandler.cls_suite"><a class="viewcode-back" href="../../../../_autosummary/modules.dhbw.tests.zimbra_test.TestZimbraHandler.html#modules.dhbw.tests.zimbra_test.TestZimbraHandler.cls_suite">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">cls_suite</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create suite for ordered execution of unittests.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cls_suite</span> <span class="o">=</span> <span class="n">TestSuite</span><span class="p">()</span>
+        <span class="n">cls_suite</span><span class="o">.</span><span class="n">addTest</span><span class="p">(</span><span class="bp">cls</span><span class="p">(</span><span class="s2">&quot;test_login&quot;</span><span class="p">))</span>
+        <span class="n">cls_suite</span><span class="o">.</span><span class="n">addTest</span><span class="p">(</span><span class="bp">cls</span><span class="p">(</span><span class="s2">&quot;test_scrape&quot;</span><span class="p">))</span>
+        <span class="n">cls_suite</span><span class="o">.</span><span class="n">addTest</span><span class="p">(</span><span class="bp">cls</span><span class="p">(</span><span class="s2">&quot;test_get_contacts&quot;</span><span class="p">))</span>
+        <span class="n">cls_suite</span><span class="o">.</span><span class="n">addTest</span><span class="p">(</span><span class="bp">cls</span><span class="p">(</span><span class="s2">&quot;test_new_contact&quot;</span><span class="p">))</span>
+        <span class="n">cls_suite</span><span class="o">.</span><span class="n">addTest</span><span class="p">(</span><span class="bp">cls</span><span class="p">(</span><span class="s2">&quot;test_remove_contact&quot;</span><span class="p">))</span>
+        <span class="n">cls_suite</span><span class="o">.</span><span class="n">addTest</span><span class="p">(</span><span class="bp">cls</span><span class="p">(</span><span class="s2">&quot;test_send_mail&quot;</span><span class="p">))</span>
+        <span class="n">cls_suite</span><span class="o">.</span><span class="n">addTest</span><span class="p">(</span><span class="bp">cls</span><span class="p">(</span><span class="s2">&quot;test_logout&quot;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">cls_suite</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Optima Connect.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

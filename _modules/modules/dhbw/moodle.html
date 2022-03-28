@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>modules.dhbw.moodle &mdash; Bonoboboard  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> Bonoboboard
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/modules.html">modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/core.html">core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/apps.html">apps</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Bonoboboard</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>modules.dhbw.moodle</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for modules.dhbw.moodle</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;the moodle module provides an interface to interact with moodle</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">from</span> <span class="nn">bs4.element</span> <span class="kn">import</span> <span class="n">NavigableString</span>
+
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">ImporterSession</span><span class="p">,</span> <span class="n">reqget</span><span class="p">,</span> <span class="n">reqpost</span><span class="p">,</span> <span class="n">url_get_fqdn</span><span class="p">,</span> <span class="n">url_get_args</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CredentialsException</span><span class="p">,</span> <span class="n">LoginRequiredException</span><span class="p">,</span> <span class="n">ServiceUnavailableException</span>
+<span class="p">)</span>
+
+<span class="c1">#------------------------------------------------------------------------------#</span>
+<span class="c1"># H E L P E R - F U N C T I O N S</span>
+<span class="c1">#------------------------------------------------------------------------------#</span>
+
+<div class="viewcode-block" id="add_to_module_dict"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.moodle.add_to_module_dict.html#modules.dhbw.moodle.add_to_module_dict">[docs]</a><span class="k">def</span> <span class="nf">add_to_module_dict</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function to fill a MoodleModuleDict with values and return it.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name: str</span>
+<span class="sd">        Name of module</span>
+<span class="sd">    url: str</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    _: MoodleModuleDict</span>
+<span class="sd">        a typed dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+        <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">url</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="get_bbb_instance_name"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.moodle.get_bbb_instance_name.html#modules.dhbw.moodle.get_bbb_instance_name">[docs]</a><span class="k">def</span> <span class="nf">get_bbb_instance_name</span><span class="p">(</span><span class="n">tag_a</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Searches for the instance name for a given tag and returns it.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tag_a: Tag</span>
+<span class="sd">        the tag which contains the instance name</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    temp: str</span>
+<span class="sd">        the instance name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">tag_span</span> <span class="ow">in</span> <span class="n">tag_a</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;span&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;instancename&quot;</span> <span class="ow">in</span> <span class="n">tag_span</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tag_span</span><span class="o">.</span><span class="n">contents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="n">tag_span</span><span class="o">.</span><span class="n">string</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">tag_span</span><span class="o">.</span><span class="n">contents</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">NavigableString</span><span class="p">):</span>
+                        <span class="n">temp</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">string</span>
+                        <span class="k">break</span>
+        <span class="k">break</span>
+    <span class="k">return</span> <span class="n">temp</span></div>
+
+<span class="c1">#------------------------------------------------------------------------------#</span>
+<span class="c1"># M O O D L E - I M P O R T E R</span>
+<span class="c1">#------------------------------------------------------------------------------#</span>
+
+<div class="viewcode-block" id="MoodleImporter"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.moodle.MoodleImporter.html#modules.dhbw.moodle.MoodleImporter">[docs]</a><span class="k">class</span> <span class="nc">MoodleImporter</span><span class="p">(</span><span class="n">ImporterSession</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to import data from moodle.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    url: str</span>
+<span class="sd">        The given url for moodle.</span>
+<span class="sd">    logout_url: str</span>
+<span class="sd">        The url for logout.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    login(self, username, password): None</span>
+<span class="sd">        creates a session for the user</span>
+<span class="sd">    find_all_bbb_rooms(self, course_dict): MoodleCourseDict</span>
+<span class="sd">        find all bbb rooms and store them in the given dictionary</span>
+<span class="sd">    scrape(self): None</span>
+<span class="sd">        scrape moodle data</span>
+<span class="sd">    logout(self): None</span>
+<span class="sd">        sends the logout request</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://moodle.dhbw-mannheim.de/&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;logout_url&quot;</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Host&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">url_get_fqdn</span><span class="p">(</span><span class="n">MoodleImporter</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logout_url</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+<div class="viewcode-block" id="MoodleImporter.login"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.moodle.MoodleImporter.html#modules.dhbw.moodle.MoodleImporter.login">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Acquire the authentication token.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        username: str</span>
+<span class="sd">            username used to login</span>
+<span class="sd">        password: str</span>
+<span class="sd">            password used to login</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        MoodleImporter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;@&quot;</span> <span class="ow">in</span> <span class="n">username</span><span class="p">:</span>
+            <span class="n">username</span> <span class="o">=</span> <span class="n">username</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="n">MoodleImporter</span><span class="o">.</span><span class="n">url</span>
+
+        <span class="c1"># get token from login page</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r_token</span> <span class="o">=</span> <span class="n">reqget</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span> <span class="o">+</span> <span class="s2">&quot;login/index.php&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">service_err</span>
+
+        <span class="c1"># extract the token from response</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Cookie&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">r_token</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Set-Cookie&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Referer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">url</span> <span class="o">+</span> <span class="s2">&quot;login/index.php&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Origin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="n">content_token</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r_token</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">)</span>
+        <span class="n">tag_list</span> <span class="o">=</span> <span class="n">content_token</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;login&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">tag_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">elem</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;logintoken&quot;</span><span class="p">:</span>
+                <span class="n">logintoken</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+
+        <span class="c1"># set form data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;application/x-www-form-urlencoded&quot;</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;anchor&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;logintoken&quot;</span><span class="p">:</span> <span class="n">logintoken</span><span class="p">,</span>
+            <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+            <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">password</span>
+        <span class="p">}</span>
+
+        <span class="c1"># post request for login</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r_login</span> <span class="o">=</span> <span class="n">reqpost</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span> <span class="o">+</span> <span class="s2">&quot;login/index.php&quot;</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span>
+                <span class="n">return_code</span><span class="o">=</span><span class="mi">303</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">service_err</span>
+        <span class="k">except</span> <span class="n">CredentialsException</span> <span class="k">as</span> <span class="n">cred_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">cred_err</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drop_header</span><span class="p">(</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drop_header</span><span class="p">(</span><span class="s2">&quot;Origin&quot;</span><span class="p">)</span>
+
+        <span class="c1"># add authentication cookie to the headers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth_token</span> <span class="o">=</span> <span class="n">r_login</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Set-Cookie&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Cookie&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth_token</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">username</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="MoodleImporter.find_all_bbb_rooms"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.moodle.MoodleImporter.html#modules.dhbw.moodle.MoodleImporter.find_all_bbb_rooms">[docs]</a>    <span class="k">def</span> <span class="nf">find_all_bbb_rooms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">course_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method to find all bbc rooms for a given course.</span>
+
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        course_dict: MoodleCourseDict</span>
+<span class="sd">            a typed dictionary</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        course_dict: MoodleCourseDict</span>
+<span class="sd">            a typed dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r_course</span> <span class="o">=</span> <span class="n">reqget</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">course_dict</span><span class="p">[</span><span class="s2">&quot;href&quot;</span><span class="p">],</span>
+                <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">service_err</span>
+
+        <span class="n">content_course</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r_course</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">tag_a_list</span> <span class="o">=</span> <span class="n">content_course</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">attr_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">LoginRequiredException</span> <span class="kn">from</span> <span class="nn">attr_err</span>
+
+        <span class="k">for</span> <span class="n">tag_a</span> <span class="ow">in</span> <span class="n">tag_a_list</span><span class="p">:</span>
+            <span class="c1"># in case there is an &lt;a&gt; without href as attribute</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">tag_a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">temp_href</span> <span class="o">=</span> <span class="n">tag_a</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;bigbluebuttonbn&quot;</span> <span class="ow">in</span> <span class="n">temp_href</span><span class="p">:</span>
+                <span class="n">course_dict</span><span class="p">[</span><span class="s2">&quot;bbb_rooms&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">add_to_module_dict</span><span class="p">(</span><span class="n">get_bbb_instance_name</span><span class="p">(</span><span class="n">tag_a</span><span class="p">),</span> <span class="n">temp_href</span><span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">course_dict</span></div>
+
+<div class="viewcode-block" id="MoodleImporter.scrape"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.moodle.MoodleImporter.html#modules.dhbw.moodle.MoodleImporter.scrape">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">scrape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Scrape selected data from moodle.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="n">MoodleImporter</span><span class="o">.</span><span class="n">url</span>
+
+        <span class="c1"># renew referer header</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Referer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">url</span>
+
+        <span class="c1"># get profile data</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r_profile</span> <span class="o">=</span> <span class="n">reqget</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span> <span class="o">+</span> <span class="s2">&quot;user/profile.php&quot;</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">service_err</span>
+
+        <span class="c1"># parse html content of the response</span>
+        <span class="n">content_profile</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r_profile</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">)</span>
+
+        <span class="c1"># scrape username</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scraped_data</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">content_profile</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;usermenu&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">attr_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">LoginRequiredException</span><span class="p">()</span> <span class="kn">from</span> <span class="nn">attr_err</span>
+
+        <span class="c1"># scrape logout url</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">tag_list</span> <span class="o">=</span> <span class="n">content_profile</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;usermenu-dropdown&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">attr_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">LoginRequiredException</span><span class="p">()</span> <span class="kn">from</span> <span class="nn">attr_err</span>
+
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">tag_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">elem</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Logout&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logout_url</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">))</span>
+
+        <span class="c1"># scrape for every joined course</span>
+        <span class="n">courses_dict</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">tag_list</span> <span class="o">=</span> <span class="n">content_profile</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;adaptable-tab-coursedetails&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">attr_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">LoginRequiredException</span><span class="p">()</span> <span class="kn">from</span> <span class="nn">attr_err</span>
+
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">tag_list</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">argument</span> <span class="ow">in</span> <span class="n">url_get_args</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="s2">&quot;course&quot;</span> <span class="ow">in</span> <span class="n">argument</span><span class="p">:</span>
+                    <span class="n">course_id</span> <span class="o">=</span> <span class="n">argument</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">break</span>
+            <span class="n">courses_dict</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">elem</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+                    <span class="s2">&quot;href&quot;</span><span class="p">:</span> <span class="n">url</span> <span class="o">+</span> <span class="s2">&quot;course/view.php?id=&quot;</span> <span class="o">+</span> <span class="n">course_id</span><span class="p">,</span>
+                    <span class="s2">&quot;bbb_rooms&quot;</span><span class="p">:</span> <span class="p">[]</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="c1"># find every bbb room under the joined courses</span>
+        <span class="k">for</span> <span class="n">course_dict</span> <span class="ow">in</span> <span class="n">courses_dict</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">course_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_all_bbb_rooms</span><span class="p">(</span><span class="n">course_dict</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">service_err</span>
+            <span class="k">except</span> <span class="n">LoginRequiredException</span> <span class="k">as</span> <span class="n">log_req_err</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">log_req_err</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scraped_data</span><span class="p">[</span><span class="s2">&quot;courses&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">courses_dict</span></div>
+
+<div class="viewcode-block" id="MoodleImporter.logout"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.moodle.MoodleImporter.html#modules.dhbw.moodle.MoodleImporter.logout">[docs]</a>    <span class="k">def</span> <span class="nf">logout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sends a logout request.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># logout request</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">reqget</span><span class="p">(</span>
+                <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logout_url</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">return_code</span><span class="o">=</span><span class="mi">303</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ServiceUnavailableException</span> <span class="k">as</span> <span class="n">service_err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">service_err</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth_token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Optima Connect.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

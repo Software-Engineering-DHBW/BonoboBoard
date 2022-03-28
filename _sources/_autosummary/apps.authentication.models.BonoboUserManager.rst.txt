@@ -1,0 +1,25 @@
+apps.authentication.models.BonoboUserManager
+============================================
+
+.. currentmodule:: apps.authentication.models
+
+.. autoclass:: BonoboUserManager
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~BonoboUserManager.create_user
+   
+   
+
+   
+   
+   

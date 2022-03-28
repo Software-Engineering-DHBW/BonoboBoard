@@ -1,0 +1,35 @@
+modules.dhbw.lecture\_importer.LectureImporter
+==============================================
+
+.. currentmodule:: modules.dhbw.lecture_importer
+
+.. autoclass:: LectureImporter
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~LectureImporter.drop_header
+      ~LectureImporter.limit_weeks_in_list
+      ~LectureImporter.scrape
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~LectureImporter.headers
+      ~LectureImporter.scraped_data
+      ~LectureImporter.url
+   
+   

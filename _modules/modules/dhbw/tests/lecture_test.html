@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>modules.dhbw.tests.lecture_test &mdash; Bonoboboard  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> Bonoboboard
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_autosummary/modules.html">modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_autosummary/core.html">core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../_autosummary/apps.html">apps</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Bonoboboard</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>modules.dhbw.tests.lecture_test</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for modules.dhbw.tests.lecture_test</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;unittests for the lecture module</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">TestCase</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">dhbw.lecture_importer</span> <span class="kn">import</span> <span class="n">LectureImporter</span>
+<span class="kn">from</span> <span class="nn">dhbw.lecture_importer</span> <span class="kn">import</span> <span class="n">CourseImporter</span>
+
+<div class="viewcode-block" id="LectureImporterTest"><a class="viewcode-back" href="../../../../_autosummary/modules.dhbw.tests.lecture_test.LectureImporterTest.html#modules.dhbw.tests.lecture_test.LectureImporterTest">[docs]</a><span class="k">class</span> <span class="nc">LectureImporterTest</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Unittests for the lecture class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="LectureImporterTest.test_false_uid"><a class="viewcode-back" href="../../../../_autosummary/modules.dhbw.tests.lecture_test.LectureImporterTest.html#modules.dhbw.tests.lecture_test.LectureImporterTest.test_false_uid">[docs]</a>    <span class="k">def</span> <span class="nf">test_false_uid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test for check of gathering lectures with wrong uid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lec</span> <span class="o">=</span> <span class="n">LectureImporter</span><span class="p">()</span>
+        <span class="n">lec</span><span class="o">.</span><span class="n">scrape</span><span class="p">(</span><span class="mi">776101</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">lec</span><span class="o">.</span><span class="n">lectures</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LectureImporterTest.test_true_uid"><a class="viewcode-back" href="../../../../_autosummary/modules.dhbw.tests.lecture_test.LectureImporterTest.html#modules.dhbw.tests.lecture_test.LectureImporterTest.test_true_uid">[docs]</a>    <span class="k">def</span> <span class="nf">test_true_uid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test for check of gathering lectures with right uid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lec</span> <span class="o">=</span> <span class="n">LectureImporter</span><span class="p">()</span>
+        <span class="n">lec</span><span class="o">.</span><span class="n">scrape</span><span class="p">(</span><span class="mi">7761001</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">lec</span><span class="o">.</span><span class="n">lectures</span><span class="o">.</span><span class="n">empty</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LectureImporterTest.test_limit_weeks_in_list"><a class="viewcode-back" href="../../../../_autosummary/modules.dhbw.tests.lecture_test.LectureImporterTest.html#modules.dhbw.tests.lecture_test.LectureImporterTest.test_limit_weeks_in_list">[docs]</a>    <span class="k">def</span> <span class="nf">test_limit_weeks_in_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test for limiting weeks in lecture-list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lec</span> <span class="o">=</span> <span class="n">LectureImporter</span><span class="p">()</span>
+        <span class="n">lec</span><span class="o">.</span><span class="n">scrape</span><span class="p">(</span><span class="mi">7761001</span><span class="p">)</span>
+        <span class="n">lec</span><span class="o">.</span><span class="n">lectures</span> <span class="o">=</span> <span class="n">lec</span><span class="o">.</span><span class="n">limit_weeks_in_list</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">lec</span><span class="o">.</span><span class="n">lectures</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="CourseImporterTest"><a class="viewcode-back" href="../../../../_autosummary/modules.dhbw.tests.lecture_test.CourseImporterTest.html#modules.dhbw.tests.lecture_test.CourseImporterTest">[docs]</a><span class="k">class</span> <span class="nc">CourseImporterTest</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;unittests for the course module.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="CourseImporterTest.test_course_importer"><a class="viewcode-back" href="../../../../_autosummary/modules.dhbw.tests.lecture_test.CourseImporterTest.html#modules.dhbw.tests.lecture_test.CourseImporterTest.test_course_importer">[docs]</a>    <span class="k">def</span> <span class="nf">test_course_importer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test for return of CourseImporter, length of list should be &gt;0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">courses</span> <span class="o">=</span> <span class="n">CourseImporter</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">courses</span><span class="o">.</span><span class="n">course_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CourseImporterTest.test_check_values"><a class="viewcode-back" href="../../../../_autosummary/modules.dhbw.tests.lecture_test.CourseImporterTest.html#modules.dhbw.tests.lecture_test.CourseImporterTest.test_check_values">[docs]</a>    <span class="k">def</span> <span class="nf">test_check_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test if the course list contains a specific course uid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">courses</span> <span class="o">=</span> <span class="n">CourseImporter</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s2">&quot;7761001&quot;</span> <span class="ow">in</span> <span class="n">courses</span><span class="o">.</span><span class="n">uid_list</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Optima Connect.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
