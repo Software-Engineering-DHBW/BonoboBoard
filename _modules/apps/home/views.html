@@ -72,7 +72,6 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">ast</span>
 <span class="kn">from</span> <span class="nn">distutils.fancy_getopt</span> <span class="kn">import</span> <span class="n">wrap_text</span>
-<span class="kn">from</span> <span class="nn">email</span> <span class="kn">import</span> <span class="n">header</span>
 <span class="kn">import</span> <span class="nn">json</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -80,7 +79,7 @@
 <span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">HttpResponseRedirect</span>
 <span class="kn">from</span> <span class="nn">django.template</span> <span class="kn">import</span> <span class="n">loader</span>
 <span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">reverse</span>
-<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">redirect</span>
 <span class="kn">from</span> <span class="nn">django.views.decorators.csrf</span> <span class="kn">import</span> <span class="n">csrf_protect</span>
 <span class="kn">from</span> <span class="nn">django.contrib.auth</span> <span class="kn">import</span> <span class="n">get_user_model</span>
 <span class="kn">from</span> <span class="nn">django.contrib.auth.decorators</span> <span class="kn">import</span> <span class="n">login_required</span>
@@ -129,7 +128,7 @@
 
 
 <span class="nd">@login_required</span><span class="p">(</span><span class="n">login_url</span><span class="o">=</span><span class="s2">&quot;/login/&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">email</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">email</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">inc_msg</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;on email page is opened, return home/email.html</span>
 <span class="sd">    on send email click, check input and send mail by ZimbraHandler</span>
 
@@ -150,7 +149,8 @@
     <span class="n">zimbra</span><span class="o">.</span><span class="n">contacts</span> <span class="o">=</span> <span class="n">current_user</span><span class="o">.</span><span class="n">zimbra_contacts</span>
     <span class="n">zimbra</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">zimbra_headers</span><span class="p">)</span>
 
-    <span class="n">msg</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    
     <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
         <span class="n">form</span> <span class="o">=</span> <span class="n">ContactForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
 
@@ -165,11 +165,9 @@
             <span class="p">}</span>
 
             <span class="n">zimbra</span><span class="o">.</span><span class="n">send_mail</span><span class="p">(</span><span class="n">mail_dict</span><span class="p">)</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;Email erfolgreich gesendet!&quot;</span><span class="p">]</span>
-            <span class="n">form</span> <span class="o">=</span> <span class="n">ContactForm</span><span class="p">()</span>  <span class="c1"># clear the from</span>
-            <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;home/email.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">,</span> <span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">})</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;/email/success&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Fehlerhafte Eingabe&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Fehlerhafte Eingabe&quot;</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">form</span> <span class="o">=</span> <span class="n">ContactForm</span><span class="p">()</span>
