@@ -59,6 +59,14 @@ File: style.css
 ==========================  **/
 @import url("../fonts/custom/css/custom.css");
 
+.contact-btn {
+    margin: 10px 0px 0px 10px
+}
+
+.contact-btn:hover {
+    cursor: pointer;
+}
+
 .form-group *{
     margin-bottom: 15px;
 }
