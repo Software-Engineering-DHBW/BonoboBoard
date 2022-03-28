@@ -28,21 +28,21 @@
                 <!-- [ Main Content ] start -->
                 <div class="row">
                     <!-- Grades overview start -->
-                    <div class="col-8">
+                    <div class="col-sm">
                         <div class="card">
                             <div class="card-header">
                                 <h5>Noten</h5>
                             </div>
                             <div class="card-block">
                                 <div class="row">
-                                    <div id="all_grades" class="col"></div>
+                                    <div id="all_grades" class="col" style="overflow-x:auto;"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!-- Grades overview end -->
                     <!-- GPA Display start -->
-                    <div class="col-3">
+                    <div class="col-sm">
                         <div class="card">
                             <div class="card-header">
                                 <h5>GPA</h5>
@@ -74,13 +74,13 @@
     //fill tabel with all grades
     var grades = document.getElementById("all_grades")
     let content = ''
-    content += ' <table class="table"><thead><tr><th>Veranstaltung</th><th>Credits</th><th>Note</th></tr></thead> <tbody>'
+    content += ' <table class="table"><thead><tr><th>Note</th><th>Credits</th><th>Veranstaltung</th></tr></thead> <tbody>'
 
     for (let index in dualis_data["modules"]) {
         const entry = dualis_data["modules"][index]
-        content += '<tr><td>' + entry["name"] + '</td>'
+        content += '<tr><td>' + entry["grade"] + '</td>'
         content += '<td>' + entry["credits"] + '</td>'
-        content += '<td>' + entry["grade"] + '</td></tr>'
+        content += '<td>' + entry["name"] + '</td></tr>'
     }
 
     content += '  </tbody> </table>'
