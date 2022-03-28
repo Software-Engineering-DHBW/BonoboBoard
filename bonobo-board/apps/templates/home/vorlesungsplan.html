@@ -156,7 +156,8 @@ tbody tr td {
 {% block javascripts %}
 <script>
   let dateForHeader = new Date();
-  dateForHeader.setDate(dateForHeader.getDate() + {{offset}} * 7);
+  offset = {{offset}}
+  dateForHeader.setDate(dateForHeader.getDate() + offset * 7);
 
   //Set week of year in Header
   var week_of_year = document.getElementById("week_of_year")
@@ -174,13 +175,15 @@ tbody tr td {
   rawLectureLinks = rawLectureLinks.replace(/&#x27;/g, '"')
   const lectureLinks = JSON.parse(rawLectureLinks);
 
+
+
   //get element
   var lecture_plan = document.getElementById("lecture_plan")
   let content = ''
 
   //create header (Dates of current week)
   content += '<table><thead><tr><th class="headcol"></th>'
-  content += createHeaderContent(dateForHeader)
+  content += createHeaderContent(dateForHeader, offset)
   content += '</tr></thead></table>'
 
   //create calendar body

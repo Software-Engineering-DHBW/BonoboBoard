@@ -65,11 +65,13 @@ function getDatesOfCurrentWeek(date) {
 }
 
 //copied from https://www.delftstack.com/de/howto/javascript/javascript-get-week-number/
-function getWeekNumber(date) {
+function getWeekNumber(headDate) {
+    date = new Date(headDate)
     date.setDate(date.getDate() - 1);
     var oneJan = new Date(date.getFullYear(), 0, 1);
     var numberOfDays = Math.floor((date - oneJan) / (24 * 60 * 60 * 1000));
-    return Math.ceil((date.getDay() + 1 + numberOfDays) / 7) - 1;
+    var weekNum = Math.ceil((date.getDay() + 1 + numberOfDays) / 7) ;
+    return weekNum
 }
 
 //checks if time is between 7am and 9:45pm and between monday and saturday
@@ -139,11 +141,11 @@ function isToday(day) {
 }
 
 //function to fill in the correct dates in schedule header. Marks current day as well.
-function createHeaderContent(date) {
-    content = ''
+function createHeaderContent(date, offset) {
+    let content = ''
     datesOfCurrentWeek = getDatesOfCurrentWeek(date)
     for (let day = monday; day < sunday; day++) {
-        content += '<th' + (isToday(day) ? ' class="today"' : '')
+        content += '<th' + (isToday(day) && offset == 0  ? ' class="today"' : '')
             + '>' + dayNames[day] + ', '  //Mo, Di, Mi etc
             + datesOfCurrentWeek[day].getDate() + '.'
             + (datesOfCurrentWeek[day].getMonth() + 1) + '</th>' //plus one --> Jan = 0 in js
@@ -155,7 +157,7 @@ function createCalendarBody() {
     //create look up table for lecture data
     let lut = createLut(lectureData)
 
-    content = ''
+    let content = ''
     //creates extra row above for cosmetic reason
     for (let day = monday; day < sunday; day++) {
         content += '<td></td>'
@@ -211,24 +213,19 @@ function createCalendarBody() {
     return content
 }
 
-
-
 //creates table of lectures for current day
 function getTodaysLectures(lectureData) {
     let currentDay = getWeekday(currentDate)
-
     //create look up table for lecture data
     let lut = createLut(lectureData)
 
-    content = ''
+    let content = ''
+
     for (let timeslot in lut) {
-        if (current = sunday){
+        if (currentDay == sunday){
             break;
         }
-
         if (lut[timeslot][currentDay] != 0) {
-            console.log(lut)
-            console.log(lut[timeslot][currentDay])
             content += '<tr><td>' + lut[timeslot][currentDay].name + '</td>'
             content += '<td>' + lut[timeslot][currentDay].start + ' - ' + lut[timeslot][currentDay].end + '</td>'
 

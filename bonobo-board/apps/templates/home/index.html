@@ -84,13 +84,11 @@
             icon.className = "feather icon-eye-off"
             if (gpa !== null && dualisData["gpa_total"] !== undefined) {
                 gpa.innerHTML = '<p><b>GPA-Total:</b> ' + dualisData["gpa_total"] + '</p>'
-                console.log("off")
             }
         } else {
             icon.className = "feather icon-eye"
             if (gpa !== null && dualisData["gpa_total"] !== undefined) {
                 gpa.innerHTML = '<p><b>GPA-Total:</b> Ausgeblendet </p>'
-                console.log("on")
             }
         }
     })
@@ -115,13 +113,13 @@
 
     //show lecture plan
     let lecturePlan = document.getElementById("lecture_plan")
+
     let content = ''
+    lectureContent = getTodaysLectures(lectureData)
+    if(lectureContent){
 
-    console.log(getTodaysLectures(lectureData))
-
-    if(getTodaysLectures(lectureData)){
         content += ' <table class="table"><thead><tr><th>Veranstaltung</th><th>Uhrzeit</th><th>Raum</th></tr></thead> <tbody>'
-        content += getTodaysLectures(lectureData)
+        content += lectureContent
         content += '  </tbody> </table>'
     }
     else {
