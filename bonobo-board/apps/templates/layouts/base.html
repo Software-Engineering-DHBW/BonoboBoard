@@ -29,13 +29,14 @@
     <!-- vendor css -->
     <link rel="stylesheet" href="/static/assets/css/style.css">
     <script src="/static/assets/js/custom_classes.js"></script>
+    <script src="/static/assets/js/onBackPress.js"></script>
 
     <!-- Specific CSS goes HERE -->
     {% block stylesheets %}{% endblock stylesheets %}
 
 </head>
 
-<body>
+<body onbeforeunload="HandleBackFunctionality()">
 
     <!-- [ Pre-loader ] start -->
     <div class="loader-bg">
