@@ -7,16 +7,19 @@
     body {
         background-color: #EFEFEF;
     }
-    .bonobo1{
-        font-size:200px;
+
+    .bonobo1 {
+        font-size: 200px;
         color: #7CB45B;
     }
-    .bonobo2{
-        font-size:150px;
+
+    .bonobo2 {
+        font-size: 150px;
         color: #ADDA92;
     }
-    .bonobo3{
-        font-size:200px;
+
+    .bonobo3 {
+        font-size: 200px;
         color: #569233;
     }
 </style>
@@ -38,11 +41,8 @@
                 <h3 class="mb-4">Login</h3>
 
                 <span class="mb-0 text-muted">
-                    {% if msg %}
-                    <span id="error_msg" style="color: #ff0000">{{ msg | safe }}</span>
-                    {% else %}
-                    Gib deine DHBW Login-Daten ein.
-                    {% endif %}
+                    <span id="error_msg" ></span>
+                    
                 </span>
 
                 <br />
@@ -80,6 +80,12 @@
 {% block javascripts %}
 <script>
     error_msg = document.getElementById("error_msg")
+    msg = "{{ msg }}"
+    console.log(msg)
+    if(msg !== "Gib deine DHBW Login-Daten ein.") {
+        error_msg.style.color= "#ff0000"
+    }
+    error_msg.textContent = msg
     setTimeout(() => {
         error_msg.textContent = "Gib deine DHBW Login-Daten ein."
         error_msg.style.color = "#000"
@@ -94,6 +100,16 @@
         loading.style.visibility = "visible";
         button.disabled = true
         button.parentElement.submit()
+        setTimeout(() => {
+            error_msg.textContent = "Unvollständige Eingabedaten"
+            error_msg.style.color = "#ff0000"
+            button.disabled = false
+            loading.style.visibility = "hidden";
+            setTimeout(() => {
+                error_msg.textContent = "Gib deine DHBW Login-Daten ein."
+                error_msg.style.color = "#000"
+             }, 5000)
+        }, 15000)
     });
 
     let rawCourseImport = "{{ course_list }}"
