@@ -28,7 +28,7 @@
                 <!-- [ Main Content ] start -->
                 <!-- write Email -->
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-sm">
                         <div class="card">
                             <div class="card-header">
                                 <h5>Email <span id="error_msg_field" style="color: #ff0000; padding-left: 40px;"> {{ msg
@@ -49,14 +49,14 @@
                         </div>
                     </div>
                     <!-- show contacts -->
-                    <div class="col-6">
+                    <div class="col-sm">
                         <div class="card">
                             <div class="card-header">
                                 <h5>Kontakte</span></h5>
                             </div>
                             <div class="card-block">
                                 <div class="form-group">
-                                    <div id="contacts"> </div>
+                                    <div id="contacts" style="overflow-x:auto;"> </div>
                                 </div>
                             </div>
                         </div>
@@ -94,20 +94,23 @@
         }, 3500)
     }
 
-
     //show contact selection for user
     rawContacts = "{{ contacts }}"
     rawContacts = rawContacts.replace(/&#x27;/g, '"')
     rawContacts = rawContacts.replace(/None/g, null)
     const contacts = JSON.parse(rawContacts);
-    console.log(contacts)
     contactsDiv = document.getElementById("contacts")
     contactsContent = ""
     i = 0
+    contactsContent += '<table>'
     contacts.forEach(contact => {
-        contactsContent += '<div >' + contact["firstName"] + " " + contact["lastName"] + '<button onclick="getEmailById(' + i + ',1)">Empfänger </button>  <button onclick="getEmailById(' + i + ',2)">Cc </button> <button onclick="getEmailById(' + i + ',3)"">Bcc </button> <div>'
+        contactsContent += '<tr><td>' + contact["firstName"] + " " + contact["lastName"] + '</td>'
+        contactsContent += '<td><button class="contact-btn" onclick="getEmailById(' + i + ',1)">Empfänger</button></td>'
+        contactsContent += '<td><button class="contact-btn" onclick="getEmailById(' + i + ',2)">Cc </button> </td>'
+        contactsContent += '<td><button class="contact-btn" onclick="getEmailById(' + i + ',3)"">Bcc </button></td></tr>'
         i++
     });
+    contactsContent += '</table>'
     contactsDiv.innerHTML += contactsContent
 
     recipientField = document.getElementById("id_empfänger")
@@ -127,7 +130,6 @@
                 bccField.value += contacts[id]["email"] + ";"
                 break
         }
-        console.log()
         return
     }
 </script>

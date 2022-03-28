@@ -44,7 +44,6 @@
     courseMap = new Map()
     moodleData["courses"].forEach(element => {
         if (element["bbb_rooms"].length != 0) {
-            console.log(element["bbb_rooms"])
             element["bbb_rooms"].forEach(bbb_room => {
                 courseMap.set(element["name"]+': ' + bbb_room["name"]  , [bbb_room["name"], bbb_room["url"]])
             })
