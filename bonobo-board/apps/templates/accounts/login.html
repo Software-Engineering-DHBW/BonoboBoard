@@ -29,9 +29,9 @@
 <div class="auth-wrapper">
     <div class="auth-content">
         <div class="auth-bg">
-            <span class="r"><i class="custom icon-Bonobo_right bonobo1"></i></span>
-            <span class="r s"><i class="custom icon-Bonobo_right bonobo2"></i></span>
-            <span class="r s"><i class="custom icon-Bonobo_left bonobo3"></i></span>
+            <span class="r"><i onclick="goToBonoboCharity()" class="custom icon-Bonobo_right bonobo1"></i></span>
+            <span class="r s"><i onclick="goToBonoboCharity()" class="custom icon-Bonobo_right bonobo2"></i></span>
+            <span class="r s"><i onclick="goToBonoboCharity()" class="custom icon-Bonobo_left bonobo3"></i></span>
         </div>
         <div class="card">
             <div class="card-body text-center">
@@ -132,6 +132,10 @@
                 console.log("back pressed collected")
             }
         }
+    }
+
+    function goToBonoboCharity() {
+        window.location.href = "https://www.bonobo-alive.org/files/german/hilfe.html"
     }
     autocomplete(courseFiled, courseList);
 </script>
