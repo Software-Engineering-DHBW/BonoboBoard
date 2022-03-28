@@ -41,8 +41,8 @@
                 <h3 class="mb-4">Login</h3>
 
                 <span class="mb-0 text-muted">
-                    <span id="error_msg" ></span>
-                    
+                    <span id="error_msg"></span>
+
                 </span>
 
                 <br />
@@ -81,11 +81,10 @@
 <script>
     error_msg = document.getElementById("error_msg")
     msg = "{{ msg }}"
-    console.log(msg)
-    if(msg !== "Gib deine DHBW Login-Daten ein.") {
-        error_msg.style.color= "#ff0000"
+    if (msg !== "Gib deine DHBW Login-Daten ein.") {
+        error_msg.style.color = "#ff0000"
     }
-    error_msg.textContent = msg
+    setError(msg)
     setTimeout(() => {
         error_msg.textContent = "Gib deine DHBW Login-Daten ein."
         error_msg.style.color = "#000"
@@ -97,19 +96,17 @@
     loading = document.getElementById("loading")
     button = document.getElementById("login")
     button.addEventListener("click", function () {
-        loading.style.visibility = "visible";
-        button.disabled = true
-        button.parentElement.submit()
-        setTimeout(() => {
-            error_msg.textContent = "Unvollständige Eingabedaten"
-            error_msg.style.color = "#ff0000"
-            button.disabled = false
-            loading.style.visibility = "hidden";
-            setTimeout(() => {
-                error_msg.textContent = "Gib deine DHBW Login-Daten ein."
-                error_msg.style.color = "#000"
-             }, 5000)
-        }, 15000)
+        username = document.getElementById("id_username")
+        password = document.getElementById("id_password")
+        course = document.getElementById("id_course")
+        if (username.value == "" || password.value == "" || course.value == "") {
+            setError("Unvollständige Eingabe!")
+        }
+        else {
+            loading.style.visibility = "visible";
+            button.disabled = true
+            button.parentElement.submit()
+        }
     });
 
     let rawCourseImport = "{{ course_list }}"
@@ -119,6 +116,16 @@
     } catch (e) { }
     const courseList = JSON.parse(rawCourseImport);
 
+    function setError(msg) {
+        error_msg.textContent = msg
+        if (msg !== "Gib deine DHBW Login-Daten ein.") {
+            error_msg.style.color = "#ff0000"
+        }
+        setTimeout(() => {
+            error_msg.textContent = "Gib deine DHBW Login-Daten ein."
+            error_msg.style.color = "#000"
+        }, 5000)
+    }
 
     autocomplete(courseFiled, courseList);
 </script>
