@@ -2,28 +2,26 @@
 
 ## Vorwort
 
-Um etwaige Tests in diesem Verzeichnis nutzen zu können, müssen erst einmal die folgenden Pakete installiert werden:  
+To be able to use any tests in this directory, the following packages must first be installed:
   
 | Python Paket      | Version |
 |:----------------- |:------- |
 | selenium          | 4.1.3   |
 | webdriver-manager | 3.5.4   |
 
-Diese kann man ganz einfach über `pip3 install -U -r requirements.txt` installieren, wenn man im Verzeichnis [tests](https://github.com/Software-Engineering-DHBW/BonoboBoard/tree/main/bonobo-board/tests) ist.  
-(Zum Verifizieren unter Ubuntu (Linux) einfach `pip3 list | grep -e selenium -e webdriver` eingeben)  
+These can be easily installed via `pip3 install -U -r requirements.txt` if you are in the [tests](https://github.com/Software-Engineering-DHBW/BonoboBoard/tree/main/bonobo-board/tests) directory.
+(To verify under Ubuntu (Linux) just type `pip3 list | grep -e selenium -e webdriver`)
 
 ### Credentials
 
-Die Umgebungsvariablen: **STUDENTMAIL**, **STUDENTPASS** und **STUDENTCOURSE** müssen gesetzt sein, damit etwaige Authentifizierungsprozesse funktionieren.  
-Für **Windows** müssen die Umgebungsvariablen angepasst werden. Diese sind über das Startmenü -> Systemumgebungsvariablen bearbeiten -> Umgebungsvariablen -> Benutzervariablen zu erreichen. Mit Hilfe des Buttons "Neu" kann ein neuer Eintrag hinzugefügt werden. Der Name der Variablen entspricht dabei **STUDENTMAIL**, **STUDENTPASS** und **STUDENTCOURSE**, der Wert ist der zugehörige Wert.
+The environment variables: **STUDENTMAIL**, **STUDENTPASS** and **STUDENTCOURSE** must be set for any authentication processes to work.  
+For **Windows**, the environment variables must be adjusted. These can be accessed via the Start menu -> Edit System Environment Variables -> Environment Variables -> User Variables. A new entry can be added using the "New" button. The name of the variable corresponds to **STUDENTMAIL**, **STUDENTPASS** or **STUDENTCOURSE**, the value is the corresponding value.
 
 ### PYTHONPATH
 
-Des Weiteren ist es nötig, das Verzeichnis [tests](https://github.com/Software-Engineering-DHBW/BonoboBoard/tree/main/bonobo-board/tests)
-der Umgebungsvariable PYTHONPATH hinzuzufügen. Gewisse Imports beim Ausführen der Tests schlagen sonst fehl.  
-  
-Unter **Ubuntu/Linux** kann man das Ganze dauerhaft hinzufügen, in dem man in die Datei **.bashrc** unter dem Home-Verzeichnis des Benutzers (via `cd ~` zu erreichen)
-folgende Zeilen an das Ende der Datei anhängt:  
+Furthermore, it is necessary to add the directory [tests](https://github.com/Software-Engineering-DHBW/BonoboBoard/tree/main/bonobo-board/tests) to the environment variable PYTHONPATH. Certain imports when running the tests will otherwise fail.
+
+Under **Ubuntu/Linux** you can add it permanently by adding the following lines to the end of the **.bashrc** file under the user's home directory (reachable via `cd ~`):
 ```
 bonobo_test_path="$HOME/path/to/bonobo-board/tests"
 if [ "${PYTHONPATH##*${bonobo_test_path}}" == "$PYTHONPATH" ] && [ "${PYTHONPATH##*${bonobo_test_path}:*}" == "$PYTHONPATH" ]; then
@@ -31,11 +29,11 @@ if [ "${PYTHONPATH##*${bonobo_test_path}}" == "$PYTHONPATH" ] && [ "${PYTHONPATH
 fi
 ```
 
-Unter **Windows** muss der PYTHONPATH in den Umgebungsvariablen angepasst werden. Fall mehr als ein Eintrag im PYTHONPATH besteht, sind diese durch ein Semikolon zu trennen. Der hinzuzufügende Pfad muss in etwa folgenden Ansprüchen C:\path\to\bonobo-board\tests genügen.
+Under Windows, the PYTHONPATH must be adjusted in the environment variables. If there is more than one entry in the PYTHONPATH, separate them with a semicolon. The path to be added must approximately meet the following requirements C:\path\to\bonobo-board\tests.
 
 ## Frontend UI
 
-Im Verzeichnis [frontend_ui](https://github.com/Software-Engineering-DHBW/BonoboBoard/tree/main/bonobo-board/tests/frontend_ui) befindet sich die Datei 
+The directory [frontend_ui](https://github.com/Software-Engineering-DHBW/BonoboBoard/tree/main/bonobo-board/tests/frontend_ui) contains the file
 
 
 
