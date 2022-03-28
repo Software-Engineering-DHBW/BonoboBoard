@@ -11,10 +11,12 @@ COPY . .
 # remove unwanted files
 RUN rm -rf CHANGELOG.md \
     docker-compose.yml \
-    Dockerfile \
+    Dockerfile.base \
+    Dockerfile.django \
     LICENSE.md \
     nginx/ \
     README.md
+
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -25,3 +27,11 @@ ENV PYTHONPATH /bonobo-board/modules
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 RUN pip install -r ./modules/dhbw/requirements.txt
+
+RUN apt-get update && apt-get -y install cron
+
+RUN echo "0 */6 * * * root /usr/local/bin/python3 /bonobo-board/modules/lecture_scraper_cronjob.py" > /etc/cron.d/dhbw_lectures
+
+RUN chmod 0644 /etc/cron.d/dhbw_lectures
+
+CMD service cron start && tail -F /var/log/cron/error.log   # Not working

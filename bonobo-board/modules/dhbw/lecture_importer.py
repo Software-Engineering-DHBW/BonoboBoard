@@ -2,15 +2,13 @@
 
 """Provide functionality to interact with the students timetable.
 """
-
+import asyncio
+import os
 from datetime import datetime, timedelta
-import calendar
 import pandas as pd
 import sqlalchemy
 from bs4 import BeautifulSoup
 import icalendar
-import asyncio
-
 from .util import Importer, reqget
 
 
@@ -88,16 +86,7 @@ class LectureImporter(Importer):
         super().__init__()
         self.lectures = None
 
-    async def login(self):
-        """Async login method for frontend
-
-        Returns
-        -------
-        LectureImporter
-        """
-        return self
-
-    async def scrape(self, uid):
+    def scrape(self, uid):
         """Method to scrape the courses-icalendar and parse it to a pandas.DataFrame.
 
         Parameters
@@ -130,80 +119,24 @@ class LectureImporter(Importer):
         self.lectures = df
         return df
 
-    def limit_days_in_list(self, days_past, days_future):
-        """Method to limit/crop the lectures-DataFrame gathered in LectureImporter.scrape() by limiting the days.
-
-        Parameters
-        ----------
-        days_past : int
-            include the last x days in the list
-        days_future : int
-            include the future x days in the list
-
-        Returns
-        -------
-        pandas.Dataframe
-            cropped lectures-DataFrame
-        """
-        d_past = datetime.today() - timedelta(days=days_past)
-        d_future = datetime.today() + timedelta(days=days_future)
-        df = self.lectures
-        return df[(df["start"] > d_past) & (df["start"] < d_future)]
-
-    def limit_weeks_in_list(self, weeks_past, weeks_future):
+    def limit_weeks_in_list(self, offset):
         """method to limit/crop the lectures-DataFrame gathered in LectureImporter.scrape() by limiting the weeks
 
         Parameters
         ----------
-        weeks_past : int
-            include the last x weeks in the list
-        weeks_future : int
-            include the future x weeks in the list
+        offset : int
+            offsets returned data by a number of weeks
 
         Returns
         -------
         pd.Dataframe
             cropped lectures-DataFrame
         """
-        w_past = datetime.today() - timedelta(days=datetime.today().weekday(), weeks=weeks_past)
-        w_future = datetime.today() + timedelta(days=-datetime.today().weekday(), weeks=weeks_future + 1)
+        w_start = datetime.today() + timedelta(days=-datetime.today().weekday(), weeks=offset)
+        w_end = w_start + timedelta(weeks=1)
         df = self.lectures
-        return df[(df["start"] > w_past.replace(hour=0, minute=0, second=0)) & (
-                df["start"] < w_future.replace(hour=0, minute=0, second=0))]
-
-
-# ?: remove (its cool that we can do it, but I dont see a reason for this to exist) @NK
-# NK: Its cool that we can do it, but its also mandatory (load all courses for database with cronjob) @Anonymous
-def all_courses_lectures(limit_days_past=14, limit_days_future=14):
-    """Gather lectures for all available courses.
-
-    Parameters
-    ----------
-    limit_days_past : int
-        Only save lectures of the last x days.
-    limit_days_future : int
-        Only save lectures of the future x days.
-    Returns
-    -------
-    list
-        Containing 2 lists (all_courses (uid), all_lectures (array with all lectures for every course).
-    """
-    courses = CourseImporter()
-    all_lectures = pd.DataFrame(columns=["lecture", "location", "start", "end", "c_uid"])  # foreign key c_uid
-    print(len(courses.uid_list))
-    course_data = list(zip(courses.uid_list, courses.course_list))
-    all_courses = pd.DataFrame(course_data, columns=["c_uid", "name"])
-    i = 0
-    for course in courses.uid_list:
-        i += 1
-        if i > 0 and i % 10 == 0:
-            print(i)
-        lectures = LectureImporter(course)
-        df = lectures.limit_days_in_list(limit_days_past, limit_days_future).copy()
-        df['c_uid'] = course
-        all_lectures = pd.concat([all_lectures, df], ignore_index=True)
-
-    return [all_courses, all_lectures]
+        return df[(df["start"] > w_start.replace(hour=0, minute=0, second=0)) & (
+                df["start"] < w_end.replace(hour=0, minute=0, second=0))]
 
 
 # -------------- HELPERS --------------------
@@ -252,6 +185,7 @@ def link_lectures_and_links(df_lectures, df_links):
     Parameters
     ----------
     df_lectures : pd.DataFrame
+
     df_links : pd.DataFrame
 
     Returns
@@ -305,17 +239,21 @@ def read_courses_from_database():
 # ----------------- LECTURE DATABASE --------------------
 # WRITE
 def write_all_courses_lectures_to_database():
-    """ Scraping lectures of all courses. Warning: May take while.
+    """ Scraping lectures of all courses. Warning: Does only work in docker-container.
 
     Returns
     -------
     None
     """
+
+    # Change to bonobo-working directory in docker-container
+    os.chdir("/bonobo-board/")
     courses = CourseImporter()
-    print("Length Course-List:", len(courses.uid_list))
     for course in courses.uid_list:
-        lectures = LectureImporter(course)
-        df = lectures.limit_days_in_list(14, 14).copy()
+        print(course)
+        lecture_imp = LectureImporter()
+        lecture_imp.scrape(course)
+        df = lecture_imp.lectures
         write_lectures_to_database(df, course)
 
 
@@ -324,13 +262,17 @@ def write_lectures_to_database(lectures_df, course_uid):
 
     Parameters
     ----------
+    path_to_db : str
+
     lectures_df : pd.DataFrame
+
     course_uid : str
 
     Returns
     -------
-
+    None
     """
+
     engine_string = "sqlite:///lectures.db"
     engine = sqlalchemy.create_engine(engine_string)
     lectures_df.to_sql(str(course_uid), engine, if_exists='replace', index=False)
@@ -357,12 +299,12 @@ def read_lectures_from_database(course_uid):
 
 # ----------------- LECTURE LINK DATABASE --------------------
 
-def write_lecture_links_to_database(df, user_uid):  # df-columns: lecture, link
+def _write_lecture_links_to_database(df, user_uid):  # df-columns: lecture, link
     """ Write lecture-link DataFrame to database.
 
     Parameters
     ----------
-    df : pd.DataFrame(columns=["lecture", "link"]
+    df : pd.DataFrame(columns=["lecture", "link"])
     user_uid : str
 
     Returns
@@ -379,7 +321,7 @@ def write_lecture_links_to_database(df, user_uid):  # df-columns: lecture, link
 
 def read_lecture_links_from_database(user_uid):
     """ Read lecture-link DataFrame from database.
-
+        Creates table, for new users.
     Parameters
     ----------
     user_uid : str
@@ -391,4 +333,36 @@ def read_lecture_links_from_database(user_uid):
     engine_string = "sqlite:///users.db"
     table_name = str(user_uid) + "_link"
     engine = sqlalchemy.create_engine(engine_string)
-    return pd.read_sql("SELECT * FROM \'" + table_name + "\';", engine)
+    try:
+        result = pd.read_sql("SELECT * FROM \'" + table_name + "\';", engine)
+    except Exception:
+        new_df = pd.DataFrame(columns=["lecture", "link"])
+        _write_lecture_links_to_database(df=new_df, user_uid=user_uid)
+        result = new_df
+    return result
+
+
+def add_lecture_links_to_database(user_uid, event, link):
+    """ Checks, if event is already saved in database.
+        Adds/Updates event in database.
+    Parameters
+    ----------
+    user_uid : str
+        user email
+    event : str
+        name of the event
+    link : str
+        link to safe to the event
+    Returns
+    -------
+    pd.DataFrame
+    """
+    df = read_lecture_links_from_database(user_uid)
+    if (df['lecture'] == event).any():
+        # df['link'][(df['lecture'] == event).any().index] = link
+        df.loc[df["lecture"] == event, "link"] = link
+    else:
+        df_to_append = pd.DataFrame({"lecture": [event], "link": [link]})
+        df = df.append(df_to_append)
+
+    _write_lecture_links_to_database(df, user_uid)

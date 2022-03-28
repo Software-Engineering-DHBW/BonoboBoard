@@ -7,11 +7,6 @@
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}
 <style>
-* {
-  margin: 0;
-  border: 0;
-}
-
 body {
   flex-direction: column;
   display: flex;
@@ -21,20 +16,13 @@ body {
   height: 100vh;
 }
 
-.outer {
-  position:relative;
-}
-
 .calendar {
   margin: 0 auto;
   min-width: 500px;
-
-  box-shadow: 0px 30px 50px rgba(0, 0, 0, 0.2) ,0px 3px 7px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  box-shadow: 0px 30px 50px rgba(0, 0, 0, 0.2), 0px 3px 7px rgba(0, 0, 0, 0.1);
 }
 
 thead {
-  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.2);
   text-align: center;
   width: 100%;
   font-size: 1rem;
@@ -68,9 +56,9 @@ header {
 }
 
 header h1 {
- font-size: 1.25rem;
- text-align: center;
- font-weight: normal;
+  font-size: 1.25rem;
+  text-align: center;
+  font-weight: normal;
 }
 
 table {
@@ -83,10 +71,10 @@ table {
 
 .headcol {
   width: 60px;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.5);
-  padding: 0.25rem 0;
+  padding: 0 0;
   text-align: center;
   border: 0;
   position: relative;
@@ -98,12 +86,9 @@ td {
   text-align: center;
   position: relative;
 }
+
 tr:nth-child(odd) td:not(.headcol) {
   border-bottom: 1px solid #e8e8e8;
-}
-
-tr:nth-child(even) td:not(.headcol) {
-  border-bottom: 1px solid #eee;
 }
 
 tr td {
@@ -114,93 +99,20 @@ tr td {
 
 tbody tr td {
   vertical-align: top;
-  height: 30px;
+  height: 20px;
   padding: 0.25rem 0.25rem 0 0.25rem;
   width: auto;
 }
-
-.event {
-  background: #7CB45B ;
-  color: white;
-  border-radius: 2px;
-  text-align: left;
-  font-size: 0.875rem;
-  padding: 0.5rem;
-  overflow-x: hidden;
-  transition: all 0.2s;
-  cursor: pointer;
-  position: absolute;
-  z-index: 1;
-  width: 96%;
-  height: 84%;
-}
-
-.event:hover {
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
-  background: #9BCA7F;
-}
-
-button.secondary {
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background: white;
-  padding: 0.5rem 0.75rem;
-  font-size: 14px;
-  border-radius: 2px;
-  color: rgba(0, 0, 0, 0.5);
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  font-weight: 500;
-}
-
-button.secondary:hover {
-  background: #fafafa;
-}
-button.secondary:active {
-  box-shadow: none;
-}
-button.secondary:focus {
-  outline: 0;
-}
-
-/* TODO
-tr td:nth-child(2), tr td:nth-child(3), .past {
-  background: #ffffff;
-}
-*/
-
-.now {
-  box-shadow: 0px -1px 0px 0px red;
-}
-
-/** < > signs to change week */
-.icon {
-  font-size: 1.5rem;
-  margin: 0 1rem;
-  text-align: center;
-  cursor: pointer;
-  vertical-align: middle;
-  position: relative;
-  top: -2px;
-}
-
-.icon:hover {
-  color: red;
-}
-
-.today {
-  color: #53c213;
-}
-
 </style>
 {% endblock stylesheets %}
 
 {% block content %}
-
 <div class="pcoded-content">
   <div class="pcoded-inner-content">
     <div class="page-header-title">
       <h3 class="m-b-10">Vorlesungsplan</h3>
     </div>
+    <!-- Navigation bar start -->
     <nav aria-label="breadcrumb">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -209,39 +121,47 @@ tr td:nth-child(2), tr td:nth-child(3), .past {
         </ol>
       </nav>
     </nav>
+    <!-- Navigation bar end -->
     <div class="main-body">
       <div class="page-wrapper">
         <!-- [ Main Content ] start -->
         <div class="card">
           <div class="calendar">
             <header>
-              <button class="secondary" style="align-self: flex-start; flex: 0 0 1">Today</button>
-              <div class="calendar__title" style="display: flex; justify-content: center; align-items: center">
+              <a class="todays-btn" href="/vorlesungsplan">Heute</a>
+              <div style="display: flex; justify-content: center; align-items: center">
                 <!-- Date selection -->
-                <div class="icon secondary chevron_left">‹</div>
-                <h1 class="" id="week_of_year" style="flex: 1;"></h1>
-                <div class="icon secondary chevron_left">›</div>
+                <div><a class="prev-ic" href="/vorlesungsplan/-1/{{offset}}">‹</a></div>
+                <h1 id="week_of_year" style="flex: 1; margin-top:7px"></h1>
+                <div><a class="next-ic" href="/vorlesungsplan/1/{{offset}}">›</a></div>
                 <!-- Date selection end -->
               </div>
               <div style="align-self: flex-start; flex: 0 0 1"></div>
             </header>
+            <!-- Calendar body start -->
             <div id="lecture_plan"></div>
+            <!-- Calendar body end -->
           </div>
         </div>
-        <!-- [ Main Content ] end -->
-      </div>
     </div>
-  </div>
 </div>
-
+<!-- Modal (used to edit links of event) start  -->
+<div id="modal" class="modal fade" tabindex="-1">
+    <div id="dialog" class="modal-dialog" hx-target="this"></div>
+</div>
+<!-- Modal end  -->
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 <script>
+  let dateForHeader = new Date();
+  offset = {{offset}}
+  dateForHeader.setDate(dateForHeader.getDate() + offset * 7);
+
   //Set week of year in Header
   var week_of_year = document.getElementById("week_of_year")
-  week_of_year.innerHTML = '<strong>Kalenderwoche ' + getWeekNumber(Date.now()) + '</strong>'
+  week_of_year.innerHTML = '<strong>Kalenderwoche ' + getWeekNumber(dateForHeader) + '</strong>'
 
   //encode lecture data
   rawLectureData = "{{lectures}}"
@@ -249,22 +169,29 @@ tr td:nth-child(2), tr td:nth-child(3), .past {
   rawLectureData = rawLectureData.replace(/&#x27;/g, '"')
   const lectureData = JSON.parse(rawLectureData);
 
-  //fill tables with lecture data
+  //encode lecture data links
+  rawLectureLinks = "{{lecture_links}}"
+  rawLectureLinks = rawLectureLinks.replace(/&quot;/g, '"')
+  rawLectureLinks = rawLectureLinks.replace(/&#x27;/g, '"')
+  const lectureLinks = JSON.parse(rawLectureLinks);
+
+
+
+  //get element
   var lecture_plan = document.getElementById("lecture_plan")
   let content = ''
-  //create header 
-  content += '<table><thead><tr><th class="headcol"></th>'
-  content = createHeader(content)
-  content += '</tr></thead></table><table>'
 
-  //create look up table for lecture data
-  let lut = createLut(lectureData)
+  //create header (Dates of current week)
+  content += '<table><thead><tr><th class="headcol"></th>'
+  content += createHeaderContent(dateForHeader, offset)
+  content += '</tr></thead></table>'
 
   //create calendar body
-  content += '<tr><td class="headcol"></td>'
-  content = createCalendarBody(content)
+  content += '<table><tr><td class="headcol"></td>'
+  content += createCalendarBody()
   content += '</table>'
-  lecture_plan.innerHTML += content
 
+  //fill into html
+  lecture_plan.innerHTML += content
 </script>
 {% endblock javascripts %}

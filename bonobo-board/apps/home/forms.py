@@ -77,3 +77,12 @@ class ContactForm(forms.Form):
             }
         ),
         required=True)
+
+class EditLinkForm(forms.Form):
+    link = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Link zur Veranstaltung",
+                "class": "form-control"
+            }
+        ),required=False)

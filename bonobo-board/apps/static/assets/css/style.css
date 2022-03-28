@@ -59,6 +59,66 @@ File: style.css
 ==========================  **/
 @import url("../fonts/custom/css/custom.css");
 
+.form-group *{
+    margin-bottom: 15px;
+}
+
+a, .click-text {
+  color: #356E14;
+}
+
+a:hover, .click-text:hover {
+  color: #569233;
+  cursor: pointer;
+}
+
+.event {
+  background: #7CB45B ;
+  color: white;
+  border-radius: 2px;
+  text-align: left;
+  font-size: 0.875rem;
+  padding: 0.5rem;
+  overflow-x: hidden;
+  transition: all 0.2s;
+  cursor: pointer;
+  position: absolute;
+  z-index: 1;
+  width: 96%;
+  height: 84%;
+}
+
+.event:hover {
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+  background: #9BCA7F;
+}
+
+.todays-btn {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: white;
+  padding: 0.5rem 0.75rem;
+  font-size: 14px;
+  border-radius: 2px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/** < > signs to change week */
+.prev-ic, .next-ic {
+  font-size: 1.5rem;
+  margin: 0 1rem;
+  text-align: center;
+  cursor: pointer;
+  vertical-align: middle;
+  position: relative;
+  top: -2px;
+}
+
+.today {
+  color: #53c213;
+}
+
 body {
   font-family: "Open Sans", sans-serif;
   font-size: 14px;
@@ -2042,6 +2102,14 @@ p.text-muted {
 }
 .pcoded-header .dropdown.drp-user.show:before {
   color: #53c213;
+}
+
+/* INSERTION FROM NK FOR MOBILE DISPLAY */
+@media only screen and (max-width: 991px) {
+  .pcoded-header {
+    width: 100%;
+    margin-left: 0;
+  }
 }
 
 /* header css end */
@@ -7543,34 +7611,35 @@ table.footable-paging-center > tfoot > tr.footable-paging > td {
 .auth-wrapper .auth-bg .r:first-child {
   top: -100px;
   right: -100px;
-  background: linear-gradient(-135deg, #1de9b6 0%, #3E9A07 100%);
 }
 .auth-wrapper .auth-bg .r:last-child {
   left: -100px;
-  bottom: -100px;
-  background: linear-gradient(-135deg, #899FD4 0%, #A389D4 100%);
+  bottom: -500px;
 }
 .auth-wrapper .auth-bg .r.s {
-  width: 20px;
-  height: 20px;
+  width: 50px;
+  height: 50px;
 }
 .auth-wrapper .auth-bg .r.s:nth-child(2) {
   top: 150px;
-  right: -150px;
-  background: #53c213;
+  right: -60px;
 }
 .auth-wrapper .auth-bg .r.s:nth-child(3) {
-  left: -150px;
-  bottom: 150px;
-  background: #1de9b6;
+  left: -200px;
+  bottom: 100px;
 }
-.auth-wrapper .auth-bg .r:nth-child(odd) {
+.auth-wrapper .auth-bg .r:nth-child(1) {
   -webkit-animation: floating 7s infinite;
           animation: floating 7s infinite;
 }
-.auth-wrapper .auth-bg .r:nth-child(even) {
+.auth-wrapper .auth-bg .r:nth-child(2) {
   -webkit-animation: floating 9s infinite;
           animation: floating 9s infinite;
+}
+
+.auth-wrapper .auth-bg .r:nth-child(3) {
+  -webkit-animation: floating 11s infinite;
+          animation: floating 11s infinite;
 }
 
 /* image varient start */
