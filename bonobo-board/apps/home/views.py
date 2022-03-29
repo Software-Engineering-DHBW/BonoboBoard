@@ -3,7 +3,6 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 import ast
-from distutils.fancy_getopt import wrap_text
 import json
 
 import pandas as pd
@@ -22,7 +21,40 @@ from dhbw.lecture_importer import LectureImporter, read_lecture_links_from_datab
 from dhbw.zimbra import ZimbraHandler
 from .forms import ContactForm, EditLinkForm
 
+import base64
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+
 BonoboUser = get_user_model()
+
+
+def decrypt_dict(encrypted_dict, key):
+    """ Decrypt dict
+
+    Parameters
+    ----------
+    key : str
+
+    encrypted_dict : bytes
+
+    Returns
+    -------
+    bytes
+    """
+
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=bytes(1),
+        iterations=50,
+    )
+
+    key_gen = base64.urlsafe_b64encode(kdf.derive(key.encode()))
+    fernet = Fernet(key_gen)
+    decMessage = fernet.decrypt(encrypted_dict).decode()
+    dict_decoded = json.loads(decMessage)
+    return dict_decoded
 
 
 @csrf_protect
@@ -41,7 +73,10 @@ def index(request):
 
     bonobo_user = BonoboUser.objects.get(email=request.user)
     lectures, lecture_links = get_lecture_results(bonobo_user)
-    return render(request, 'home/index.html', {"dualis_data": bonobo_user.dualis_scraped_data, "lecture_links": lecture_links, "lectures": lectures, "link": "alter_bluebutton_link", "event": "Programmieren"})
+    return render(request, 'home/index.html',
+                  {"dualis_data": decrypt_dict(bonobo_user.dualis_scraped_data, bonobo_user.email),
+                   "lecture_links": lecture_links, "lectures": lectures, "link": "alter_bluebutton_link",
+                   "event": "Programmieren"})
 
 
 @login_required(login_url="/login/")
@@ -82,7 +117,7 @@ def email(request, inc_msg=""):
     zimbra.headers = ast.literal_eval(current_user.zimbra_headers)
 
     msg = ""
-    
+
     if request.method == 'POST':
         form = ContactForm(request.POST)
 
@@ -128,7 +163,8 @@ def vorlesungsplan(request, offset=0, old_offset=0):
 
     lectures, lecture_links = get_lecture_results(current_user, offset)
 
-    return render(request, 'home/vorlesungsplan.html', {"lectures": lectures, "lecture_links": lecture_links, "offset": offset})
+    return render(request, 'home/vorlesungsplan.html',
+                  {"lectures": lectures, "lecture_links": lecture_links, "offset": offset})
 
 
 @login_required(login_url="/login/")
@@ -148,27 +184,28 @@ def edit_link(request, event, link=""):
     HttpResponse
     """
     current_user = BonoboUser.objects.get(email=request.user)
-    event=event.replace("!&!", "/")
-    event=event.replace("_", " ").strip()
-    #replace html tokens with custom ones for making them processable
-    link=link.replace("!&!", "/")
-    link=link.replace("!&&!","?")
-    link=link.replace("!&&&!","#")
-    link=link.replace("!&&&&!","%")
-    link=link.replace("_", " ").strip()
+    event = event.replace("!&!", "/")
+    event = event.replace("_", " ").strip()
+    # replace html tokens with custom ones for making them processable
+    link = link.replace("!&!", "/")
+    link = link.replace("!&&!", "?")
+    link = link.replace("!&&&!", "#")
+    link = link.replace("!&&&&!", "%")
+    link = link.replace("_", " ").strip()
     if request.method == "POST":
         form = EditLinkForm(request.POST)
         if form.is_valid():
             new_link = form.cleaned_data.get("link")
-            new_link = new_link.replace("https://","")
-            new_link = new_link.replace("http://","")
+            new_link = new_link.replace("https://", "")
+            new_link = new_link.replace("http://", "")
 
             add_lecture_links_to_database(current_user, event, new_link)
-            return HttpResponse(status=204) #Code == no content
+            return HttpResponse(status=204)  # Code == no content
     else:
         form = EditLinkForm()
 
-    return render(request, 'home/edit_link.html', {'form': form, 'link': link, 'event': event, 'moodle_data': current_user.moodle_scraped_data})
+    return render(request, 'home/edit_link.html',
+                  {'form': form, 'link': link, 'event': event, 'moodle_data': current_user.moodle_scraped_data})
 
 
 def pages(request):
@@ -267,5 +304,5 @@ def write_log(msg):
     None
     """
     f = open("log.txt", "a")
-    f.write(str(msg)+"\n")
+    f.write(str(msg) + "\n")
     f.close()

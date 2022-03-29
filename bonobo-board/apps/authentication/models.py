@@ -5,11 +5,9 @@ Copyright (c) 2019 - present AppSeed.us
 
 # import unicodedata
 
-# from django.apps import apps
 from django.db import models
-# from django.utils.crypto import salted_hmac
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
-from django.contrib.auth.models import PermissionsMixin
+
 
 class BonoboUserManager(BaseUserManager):
     def create_user(self, email, password=None):
@@ -28,15 +26,16 @@ class BonoboUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+
 class BonoboUser(AbstractBaseUser):
     email = models.EmailField(
         verbose_name='email address',
         max_length=255,
         unique=True,
     )
-    dualis_scraped_data = models.CharField(
+    dualis_scraped_data = models.BinaryField(
         verbose_name='dualis scraped data',
-        max_length=255,
+        # max_length=255,
         unique=False,
         default=""
     )

@@ -5,9 +5,16 @@ Copyright (c) 2019 - present AppSeed.us
 import asyncio
 
 # Create your views here.
+import json
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, get_user_model, authenticate
 from django.views.decorators.csrf import csrf_protect
+
+import base64
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 from .forms import LoginForm
 from .models import BonoboUser
@@ -21,6 +28,7 @@ from dhbw.zimbra import ZimbraHandler
 from dhbw.lecture_importer import LectureImporter, read_lectures_from_database, write_lectures_to_database
 
 BonoboUser = get_user_model()
+
 
 @csrf_protect
 def login_view(request):
@@ -54,7 +62,7 @@ def login_view(request):
             if not username or not password or not course:
                 write_log("user empty")
                 msg = 'Ungültige Eingabedaten'
-                return render(request, "accounts/login.html", {"form": form, "msg": msg, "course_list": course_list}) 
+                return render(request, "accounts/login.html", {"form": form, "msg": msg, "course_list": course_list})
 
             if not is_valid_course(course_list, course):
                 msg = 'Unbekannter Kurs'
@@ -73,6 +81,7 @@ def login_view(request):
         form = LoginForm()
 
     return render(request, "accounts/login.html", {"form": form, "msg": msg, "course_list": course_list})
+
 
 def lecture_handler(course):
     """ Handles database communication. Pulls latest entries in lectures.db or creates the table if it does not exist.
@@ -93,6 +102,35 @@ def lecture_handler(course):
         write_lectures_to_database(lecture_importer.lectures, course)
         lecture_df = read_lectures_from_database(course)
     return lecture_df.to_json()
+
+
+def encrypt_dict(data_dict, key):
+    """ https://stackoverflow.com/questions/2490334/simple-way-to-encode-a-string-according-to-a-password
+
+    Parameters
+    ----------
+    key : str
+
+    data_dict : dict
+
+    Returns
+    -------
+    bytes
+    """
+
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=bytes(1),
+        iterations=50,
+    )
+
+    key_gen = base64.urlsafe_b64encode(kdf.derive(key.encode()))
+    dump_dict = json.dumps(data_dict)
+    fernet = Fernet(key_gen)
+    enc_msg = fernet.encrypt(dump_dict.encode())
+    return enc_msg
+
 
 def authenticate_user(request, username, password, course, lectures_json):
     """on login view is opened, show window login.html
@@ -146,7 +184,8 @@ def authenticate_user(request, username, password, course, lectures_json):
     bonobo_user.user_objects["zimbra"].get_contacts()
 
     # save scraped data to user in db
-    bonobo_user.dualis_scraped_data = bonobo_user.user_objects["dualis"].scraped_data
+    bonobo_user.dualis_scraped_data = encrypt_dict(
+        bonobo_user.user_objects["dualis"].scraped_data, bonobo_user.email)  # no plain text in db
 
     bonobo_user.zimbra_token = bonobo_user.user_objects["zimbra"].auth_token
     bonobo_user.zimbra_accountname = bonobo_user.user_objects["zimbra"].accountname  # Mail sxxxx@student-mannheim.de
