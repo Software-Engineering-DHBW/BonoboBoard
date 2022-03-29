@@ -38,7 +38,7 @@ If the local setup uses a different port or uses SSL encryption, the [frontend_c
 ## Frontend UI
 
 The directory [frontend_ui](https://github.com/Software-Engineering-DHBW/BonoboBoard/tree/main/bonobo-board/tests/frontend_ui) contains the file
-[pages_ui.py]() which can be used to run tests on the frontend. The UI of the frontend is tested in Chrome, Firefox and Brave using selenium.
+[pages_ui.py](https://github.com/Software-Engineering-DHBW/BonoboBoard/tree/main/bonobo-board/tests/frontend_ui/pages_ui.py) which can be used to run tests on the frontend. The UI of the frontend is tested in Chrome, Firefox and Brave using selenium.
 To test the functionality just run `python3 pages_ui.py` inside the _frontend_ui_ directory.
 
 ## Feature Test: Leistungsübersicht
