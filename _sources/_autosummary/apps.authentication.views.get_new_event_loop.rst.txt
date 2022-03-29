@@ -1,6 +1,0 @@
-apps.authentication.views.get\_new\_event\_loop
-===============================================
-
-.. currentmodule:: apps.authentication.views
-
-.. autofunction:: get_new_event_loop

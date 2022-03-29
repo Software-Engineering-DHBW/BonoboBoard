@@ -1,6 +1,0 @@
-apps.authentication.views.lecture\_handler
-==========================================
-
-.. currentmodule:: apps.authentication.views
-
-.. autofunction:: lecture_handler

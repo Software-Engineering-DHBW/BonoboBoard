@@ -1,6 +1,0 @@
-apps.authentication.views.load\_user\_data
-==========================================
-
-.. currentmodule:: apps.authentication.views
-
-.. autofunction:: load_user_data
