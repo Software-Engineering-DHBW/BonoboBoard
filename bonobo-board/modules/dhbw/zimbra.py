@@ -275,8 +275,8 @@ class ZimbraHandler(ImporterSession):
 
         try:
             contacts = r_contacts["Body"]["SearchResponse"]["cn"]
-        except AttributeError as attr_err:
-            raise attr_err
+        except KeyError as key_err:
+            contacts = []
 
         for contact in contacts:
             cnt = contact["_attrs"]

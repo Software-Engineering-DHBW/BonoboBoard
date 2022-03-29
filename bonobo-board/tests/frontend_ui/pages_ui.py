@@ -91,10 +91,11 @@ class TestPagesUI(TestCase):
         """get the browser objects"""
         self.browsers = add_browsers_to_test(self.drivers)
 
-    def test_everything(self):
-        """full feature test"""
+    def test_leistungsuebersicht(self):
+        """test every feature of leistungsuebersicht"""
         check_env_vars_set()
         for browser in self.browsers:
+            # connect to website
             browser.get(fconf.URL)
             self.assertEqual("BonoboBoard - Login", browser.title)
             # fill login form
@@ -102,22 +103,25 @@ class TestPagesUI(TestCase):
             # locate login btn and click it
             login_btn = browser.find_element(by=By.ID, value="login")
             login_btn.click()
+            # simple wait for redirect
             wait = WebDriverWait(browser,10)
             wait.until(EC.url_changes(fconf.URL))
             browser.implicitly_wait(3)
+            # click on icon to see grade
             icon_btn = browser.find_element(by=By.ID, value="icon")
             icon_btn.click()
             gpa_div = browser.find_element(by=By.ID, value="gpa")
             gpa_div_p = gpa_div.find_element(by=By.TAG_NAME, value="p")
             self.assertRegex(gpa_div_p.text, r"GPA-Total:\x20[0-6]\.[0-9]$")
             browser.implicitly_wait(3)
+            # check for grades in table
             navbar_grades = browser.find_element(by=By.LINK_TEXT, value="Leistungsübersicht")
             navbar_grades.click()
             self.assertIn("/leistungsuebersicht", browser.current_url)
             all_grades_div = browser.find_element(by=By.ID, value="all_grades")
             tbody = all_grades_div.find_element(by=By.TAG_NAME, value="tbody")
             grades = tbody.text.split("\n")
-            self.assertRegex(grades[0], r".+\x20[0-9]+\x20[0-6]\.[0-9]$")
+            self.assertRegex(grades[0], r"^[0-6]\.[0-9]\x20[0-9]{1,2}.*")
 
     def tearDown(self):
         """quit all used browsers"""
@@ -128,7 +132,7 @@ class TestPagesUI(TestCase):
     def cls_suite(cls):
         """make a suite for this test"""
         cls_suite = TestSuite()
-        cls_suite.addTest(cls("test_everything"))
+        cls_suite.addTest(cls("test_leistungsuebersicht"))
         return cls_suite
 
     @classmethod

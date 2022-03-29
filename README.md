@@ -55,5 +55,6 @@ Short summary of the setup-process:
 5) Type http://localhost:80/ in a webbrowser
 
 ## More information/documentation
-For more information/documentation about this project please have a look at our [documents-folder](https://github.com/Software-Engineering-DHBW/BonoboBoard/tree/main/documents). For example you can find our style guides, used tools or third-party libraries there.  
+For more information/documentation about this project please have a look at our [documents-folder](https://github.com/Software-Engineering-DHBW/BonoboBoard/tree/main/documents) or this [README](https://github.com/Software-Engineering-DHBW/BonoboBoard/blob/main/bonobo-board/tests/README.md) for unit tests.  
+For example you can find our style guides, used tools or third-party libraries there.  
 Feel free to contact the developer-team, if you have questions or need further information.
