@@ -19,3 +19,4 @@ pandas>=1.4.0
 lxml>=4.5.0
 SQLAlchemy>=1.4.31
 sphinx-rtd-theme==1.0.0
+cryptography==36.0.2
