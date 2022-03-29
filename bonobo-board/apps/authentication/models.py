@@ -36,8 +36,7 @@ class BonoboUser(AbstractBaseUser):
     dualis_scraped_data = models.BinaryField(
         verbose_name='dualis scraped data',
         # max_length=255,
-        unique=False,
-        default=""
+        unique=False
     )
     zimbra_token = models.CharField(
         verbose_name='zimbra auth token',
