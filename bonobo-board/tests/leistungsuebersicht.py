@@ -12,10 +12,10 @@ from dhbw.tests.dualis_test import TestDualisImporter
 from frontend_ui.pages_ui import TestPagesUI
 
 parser = ArgumentParser(
-    description="Run all tests or a subset of tests",
-    epilog="If no option is given, then all tests will run",
+    description="Run feature test for all browsers or a given subset",
+    epilog="If no option is given, the tests will be executed inside all browsers",
     formatter_class=ArgumentDefaultsHelpFormatter,
-    prog="dhbw_test"
+    prog="leistungsuebersicht"
 )
 parser.add_argument("-b", "--browser", action="extend",
                     choices=["firefox", "chrome", "brave"],
