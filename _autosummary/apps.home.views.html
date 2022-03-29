@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apps.home.views &mdash; Bonoboboard  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="apps.home.views.decrypt_dict" href="apps.home.views.decrypt_dict.html" />
+    <link rel="prev" title="apps.home.urls" href="apps.home.urls.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Bonoboboard
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="modules.html">modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">core</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apps.html">apps</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="apps.authentication.html">apps.authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apps.config.html">apps.config</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="apps.home.html">apps.home</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apps.home.admin.html">apps.home.admin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apps.home.config.html">apps.home.config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apps.home.forms.html">apps.home.forms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apps.home.migrations.html">apps.home.migrations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apps.home.models.html">apps.home.models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apps.home.tests.html">apps.home.tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apps.home.urls.html">apps.home.urls</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">apps.home.views</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="apps.home.views.decrypt_dict.html">apps.home.views.decrypt_dict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="apps.home.views.get_dualis_results.html">apps.home.views.get_dualis_results</a></li>
+<li class="toctree-l4"><a class="reference internal" href="apps.home.views.get_lecture_results.html">apps.home.views.get_lecture_results</a></li>
+<li class="toctree-l4"><a class="reference internal" href="apps.home.views.pages.html">apps.home.views.pages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="apps.home.views.write_log.html">apps.home.views.write_log</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="apps.temp.html">apps.temp</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Bonoboboard</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="apps.html">apps</a> &raquo;</li>
+          <li><a href="apps.home.html">apps.home</a> &raquo;</li>
+      <li>apps.home.views</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/apps.home.views.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="module-apps.home.views">
+<span id="apps-home-views"></span><h1>apps.home.views<a class="headerlink" href="#module-apps.home.views" title="Permalink to this headline"></a></h1>
+<p>Copyright (c) 2019 - present AppSeed.us</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="apps.home.views.decrypt_dict.html#apps.home.views.decrypt_dict" title="apps.home.views.decrypt_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decrypt_dict</span></code></a></p></td>
+<td><p>Decrypt dict</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="apps.home.views.get_dualis_results.html#apps.home.views.get_dualis_results" title="apps.home.views.get_dualis_results"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dualis_results</span></code></a></p></td>
+<td><p>get dualis data of user</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="apps.home.views.get_lecture_results.html#apps.home.views.get_lecture_results" title="apps.home.views.get_lecture_results"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_lecture_results</span></code></a></p></td>
+<td><p>get lectures of user</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="apps.home.views.pages.html#apps.home.views.pages" title="apps.home.views.pages"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pages</span></code></a></p></td>
+<td><p>on unknown page is opened, return error.html accordingly</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="apps.home.views.write_log.html#apps.home.views.write_log" title="apps.home.views.write_log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_log</span></code></a></p></td>
+<td><p>internally used for logging print message to log.txt</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="apps.home.urls.html" class="btn btn-neutral float-left" title="apps.home.urls" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apps.home.views.decrypt_dict.html" class="btn btn-neutral float-right" title="apps.home.views.decrypt_dict" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Optima Connect.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

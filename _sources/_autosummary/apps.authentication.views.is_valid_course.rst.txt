@@ -1,0 +1,6 @@
+apps.authentication.views.is\_valid\_course
+===========================================
+
+.. currentmodule:: apps.authentication.views
+
+.. autofunction:: is_valid_course

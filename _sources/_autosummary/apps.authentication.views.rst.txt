@@ -1,0 +1,38 @@
+apps.authentication.views
+=========================
+
+.. automodule:: apps.authentication.views
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      authenticate_user
+      encrypt_dict
+      get_new_event_loop
+      is_valid_course
+      lecture_handler
+      load_user_data
+      verify_login_credentials
+      write_log
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

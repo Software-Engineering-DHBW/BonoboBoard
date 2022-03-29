@@ -1,0 +1,6 @@
+apps.home.views.write\_log
+==========================
+
+.. currentmodule:: apps.home.views
+
+.. autofunction:: write_log
