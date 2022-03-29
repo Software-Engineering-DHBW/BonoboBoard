@@ -1,0 +1,6 @@
+apps.home.views.decrypt\_dict
+=============================
+
+.. currentmodule:: apps.home.views
+
+.. autofunction:: decrypt_dict

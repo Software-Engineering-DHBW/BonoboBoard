@@ -1,0 +1,6 @@
+modules.dhbw.util.ReturnCodeException
+=====================================
+
+.. currentmodule:: modules.dhbw.util
+
+.. autoexception:: ReturnCodeException

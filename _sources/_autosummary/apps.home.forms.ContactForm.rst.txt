@@ -1,0 +1,34 @@
+apps.home.forms.ContactForm
+===========================
+
+.. currentmodule:: apps.home.forms
+
+.. autoclass:: ContactForm
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ContactForm.bcc
+      ~ContactForm.betreff
+      ~ContactForm.cc
+      ~ContactForm.empfänger
+      ~ContactForm.nachricht
+   
+   

@@ -1,0 +1,6 @@
+apps.authentication.views.authenticate\_user
+============================================
+
+.. currentmodule:: apps.authentication.views
+
+.. autofunction:: authenticate_user

@@ -1,0 +1,100 @@
+modules.dhbw.tests.lecture\_test.LectureImporterTest
+====================================================
+
+.. currentmodule:: modules.dhbw.tests.lecture_test
+
+.. autoclass:: LectureImporterTest
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~LectureImporterTest.addClassCleanup
+      ~LectureImporterTest.addCleanup
+      ~LectureImporterTest.addTypeEqualityFunc
+      ~LectureImporterTest.assertAlmostEqual
+      ~LectureImporterTest.assertAlmostEquals
+      ~LectureImporterTest.assertCountEqual
+      ~LectureImporterTest.assertDictContainsSubset
+      ~LectureImporterTest.assertDictEqual
+      ~LectureImporterTest.assertEqual
+      ~LectureImporterTest.assertEquals
+      ~LectureImporterTest.assertFalse
+      ~LectureImporterTest.assertGreater
+      ~LectureImporterTest.assertGreaterEqual
+      ~LectureImporterTest.assertIn
+      ~LectureImporterTest.assertIs
+      ~LectureImporterTest.assertIsInstance
+      ~LectureImporterTest.assertIsNone
+      ~LectureImporterTest.assertIsNot
+      ~LectureImporterTest.assertIsNotNone
+      ~LectureImporterTest.assertLess
+      ~LectureImporterTest.assertLessEqual
+      ~LectureImporterTest.assertListEqual
+      ~LectureImporterTest.assertLogs
+      ~LectureImporterTest.assertMultiLineEqual
+      ~LectureImporterTest.assertNotAlmostEqual
+      ~LectureImporterTest.assertNotAlmostEquals
+      ~LectureImporterTest.assertNotEqual
+      ~LectureImporterTest.assertNotEquals
+      ~LectureImporterTest.assertNotIn
+      ~LectureImporterTest.assertNotIsInstance
+      ~LectureImporterTest.assertNotRegex
+      ~LectureImporterTest.assertNotRegexpMatches
+      ~LectureImporterTest.assertRaises
+      ~LectureImporterTest.assertRaisesRegex
+      ~LectureImporterTest.assertRaisesRegexp
+      ~LectureImporterTest.assertRegex
+      ~LectureImporterTest.assertRegexpMatches
+      ~LectureImporterTest.assertSequenceEqual
+      ~LectureImporterTest.assertSetEqual
+      ~LectureImporterTest.assertTrue
+      ~LectureImporterTest.assertTupleEqual
+      ~LectureImporterTest.assertWarns
+      ~LectureImporterTest.assertWarnsRegex
+      ~LectureImporterTest.assert_
+      ~LectureImporterTest.countTestCases
+      ~LectureImporterTest.debug
+      ~LectureImporterTest.defaultTestResult
+      ~LectureImporterTest.doClassCleanups
+      ~LectureImporterTest.doCleanups
+      ~LectureImporterTest.fail
+      ~LectureImporterTest.failIf
+      ~LectureImporterTest.failIfAlmostEqual
+      ~LectureImporterTest.failIfEqual
+      ~LectureImporterTest.failUnless
+      ~LectureImporterTest.failUnlessAlmostEqual
+      ~LectureImporterTest.failUnlessEqual
+      ~LectureImporterTest.failUnlessRaises
+      ~LectureImporterTest.id
+      ~LectureImporterTest.run
+      ~LectureImporterTest.setUp
+      ~LectureImporterTest.setUpClass
+      ~LectureImporterTest.shortDescription
+      ~LectureImporterTest.skipTest
+      ~LectureImporterTest.subTest
+      ~LectureImporterTest.tearDown
+      ~LectureImporterTest.tearDownClass
+      ~LectureImporterTest.test_false_uid
+      ~LectureImporterTest.test_limit_weeks_in_list
+      ~LectureImporterTest.test_true_uid
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~LectureImporterTest.longMessage
+      ~LectureImporterTest.maxDiff
+   
+   

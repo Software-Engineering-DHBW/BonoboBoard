@@ -1,0 +1,48 @@
+apps.authentication.models.BonoboUser
+=====================================
+
+.. currentmodule:: apps.authentication.models
+
+.. autoclass:: BonoboUser
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~BonoboUser.has_module_perms
+      ~BonoboUser.has_perm
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BonoboUser.REQUIRED_FIELDS
+      ~BonoboUser.USERNAME_FIELD
+      ~BonoboUser.dualis_scraped_data
+      ~BonoboUser.email
+      ~BonoboUser.is_active
+      ~BonoboUser.is_admin
+      ~BonoboUser.is_staff
+      ~BonoboUser.lectures
+      ~BonoboUser.moodle_scraped_data
+      ~BonoboUser.moodle_token
+      ~BonoboUser.objects
+      ~BonoboUser.user_objects
+      ~BonoboUser.zimbra_accountname
+      ~BonoboUser.zimbra_contacts
+      ~BonoboUser.zimbra_headers
+      ~BonoboUser.zimbra_name
+      ~BonoboUser.zimbra_token
+   
+   

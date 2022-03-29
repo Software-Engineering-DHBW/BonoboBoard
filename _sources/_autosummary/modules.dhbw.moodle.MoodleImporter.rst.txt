@@ -1,0 +1,40 @@
+modules.dhbw.moodle.MoodleImporter
+==================================
+
+.. currentmodule:: modules.dhbw.moodle
+
+.. autoclass:: MoodleImporter
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~MoodleImporter.drop_header
+      ~MoodleImporter.find_all_bbb_rooms
+      ~MoodleImporter.login
+      ~MoodleImporter.logout
+      ~MoodleImporter.scrape
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MoodleImporter.logout_url
+      ~MoodleImporter.auth_token
+      ~MoodleImporter.email
+      ~MoodleImporter.headers
+      ~MoodleImporter.scraped_data
+      ~MoodleImporter.url
+   
+   

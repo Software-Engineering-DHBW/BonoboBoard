@@ -1,0 +1,23 @@
+core.urls
+=========
+
+.. automodule:: core.urls
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

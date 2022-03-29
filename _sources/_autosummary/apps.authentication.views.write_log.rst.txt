@@ -1,0 +1,6 @@
+apps.authentication.views.write\_log
+====================================
+
+.. currentmodule:: apps.authentication.views
+
+.. autofunction:: write_log

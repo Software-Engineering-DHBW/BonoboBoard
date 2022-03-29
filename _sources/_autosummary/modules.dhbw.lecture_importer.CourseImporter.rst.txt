@@ -1,0 +1,35 @@
+modules.dhbw.lecture\_importer.CourseImporter
+=============================================
+
+.. currentmodule:: modules.dhbw.lecture_importer
+
+.. autoclass:: CourseImporter
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~CourseImporter.drop_header
+      ~CourseImporter.get_course_uid
+      ~CourseImporter.scrape
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~CourseImporter.headers
+      ~CourseImporter.scraped_data
+      ~CourseImporter.url
+   
+   

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>modules.dhbw.lecture_importer &mdash; Bonoboboard  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> Bonoboboard
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/modules.html">modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/core.html">core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/apps.html">apps</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Bonoboboard</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>modules.dhbw.lecture_importer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for modules.dhbw.lecture_importer</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;Provide functionality to interact with the students timetable.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">sqlalchemy</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">import</span> <span class="nn">icalendar</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">Importer</span><span class="p">,</span> <span class="n">reqget</span>
+
+
+<div class="viewcode-block" id="CourseImporter"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.lecture_importer.CourseImporter.html#modules.dhbw.lecture_importer.CourseImporter">[docs]</a><span class="k">class</span> <span class="nc">CourseImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to achieve the list of all courses of the DHBW Mannheim.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    url : str</span>
+<span class="sd">        Universal given link for the dhbw-course-calendars.</span>
+<span class="sd">    course_list : List[str]</span>
+<span class="sd">        List containing all courses (e.g. &quot;TINF19 IT2&quot;) after scraping</span>
+<span class="sd">    uid_list : uid_list[str]</span>
+<span class="sd">        List containing all course-uid&#39;s after scraping</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://vorlesungsplan.dhbw-mannheim.de/ical.php&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">course_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uid_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scrape</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CourseImporter.scrape"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.lecture_importer.CourseImporter.html#modules.dhbw.lecture_importer.CourseImporter.scrape">[docs]</a>    <span class="k">def</span> <span class="nf">scrape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method to scrape the list of all courses. List is stored in course_list and uid_list.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">reqget</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">CourseImporter</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;class_select&quot;</span><span class="p">)</span>
+
+        <span class="c1"># optgroup stores the list of courses</span>
+        <span class="n">all_optgroup</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;optgroup&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">optgroup</span> <span class="ow">in</span> <span class="n">all_optgroup</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">course</span> <span class="ow">in</span> <span class="n">optgroup</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">course</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">course_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">course</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">uid_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">course</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="CourseImporter.get_course_uid"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.lecture_importer.CourseImporter.html#modules.dhbw.lecture_importer.CourseImporter.get_course_uid">[docs]</a>    <span class="k">def</span> <span class="nf">get_course_uid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">course_str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a course uid by providing a course name.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        course_str : List[str]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">course_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">course_str</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">uid_list</span><span class="p">[</span><span class="n">index</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="LectureImporter"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.lecture_importer.LectureImporter.html#modules.dhbw.lecture_importer.LectureImporter">[docs]</a><span class="k">class</span> <span class="nc">LectureImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class to achieve the course-specific timetable.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    url: str</span>
+<span class="sd">        Universal given link for the dhbw-course-calendars.</span>
+<span class="sd">    lectures: pd.DataFrame</span>
+<span class="sd">        List containing all lectures of a specified course after scraping</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># No HTTPS possible in this case?</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://vorlesungsplan.dhbw-mannheim.de/ical.php?uid=&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lectures</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="LectureImporter.scrape"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.lecture_importer.LectureImporter.html#modules.dhbw.lecture_importer.LectureImporter.scrape">[docs]</a>    <span class="k">def</span> <span class="nf">scrape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method to scrape the courses-icalendar and parse it to a pandas.DataFrame.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        uid : str or int</span>
+<span class="sd">            specific course-uid (get all courses from CourseImporter)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># set up url to the ical file</span>
+        <span class="n">ical_url</span> <span class="o">=</span> <span class="n">LectureImporter</span><span class="o">.</span><span class="n">url</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+
+        <span class="c1"># Get ical from given address</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">reqget</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">ical_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
+                          <span class="n">allow_redirects</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">gcal</span> <span class="o">=</span> <span class="n">icalendar</span><span class="o">.</span><span class="n">Calendar</span><span class="o">.</span><span class="n">from_ical</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;lecture&quot;</span><span class="p">,</span> <span class="s2">&quot;location&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">gcal</span><span class="o">.</span><span class="n">walk</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">component</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;VEVENT&quot;</span><span class="p">:</span>
+                <span class="n">vevent</span> <span class="o">=</span> <span class="p">[</span><span class="n">component</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SUMMARY&#39;</span><span class="p">),</span>
+                          <span class="n">component</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;LOCATION&#39;</span><span class="p">),</span>
+                          <span class="n">component</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;DTSTART&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span>
+                          <span class="n">component</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;DTEND&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dt</span>
+                          <span class="p">]</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)]</span> <span class="o">=</span> <span class="n">vevent</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lectures</span> <span class="o">=</span> <span class="n">df</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="LectureImporter.limit_weeks_in_list"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.lecture_importer.LectureImporter.html#modules.dhbw.lecture_importer.LectureImporter.limit_weeks_in_list">[docs]</a>    <span class="k">def</span> <span class="nf">limit_weeks_in_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;method to limit/crop the lectures-DataFrame gathered in LectureImporter.scrape() by limiting the weeks</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        offset : int</span>
+<span class="sd">            offsets returned data by a number of weeks</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pd.Dataframe</span>
+<span class="sd">            cropped lectures-DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">w_start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=-</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">weekday</span><span class="p">(),</span> <span class="n">weeks</span><span class="o">=</span><span class="n">offset</span><span class="p">)</span>
+        <span class="n">w_end</span> <span class="o">=</span> <span class="n">w_start</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">weeks</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lectures</span>
+        <span class="k">return</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">w_start</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span>
+                <span class="n">df</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">w_end</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">0</span><span class="p">))]</span></div></div>
+
+
+<span class="c1"># -------------- HELPERS --------------------</span>
+
+<span class="k">def</span> <span class="nf">_get_unique_lectures</span><span class="p">(</span><span class="n">df_lectures</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function to get unique lectures of given lecture-plan.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df_lectures : pandas.DataFrame</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data : list</span>
+<span class="sd">        List of unique lectures</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">unique</span> <span class="o">=</span> <span class="n">df_lectures</span><span class="p">[</span><span class="s2">&quot;lecture&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">unique</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">entry</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+
+<div class="viewcode-block" id="create_empty_user_links_df"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.lecture_importer.create_empty_user_links_df.html#modules.dhbw.lecture_importer.create_empty_user_links_df">[docs]</a><span class="k">def</span> <span class="nf">create_empty_user_links_df</span><span class="p">(</span><span class="n">df_lectures</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function to create an empty link table.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df_lectures : pd.DataFrame</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">unique_lectures</span> <span class="o">=</span> <span class="n">_get_unique_lectures</span><span class="p">(</span><span class="n">df_lectures</span><span class="p">)</span>
+    <span class="n">df_links</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">df_links</span><span class="p">[</span><span class="s2">&quot;lecture&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">unique_lectures</span>
+    <span class="n">df_links</span><span class="p">[</span><span class="s2">&quot;link&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">df_links</span></div>
+
+
+<div class="viewcode-block" id="link_lectures_and_links"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.lecture_importer.link_lectures_and_links.html#modules.dhbw.lecture_importer.link_lectures_and_links">[docs]</a><span class="k">def</span> <span class="nf">link_lectures_and_links</span><span class="p">(</span><span class="n">df_lectures</span><span class="p">,</span> <span class="n">df_links</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Function to link lectures and link DataFrames.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df_lectures : pd.DataFrame</span>
+
+<span class="sd">    df_links : pd.DataFrame</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df_lectures</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;link&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;NO LINK&quot;</span>
+    <span class="k">for</span> <span class="n">unique_lecture</span> <span class="ow">in</span> <span class="n">df_lectures</span><span class="p">[</span><span class="s2">&quot;lecture&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+        <span class="n">link_for_unique</span> <span class="o">=</span> <span class="n">df_links</span><span class="p">[</span><span class="n">df_links</span><span class="p">[</span><span class="s2">&quot;lecture&quot;</span><span class="p">]</span>
+                                   <span class="o">==</span> <span class="n">unique_lecture</span><span class="p">][</span><span class="s2">&quot;link&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;lecture&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">unique_lecture</span><span class="p">,</span> <span class="s2">&quot;link&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">link_for_unique</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<span class="c1"># ----------------- COURSE DATABASE --------------------</span>
+<span class="c1"># WRITE</span>
+<div class="viewcode-block" id="write_courses_to_database"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.lecture_importer.write_courses_to_database.html#modules.dhbw.lecture_importer.write_courses_to_database">[docs]</a><span class="k">def</span> <span class="nf">write_courses_to_database</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Write all courses to database.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">courses</span> <span class="o">=</span> <span class="n">CourseImporter</span><span class="p">()</span>
+    <span class="n">engine_string</span> <span class="o">=</span> <span class="s2">&quot;sqlite:///courses.db&quot;</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="n">engine_string</span><span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;course&quot;</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">courses</span><span class="o">.</span><span class="n">course_list</span><span class="p">)):</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">courses</span><span class="o">.</span><span class="n">course_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">courses</span><span class="o">.</span><span class="n">uid_list</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="s2">&quot;courses&quot;</span><span class="p">,</span> <span class="n">engine</span><span class="p">,</span> <span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;replace&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+<span class="c1"># READ</span>
+<div class="viewcode-block" id="read_courses_from_database"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.lecture_importer.read_courses_from_database.html#modules.dhbw.lecture_importer.read_courses_from_database">[docs]</a><span class="k">def</span> <span class="nf">read_courses_from_database</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Read all courses from database.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    List[str], List[str]</span>
+<span class="sd">        Course and uid list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">engine_string</span> <span class="o">=</span> <span class="s2">&quot;sqlite:///courses.db&quot;</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="n">engine_string</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM </span><span class="se">\&#39;</span><span class="s2">courses</span><span class="se">\&#39;</span><span class="s2">;&quot;</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;course&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;uid&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+
+
+<span class="c1"># ----------------- LECTURE DATABASE --------------------</span>
+<span class="c1"># WRITE</span>
+<div class="viewcode-block" id="write_all_courses_lectures_to_database"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.lecture_importer.write_all_courses_lectures_to_database.html#modules.dhbw.lecture_importer.write_all_courses_lectures_to_database">[docs]</a><span class="k">def</span> <span class="nf">write_all_courses_lectures_to_database</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Scraping lectures of all courses. Warning: Does only work in docker-container.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Change to bonobo-working directory in docker-container</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s2">&quot;/bonobo-board/&quot;</span><span class="p">)</span>
+    <span class="n">courses</span> <span class="o">=</span> <span class="n">CourseImporter</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">course</span> <span class="ow">in</span> <span class="n">courses</span><span class="o">.</span><span class="n">uid_list</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">course</span><span class="p">)</span>
+        <span class="n">lecture_imp</span> <span class="o">=</span> <span class="n">LectureImporter</span><span class="p">()</span>
+        <span class="n">lecture_imp</span><span class="o">.</span><span class="n">scrape</span><span class="p">(</span><span class="n">course</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">lecture_imp</span><span class="o">.</span><span class="n">lectures</span>
+        <span class="n">write_lectures_to_database</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">course</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="write_lectures_to_database"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.lecture_importer.write_lectures_to_database.html#modules.dhbw.lecture_importer.write_lectures_to_database">[docs]</a><span class="k">def</span> <span class="nf">write_lectures_to_database</span><span class="p">(</span><span class="n">lectures_df</span><span class="p">,</span> <span class="n">course_uid</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Write the lectures of one course to the database.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path_to_db : str</span>
+
+<span class="sd">    lectures_df : pd.DataFrame</span>
+
+<span class="sd">    course_uid : str</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">engine_string</span> <span class="o">=</span> <span class="s2">&quot;sqlite:///lectures.db&quot;</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="n">engine_string</span><span class="p">)</span>
+    <span class="n">lectures_df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">course_uid</span><span class="p">),</span> <span class="n">engine</span><span class="p">,</span> <span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;replace&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+<span class="c1"># READ</span>
+<div class="viewcode-block" id="read_lectures_from_database"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.lecture_importer.read_lectures_from_database.html#modules.dhbw.lecture_importer.read_lectures_from_database">[docs]</a><span class="k">def</span> <span class="nf">read_lectures_from_database</span><span class="p">(</span><span class="n">course_uid</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Read lectures of specified course from database.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    course_uid : str</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        Contains lectures.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">engine_string</span> <span class="o">=</span> <span class="s2">&quot;sqlite:///lectures.db&quot;</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="n">engine_string</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM </span><span class="se">\&#39;</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">course_uid</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">;&quot;</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span></div>
+
+
+<span class="c1"># ----------------- LECTURE LINK DATABASE --------------------</span>
+
+<span class="k">def</span> <span class="nf">_write_lecture_links_to_database</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">user_uid</span><span class="p">):</span>  <span class="c1"># df-columns: lecture, link</span>
+    <span class="sd">&quot;&quot;&quot; Write lecture-link DataFrame to database.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pd.DataFrame(columns=[&quot;lecture&quot;, &quot;link&quot;])</span>
+<span class="sd">    user_uid : str</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">engine_string</span> <span class="o">=</span> <span class="s2">&quot;sqlite:///users.db&quot;</span>
+    <span class="n">table_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">user_uid</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_link&quot;</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="n">engine_string</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">engine</span><span class="p">,</span> <span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;replace&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span>
+
+
+<div class="viewcode-block" id="read_lecture_links_from_database"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.lecture_importer.read_lecture_links_from_database.html#modules.dhbw.lecture_importer.read_lecture_links_from_database">[docs]</a><span class="k">def</span> <span class="nf">read_lecture_links_from_database</span><span class="p">(</span><span class="n">user_uid</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Read lecture-link DataFrame from database.</span>
+<span class="sd">        Creates table, for new users.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    user_uid : str</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">engine_string</span> <span class="o">=</span> <span class="s2">&quot;sqlite:///users.db&quot;</span>
+    <span class="n">table_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">user_uid</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_link&quot;</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span><span class="n">engine_string</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM </span><span class="se">\&#39;</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">table_name</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\&#39;</span><span class="s2">;&quot;</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">new_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;lecture&quot;</span><span class="p">,</span> <span class="s2">&quot;link&quot;</span><span class="p">])</span>
+        <span class="n">_write_lecture_links_to_database</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">new_df</span><span class="p">,</span> <span class="n">user_uid</span><span class="o">=</span><span class="n">user_uid</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">new_df</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="add_lecture_links_to_database"><a class="viewcode-back" href="../../../_autosummary/modules.dhbw.lecture_importer.add_lecture_links_to_database.html#modules.dhbw.lecture_importer.add_lecture_links_to_database">[docs]</a><span class="k">def</span> <span class="nf">add_lecture_links_to_database</span><span class="p">(</span><span class="n">user_uid</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">link</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Checks, if event is already saved in database.</span>
+<span class="sd">        Adds/Updates event in database.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    user_uid : str</span>
+<span class="sd">        user email</span>
+<span class="sd">    event : str</span>
+<span class="sd">        name of the event</span>
+<span class="sd">    link : str</span>
+<span class="sd">        link to safe to the event</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">read_lecture_links_from_database</span><span class="p">(</span><span class="n">user_uid</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;lecture&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">event</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="c1"># df[&#39;link&#39;][(df[&#39;lecture&#39;] == event).any().index] = link</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;lecture&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">event</span><span class="p">,</span> <span class="s2">&quot;link&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">link</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df_to_append</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;lecture&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">event</span><span class="p">],</span> <span class="s2">&quot;link&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">link</span><span class="p">]})</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_to_append</span><span class="p">)</span>
+
+    <span class="n">_write_lecture_links_to_database</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">user_uid</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Optima Connect.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

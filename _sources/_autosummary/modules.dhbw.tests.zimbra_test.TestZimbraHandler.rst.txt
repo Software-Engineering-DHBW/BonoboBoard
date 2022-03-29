@@ -1,0 +1,105 @@
+modules.dhbw.tests.zimbra\_test.TestZimbraHandler
+=================================================
+
+.. currentmodule:: modules.dhbw.tests.zimbra_test
+
+.. autoclass:: TestZimbraHandler
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~TestZimbraHandler.addClassCleanup
+      ~TestZimbraHandler.addCleanup
+      ~TestZimbraHandler.addTypeEqualityFunc
+      ~TestZimbraHandler.assertAlmostEqual
+      ~TestZimbraHandler.assertAlmostEquals
+      ~TestZimbraHandler.assertCountEqual
+      ~TestZimbraHandler.assertDictContainsSubset
+      ~TestZimbraHandler.assertDictEqual
+      ~TestZimbraHandler.assertEqual
+      ~TestZimbraHandler.assertEquals
+      ~TestZimbraHandler.assertFalse
+      ~TestZimbraHandler.assertGreater
+      ~TestZimbraHandler.assertGreaterEqual
+      ~TestZimbraHandler.assertIn
+      ~TestZimbraHandler.assertIs
+      ~TestZimbraHandler.assertIsInstance
+      ~TestZimbraHandler.assertIsNone
+      ~TestZimbraHandler.assertIsNot
+      ~TestZimbraHandler.assertIsNotNone
+      ~TestZimbraHandler.assertLess
+      ~TestZimbraHandler.assertLessEqual
+      ~TestZimbraHandler.assertListEqual
+      ~TestZimbraHandler.assertLogs
+      ~TestZimbraHandler.assertMultiLineEqual
+      ~TestZimbraHandler.assertNotAlmostEqual
+      ~TestZimbraHandler.assertNotAlmostEquals
+      ~TestZimbraHandler.assertNotEqual
+      ~TestZimbraHandler.assertNotEquals
+      ~TestZimbraHandler.assertNotIn
+      ~TestZimbraHandler.assertNotIsInstance
+      ~TestZimbraHandler.assertNotRegex
+      ~TestZimbraHandler.assertNotRegexpMatches
+      ~TestZimbraHandler.assertRaises
+      ~TestZimbraHandler.assertRaisesRegex
+      ~TestZimbraHandler.assertRaisesRegexp
+      ~TestZimbraHandler.assertRegex
+      ~TestZimbraHandler.assertRegexpMatches
+      ~TestZimbraHandler.assertSequenceEqual
+      ~TestZimbraHandler.assertSetEqual
+      ~TestZimbraHandler.assertTrue
+      ~TestZimbraHandler.assertTupleEqual
+      ~TestZimbraHandler.assertWarns
+      ~TestZimbraHandler.assertWarnsRegex
+      ~TestZimbraHandler.assert_
+      ~TestZimbraHandler.cls_suite
+      ~TestZimbraHandler.countTestCases
+      ~TestZimbraHandler.debug
+      ~TestZimbraHandler.defaultTestResult
+      ~TestZimbraHandler.doClassCleanups
+      ~TestZimbraHandler.doCleanups
+      ~TestZimbraHandler.fail
+      ~TestZimbraHandler.failIf
+      ~TestZimbraHandler.failIfAlmostEqual
+      ~TestZimbraHandler.failIfEqual
+      ~TestZimbraHandler.failUnless
+      ~TestZimbraHandler.failUnlessAlmostEqual
+      ~TestZimbraHandler.failUnlessEqual
+      ~TestZimbraHandler.failUnlessRaises
+      ~TestZimbraHandler.id
+      ~TestZimbraHandler.run
+      ~TestZimbraHandler.setUp
+      ~TestZimbraHandler.setUpClass
+      ~TestZimbraHandler.shortDescription
+      ~TestZimbraHandler.skipTest
+      ~TestZimbraHandler.subTest
+      ~TestZimbraHandler.tearDown
+      ~TestZimbraHandler.tearDownClass
+      ~TestZimbraHandler.test_get_contacts
+      ~TestZimbraHandler.test_login
+      ~TestZimbraHandler.test_logout
+      ~TestZimbraHandler.test_new_contact
+      ~TestZimbraHandler.test_remove_contact
+      ~TestZimbraHandler.test_scrape
+      ~TestZimbraHandler.test_send_mail
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~TestZimbraHandler.longMessage
+      ~TestZimbraHandler.maxDiff
+   
+   

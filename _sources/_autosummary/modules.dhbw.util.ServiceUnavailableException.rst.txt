@@ -1,0 +1,6 @@
+modules.dhbw.util.ServiceUnavailableException
+=============================================
+
+.. currentmodule:: modules.dhbw.util
+
+.. autoexception:: ServiceUnavailableException

@@ -1,0 +1,35 @@
+apps.home.views
+===============
+
+.. automodule:: apps.home.views
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      decrypt_dict
+      get_dualis_results
+      get_lecture_results
+      pages
+      write_log
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

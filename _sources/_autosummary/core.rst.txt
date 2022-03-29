@@ -1,0 +1,32 @@
+﻿core
+====
+
+.. automodule:: core
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst
+   :recursive:
+
+   core.asgi
+   core.urls
+   core.wsgi
+

@@ -1,0 +1,6 @@
+apps.authentication.views.encrypt\_dict
+=======================================
+
+.. currentmodule:: apps.authentication.views
+
+.. autofunction:: encrypt_dict

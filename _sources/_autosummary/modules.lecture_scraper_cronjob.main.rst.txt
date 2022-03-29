@@ -1,0 +1,6 @@
+modules.lecture\_scraper\_cronjob.main
+======================================
+
+.. currentmodule:: modules.lecture_scraper_cronjob
+
+.. autofunction:: main

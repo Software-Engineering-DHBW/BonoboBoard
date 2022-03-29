@@ -1,0 +1,6 @@
+modules.dhbw.util.LoginRequiredException
+========================================
+
+.. currentmodule:: modules.dhbw.util
+
+.. autoexception:: LoginRequiredException

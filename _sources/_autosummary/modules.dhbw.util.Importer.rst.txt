@@ -1,0 +1,32 @@
+modules.dhbw.util.Importer
+==========================
+
+.. currentmodule:: modules.dhbw.util
+
+.. autoclass:: Importer
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~Importer.drop_header
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Importer.headers
+      ~Importer.scraped_data
+   
+   

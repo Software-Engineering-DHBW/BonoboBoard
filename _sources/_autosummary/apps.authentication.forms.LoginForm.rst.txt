@@ -1,0 +1,32 @@
+apps.authentication.forms.LoginForm
+===================================
+
+.. currentmodule:: apps.authentication.forms
+
+.. autoclass:: LoginForm
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~LoginForm.course
+      ~LoginForm.password
+      ~LoginForm.username
+   
+   

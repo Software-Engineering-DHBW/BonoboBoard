@@ -1,0 +1,31 @@
+apps.authentication.config.AuthConfig
+=====================================
+
+.. currentmodule:: apps.authentication.config
+
+.. autoclass:: AuthConfig
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AuthConfig.label
+      ~AuthConfig.name
+   
+   

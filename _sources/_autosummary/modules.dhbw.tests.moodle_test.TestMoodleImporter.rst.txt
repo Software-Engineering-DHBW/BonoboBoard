@@ -1,0 +1,101 @@
+modules.dhbw.tests.moodle\_test.TestMoodleImporter
+==================================================
+
+.. currentmodule:: modules.dhbw.tests.moodle_test
+
+.. autoclass:: TestMoodleImporter
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~TestMoodleImporter.addClassCleanup
+      ~TestMoodleImporter.addCleanup
+      ~TestMoodleImporter.addTypeEqualityFunc
+      ~TestMoodleImporter.assertAlmostEqual
+      ~TestMoodleImporter.assertAlmostEquals
+      ~TestMoodleImporter.assertCountEqual
+      ~TestMoodleImporter.assertDictContainsSubset
+      ~TestMoodleImporter.assertDictEqual
+      ~TestMoodleImporter.assertEqual
+      ~TestMoodleImporter.assertEquals
+      ~TestMoodleImporter.assertFalse
+      ~TestMoodleImporter.assertGreater
+      ~TestMoodleImporter.assertGreaterEqual
+      ~TestMoodleImporter.assertIn
+      ~TestMoodleImporter.assertIs
+      ~TestMoodleImporter.assertIsInstance
+      ~TestMoodleImporter.assertIsNone
+      ~TestMoodleImporter.assertIsNot
+      ~TestMoodleImporter.assertIsNotNone
+      ~TestMoodleImporter.assertLess
+      ~TestMoodleImporter.assertLessEqual
+      ~TestMoodleImporter.assertListEqual
+      ~TestMoodleImporter.assertLogs
+      ~TestMoodleImporter.assertMultiLineEqual
+      ~TestMoodleImporter.assertNotAlmostEqual
+      ~TestMoodleImporter.assertNotAlmostEquals
+      ~TestMoodleImporter.assertNotEqual
+      ~TestMoodleImporter.assertNotEquals
+      ~TestMoodleImporter.assertNotIn
+      ~TestMoodleImporter.assertNotIsInstance
+      ~TestMoodleImporter.assertNotRegex
+      ~TestMoodleImporter.assertNotRegexpMatches
+      ~TestMoodleImporter.assertRaises
+      ~TestMoodleImporter.assertRaisesRegex
+      ~TestMoodleImporter.assertRaisesRegexp
+      ~TestMoodleImporter.assertRegex
+      ~TestMoodleImporter.assertRegexpMatches
+      ~TestMoodleImporter.assertSequenceEqual
+      ~TestMoodleImporter.assertSetEqual
+      ~TestMoodleImporter.assertTrue
+      ~TestMoodleImporter.assertTupleEqual
+      ~TestMoodleImporter.assertWarns
+      ~TestMoodleImporter.assertWarnsRegex
+      ~TestMoodleImporter.assert_
+      ~TestMoodleImporter.cls_suite
+      ~TestMoodleImporter.countTestCases
+      ~TestMoodleImporter.debug
+      ~TestMoodleImporter.defaultTestResult
+      ~TestMoodleImporter.doClassCleanups
+      ~TestMoodleImporter.doCleanups
+      ~TestMoodleImporter.fail
+      ~TestMoodleImporter.failIf
+      ~TestMoodleImporter.failIfAlmostEqual
+      ~TestMoodleImporter.failIfEqual
+      ~TestMoodleImporter.failUnless
+      ~TestMoodleImporter.failUnlessAlmostEqual
+      ~TestMoodleImporter.failUnlessEqual
+      ~TestMoodleImporter.failUnlessRaises
+      ~TestMoodleImporter.id
+      ~TestMoodleImporter.run
+      ~TestMoodleImporter.setUp
+      ~TestMoodleImporter.setUpClass
+      ~TestMoodleImporter.shortDescription
+      ~TestMoodleImporter.skipTest
+      ~TestMoodleImporter.subTest
+      ~TestMoodleImporter.tearDown
+      ~TestMoodleImporter.tearDownClass
+      ~TestMoodleImporter.test_login
+      ~TestMoodleImporter.test_logout
+      ~TestMoodleImporter.test_scrape
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~TestMoodleImporter.longMessage
+      ~TestMoodleImporter.maxDiff
+   
+   
