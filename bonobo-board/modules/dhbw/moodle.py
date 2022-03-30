@@ -49,6 +49,7 @@ def get_bbb_instance_name(tag_a):
     temp: str
         the instance name
     """
+    temp = "Online-Vorlesungsraum"
     for tag_span in tag_a.find_all("span"):
         if "instancename" in tag_span.get("class"):
             if len(tag_span.contents) == 1:
