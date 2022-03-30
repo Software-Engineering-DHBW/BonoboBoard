@@ -117,6 +117,7 @@
 <span class="sd">    temp: str</span>
 <span class="sd">        the instance name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="s2">&quot;Online-Vorlesungsraum&quot;</span>
     <span class="k">for</span> <span class="n">tag_span</span> <span class="ow">in</span> <span class="n">tag_a</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;span&quot;</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;instancename&quot;</span> <span class="ow">in</span> <span class="n">tag_span</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tag_span</span><span class="o">.</span><span class="n">contents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>

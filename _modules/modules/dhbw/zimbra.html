@@ -343,7 +343,7 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">contacts</span> <span class="o">=</span> <span class="n">r_contacts</span><span class="p">[</span><span class="s2">&quot;Body&quot;</span><span class="p">][</span><span class="s2">&quot;SearchResponse&quot;</span><span class="p">][</span><span class="s2">&quot;cn&quot;</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">key_err</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="n">contacts</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">contact</span> <span class="ow">in</span> <span class="n">contacts</span><span class="p">:</span>
