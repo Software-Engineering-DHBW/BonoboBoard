@@ -275,7 +275,7 @@ class ZimbraHandler(ImporterSession):
 
         try:
             contacts = r_contacts["Body"]["SearchResponse"]["cn"]
-        except KeyError as key_err:
+        except KeyError:
             contacts = []
 
         for contact in contacts:
