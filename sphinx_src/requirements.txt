@@ -2,7 +2,7 @@ sphinx>=4.0.1
 asgiref==3.4.1
 autopep8==1.6.0
 dj-database-url==0.5.0
-Django==4.0.2
+Django==4.0.4
 gunicorn==20.1.0
 pycodestyle==2.8.0
 python-decouple==3.5
